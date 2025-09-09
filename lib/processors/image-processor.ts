@@ -1,4 +1,4 @@
-import type { ImageProcessingOptions } from "./image-processing-options" // Assuming ImageProcessingOptions is declared in another file
+import type { ImageProcessingOptions } from "./image-processing-options"
 
 export class ImageProcessor {
   private static readonly MAX_SAFE_PIXELS = 1024 * 1024 // 1MP max for stability
@@ -6,6 +6,290 @@ export class ImageProcessor {
 
   // Enhanced memory management
   private static activeCanvases = new Set<HTMLCanvasElement>()
+
+  static async resizeImage(file: File, options: ImageProcessingOptions): Promise<Blob> {
+    return this.processImageSafely(
+      file,
+      (canvas, ctx, img) => {
+        this.activeCanvases.add(canvas)
+        
+        let targetWidth = options.width || img.naturalWidth
+        let targetHeight = options.height || img.naturalHeight
+        
+        // Maintain aspect ratio if requested
+        if (options.maintainAspectRatio && options.width && options.height) {
+          const aspectRatio = img.naturalWidth / img.naturalHeight
+          if (targetWidth / targetHeight > aspectRatio) {
+            targetWidth = targetHeight * aspectRatio
+          } else {
+            targetHeight = targetWidth / aspectRatio
+          }
+        }
+        
+        canvas.width = Math.max(1, Math.floor(targetWidth))
+        canvas.height = Math.max(1, Math.floor(targetHeight))
+        
+        ctx.imageSmoothingEnabled = true
+        ctx.imageSmoothingQuality = "high"
+        
+        // Apply background color if converting to JPEG
+        if (options.outputFormat === "jpeg" && options.backgroundColor) {
+          ctx.fillStyle = options.backgroundColor
+          ctx.fillRect(0, 0, canvas.width, canvas.height)
+        }
+        
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height)
+        this.activeCanvases.delete(canvas)
+      },
+      options
+    )
+  }
+
+  static async compressImage(file: File, options: ImageProcessingOptions): Promise<Blob> {
+    return this.processImageSafely(
+      file,
+      (canvas, ctx, img) => {
+        this.activeCanvases.add(canvas)
+        canvas.width = img.naturalWidth
+        canvas.height = img.naturalHeight
+        
+        ctx.imageSmoothingEnabled = true
+        ctx.imageSmoothingQuality = "high"
+        
+        // Apply background for JPEG
+        if (options.outputFormat === "jpeg") {
+          ctx.fillStyle = options.backgroundColor || "#ffffff"
+          ctx.fillRect(0, 0, canvas.width, canvas.height)
+        }
+        
+        ctx.drawImage(img, 0, 0)
+        this.activeCanvases.delete(canvas)
+      },
+      {
+        ...options,
+        quality: this.getCompressionQuality(options.compressionLevel, options.quality)
+      }
+    )
+  }
+
+  static async convertFormat(file: File, outputFormat: "jpeg" | "png" | "webp", options: ImageProcessingOptions): Promise<Blob> {
+    return this.processImageSafely(
+      file,
+      (canvas, ctx, img) => {
+        this.activeCanvases.add(canvas)
+        canvas.width = img.naturalWidth
+        canvas.height = img.naturalHeight
+        
+        ctx.imageSmoothingEnabled = true
+        ctx.imageSmoothingQuality = "high"
+        
+        // Apply background for formats that don't support transparency
+        if (outputFormat === "jpeg") {
+          ctx.fillStyle = options.backgroundColor || "#ffffff"
+          ctx.fillRect(0, 0, canvas.width, canvas.height)
+        }
+        
+        ctx.drawImage(img, 0, 0)
+        this.activeCanvases.delete(canvas)
+      },
+      { ...options, outputFormat }
+    )
+  }
+
+  static async rotateImage(file: File, options: ImageProcessingOptions): Promise<Blob> {
+    return this.processImageSafely(
+      file,
+      (canvas, ctx, img) => {
+        this.activeCanvases.add(canvas)
+        
+        const angle = (options.customRotation || options.rotation || 0) * Math.PI / 180
+        
+        // Calculate new canvas dimensions for rotation
+        const cos = Math.abs(Math.cos(angle))
+        const sin = Math.abs(Math.sin(angle))
+        const newWidth = img.naturalWidth * cos + img.naturalHeight * sin
+        const newHeight = img.naturalWidth * sin + img.naturalHeight * cos
+        
+        canvas.width = Math.ceil(newWidth)
+        canvas.height = Math.ceil(newHeight)
+        
+        ctx.imageSmoothingEnabled = true
+        ctx.imageSmoothingQuality = "high"
+        
+        // Apply background for JPEG
+        if (options.outputFormat === "jpeg") {
+          ctx.fillStyle = options.backgroundColor || "#ffffff"
+          ctx.fillRect(0, 0, canvas.width, canvas.height)
+        }
+        
+        // Rotate around center
+        ctx.translate(canvas.width / 2, canvas.height / 2)
+        ctx.rotate(angle)
+        ctx.drawImage(img, -img.naturalWidth / 2, -img.naturalHeight / 2)
+        
+        this.activeCanvases.delete(canvas)
+      },
+      options
+    )
+  }
+
+  static async cropImage(file: File, cropArea: { x: number; y: number; width: number; height: number }, options: ImageProcessingOptions): Promise<Blob> {
+    return this.processImageSafely(
+      file,
+      (canvas, ctx, img) => {
+        this.activeCanvases.add(canvas)
+        
+        // Convert percentage to pixels
+        const sourceX = (cropArea.x / 100) * img.naturalWidth
+        const sourceY = (cropArea.y / 100) * img.naturalHeight
+        const sourceWidth = (cropArea.width / 100) * img.naturalWidth
+        const sourceHeight = (cropArea.height / 100) * img.naturalHeight
+        
+        canvas.width = Math.max(1, Math.floor(sourceWidth))
+        canvas.height = Math.max(1, Math.floor(sourceHeight))
+        
+        ctx.imageSmoothingEnabled = true
+        ctx.imageSmoothingQuality = "high"
+        
+        // Apply background for JPEG
+        if (options.outputFormat === "jpeg") {
+          ctx.fillStyle = options.backgroundColor || "#ffffff"
+          ctx.fillRect(0, 0, canvas.width, canvas.height)
+        }
+        
+        ctx.drawImage(
+          img,
+          sourceX, sourceY, sourceWidth, sourceHeight,
+          0, 0, canvas.width, canvas.height
+        )
+        
+        this.activeCanvases.delete(canvas)
+      },
+      options
+    )
+  }
+
+  static async applyFilters(file: File, options: ImageProcessingOptions): Promise<Blob> {
+    return this.processImageSafely(
+      file,
+      (canvas, ctx, img) => {
+        this.activeCanvases.add(canvas)
+        canvas.width = img.naturalWidth
+        canvas.height = img.naturalHeight
+        
+        ctx.imageSmoothingEnabled = true
+        ctx.imageSmoothingQuality = "high"
+        
+        // Build filter string
+        const filters = []
+        if (options.filters) {
+          if (options.filters.brightness !== undefined && options.filters.brightness !== 100) {
+            filters.push(`brightness(${options.filters.brightness}%)`)
+          }
+          if (options.filters.contrast !== undefined && options.filters.contrast !== 100) {
+            filters.push(`contrast(${options.filters.contrast}%)`)
+          }
+          if (options.filters.saturation !== undefined && options.filters.saturation !== 100) {
+            filters.push(`saturate(${options.filters.saturation}%)`)
+          }
+          if (options.filters.blur !== undefined && options.filters.blur > 0) {
+            filters.push(`blur(${options.filters.blur}px)`)
+          }
+          if (options.filters.sepia) {
+            filters.push("sepia(100%)")
+          }
+          if (options.filters.grayscale) {
+            filters.push("grayscale(100%)")
+          }
+        }
+        
+        if (filters.length > 0) {
+          ctx.filter = filters.join(" ")
+        }
+        
+        ctx.drawImage(img, 0, 0)
+        this.activeCanvases.delete(canvas)
+      },
+      options
+    )
+  }
+
+  private static getCompressionQuality(level?: string, baseQuality?: number): number {
+    const base = baseQuality || 90
+    
+    switch (level) {
+      case "low":
+        return Math.max(85, base)
+      case "medium":
+        return Math.max(70, base * 0.8)
+      case "high":
+        return Math.max(50, base * 0.6)
+      case "maximum":
+        return Math.max(30, base * 0.4)
+      default:
+        return base
+    }
+  }
+
+  private static async processImageSafely(
+    file: File,
+    processFunction: (canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D, img: HTMLImageElement) => void,
+    options: ImageProcessingOptions
+  ): Promise<Blob> {
+    return new Promise((resolve, reject) => {
+      // Safety checks
+      if (file.size > 25 * 1024 * 1024) {
+        reject(new Error("File too large. Maximum 25MB allowed."))
+        return
+      }
+
+      const canvas = document.createElement("canvas")
+      const ctx = canvas.getContext("2d", {
+        alpha: true,
+        willReadFrequently: false,
+        desynchronized: true
+      })
+
+      if (!ctx) {
+        reject(new Error("Canvas not supported"))
+        return
+      }
+
+      const img = new Image()
+      img.onload = () => {
+        try {
+          // Safety check for image dimensions
+          if (img.naturalWidth * img.naturalHeight > this.MAX_SAFE_PIXELS) {
+            reject(new Error("Image resolution too high for processing"))
+            return
+          }
+
+          processFunction(canvas, ctx, img)
+
+          const quality = (options.quality || 90) / 100
+          const mimeType = `image/${options.outputFormat || "png"}`
+
+          canvas.toBlob(
+            (blob) => {
+              if (blob) {
+                resolve(blob)
+              } else {
+                reject(new Error("Failed to create blob"))
+              }
+            },
+            mimeType,
+            quality
+          )
+        } catch (error) {
+          reject(error)
+        }
+      }
+
+      img.onerror = () => reject(new Error("Failed to load image"))
+      img.crossOrigin = "anonymous"
+      img.src = URL.createObjectURL(file)
+    })
+  }
 
   static async flipImage(file: File, options: ImageProcessingOptions): Promise<Blob> {
     return this.processImageSafely(

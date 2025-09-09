@@ -1,4 +1,10 @@
 import { PDFDocument, rgb, StandardFonts, PageSizes } from "pdf-lib"
+import * as pdfjsLib from "pdfjs-dist"
+
+// Configure PDF.js worker
+if (typeof window !== "undefined") {
+  pdfjsLib.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js`
+}
 
 export interface PDFProcessingOptions {
   quality?: number
@@ -58,88 +64,75 @@ export interface PDFPageInfo {
 export class PDFProcessor {
   static async getPDFInfo(file: File): Promise<{ pageCount: number; pages: PDFPageInfo[] }> {
     try {
+      // Use PDF.js for real page rendering
       const arrayBuffer = await file.arrayBuffer()
-      const pdf = await PDFDocument.load(arrayBuffer)
-      const pageCount = pdf.getPageCount()
+      const loadingTask = pdfjsLib.getDocument({ data: arrayBuffer })
+      const pdfDoc = await loadingTask.promise
+      const pageCount = pdfDoc.numPages
       const pages: PDFPageInfo[] = []
 
-      // Generate realistic PDF page thumbnails
+      // Generate real PDF page thumbnails
       for (let i = 0; i < pageCount; i++) {
-        const canvas = document.createElement("canvas")
-        const ctx = canvas.getContext("2d")!
-        canvas.width = 200
-        canvas.height = 280
-
-        // Enhanced PDF page thumbnail with realistic content
-        ctx.fillStyle = "#ffffff"
-        ctx.fillRect(0, 0, canvas.width, canvas.height)
-        
-        // Border
-        ctx.strokeStyle = "#e2e8f0"
-        ctx.lineWidth = 1
-        ctx.strokeRect(0, 0, canvas.width, canvas.height)
-        
-        // Header
-        ctx.fillStyle = "#1f2937"
-        ctx.font = "bold 12px system-ui"
-        ctx.textAlign = "left"
-        ctx.fillText("Document Title", 15, 25)
-        
-        // Content simulation with varying content per page
-        ctx.fillStyle = "#374151"
-        ctx.font = "10px system-ui"
-        const lines = [
-          "Lorem ipsum dolor sit amet, consectetur",
-          "adipiscing elit. Sed do eiusmod tempor",
-          "incididunt ut labore et dolore magna",
-          "aliqua. Ut enim ad minim veniam,",
-          "quis nostrud exercitation ullamco",
-          "laboris nisi ut aliquip ex ea commodo",
-          "consequat. Duis aute irure dolor in",
-          "reprehenderit in voluptate velit esse",
-          "cillum dolore eu fugiat nulla pariatur."
-        ]
-        
-        lines.forEach((line, lineIndex) => {
-          if (lineIndex < 8) {
-            // Vary content slightly per page
-            const pageVariation = i % 3
-            const adjustedLine = pageVariation === 0 ? line : 
-                               pageVariation === 1 ? line.substring(0, 25) + "..." :
-                               line.substring(0, 30)
-            ctx.fillText(adjustedLine, 15, 45 + lineIndex * 12)
+        try {
+          const page = await pdfDoc.getPage(i + 1)
+          const viewport = page.getViewport({ scale: 0.5 }) // Scale for thumbnail
+          
+          const canvas = document.createElement("canvas")
+          const ctx = canvas.getContext("2d")!
+          canvas.width = Math.min(200, viewport.width)
+          canvas.height = Math.min(280, viewport.height)
+          
+          // Adjust viewport to fit thumbnail size
+          const scale = Math.min(200 / viewport.width, 280 / viewport.height)
+          const scaledViewport = page.getViewport({ scale })
+          
+          canvas.width = scaledViewport.width
+          canvas.height = scaledViewport.height
+          
+          // Render the page
+          const renderContext = {
+            canvasContext: ctx,
+            viewport: scaledViewport,
           }
-        })
-        
-        // Add some visual elements
-        ctx.fillStyle = "#e5e7eb"
-        ctx.fillRect(15, 150, canvas.width - 30, 1)
-        ctx.fillRect(15, 170, canvas.width - 50, 1)
-        
-        // Add page-specific elements
-        if (i === 0) {
-          ctx.fillStyle = "#3b82f6"
-          ctx.fillRect(15, 180, 50, 20)
-          ctx.fillStyle = "#ffffff"
-          ctx.font = "8px system-ui"
+          
+          await page.render(renderContext).promise
+          
+          pages.push({
+            pageNumber: i + 1,
+            width: scaledViewport.width,
+            height: scaledViewport.height,
+            thumbnail: canvas.toDataURL("image/png", 0.8),
+            rotation: page.rotate || 0,
+            selected: false
+          })
+        } catch (error) {
+          console.error(`Failed to render page ${i + 1}:`, error)
+          // Fallback to placeholder if rendering fails
+          const canvas = document.createElement("canvas")
+          const ctx = canvas.getContext("2d")!
+          canvas.width = 200
+          canvas.height = 280
+          
+          ctx.fillStyle = "#f8f9fa"
+          ctx.fillRect(0, 0, canvas.width, canvas.height)
+          ctx.strokeStyle = "#dee2e6"
+          ctx.strokeRect(0, 0, canvas.width, canvas.height)
+          
+          ctx.fillStyle = "#6c757d"
+          ctx.font = "14px Arial"
           ctx.textAlign = "center"
-          ctx.fillText("TITLE", 40, 192)
-        }
-        
-        // Footer
-        ctx.fillStyle = "#9ca3af"
-        ctx.font = "8px system-ui"
-        ctx.textAlign = "center"
-        ctx.fillText(`Page ${i + 1} of ${pageCount}`, canvas.width / 2, canvas.height - 15)
+          ctx.fillText(`Page ${i + 1}`, canvas.width / 2, canvas.height / 2)
+          ctx.fillText("Preview Error", canvas.width / 2, canvas.height / 2 + 20)
 
-        pages.push({
-          pageNumber: i + 1,
-          width: 200,
-          height: 280,
-          thumbnail: canvas.toDataURL("image/png", 0.8),
-          rotation: 0,
-          selected: false
-        })
+          pages.push({
+            pageNumber: i + 1,
+            width: 200,
+            height: 280,
+            thumbnail: canvas.toDataURL("image/png", 0.8),
+            rotation: 0,
+            selected: false
+          })
+        }
       }
 
       return { pageCount, pages }

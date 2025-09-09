@@ -46,55 +46,69 @@ async function splitPDF(files: any[], options: any) {
 
     const file = files[0]
 
-    // Prepare form data for server-side processing
-    const formData = new FormData()
-    formData.append("file", file.originalFile || file.file)
-
-    // Process selected pages for server
-    const processedOptions = { ...options }
+    // Process selected pages for client-side processing
+    let selectedPages: number[] = []
     if (options.selectedPages && options.selectedPages.length > 0) {
-      processedOptions.selectedPages = options.selectedPages
+      selectedPages = options.selectedPages
         .map((pageKey: string) => {
           const parts = pageKey.split("-")
           return Number.parseInt(parts[parts.length - 1])
         })
         .filter((num: number) => !isNaN(num))
         .sort((a: number, b: number) => a - b)
+    } else if (options.splitMode === "size" && options.equalParts) {
+      // Handle equal parts splitting
+      const { ClientPDFProcessor } = await import("@/lib/processors/client-pdf-processor")
+      const metadata = await ClientPDFProcessor.getPDFMetadata(file.originalFile || file.file)
+      const totalPages = metadata.pageCount
+      const pagesPerPart = Math.ceil(totalPages / options.equalParts)
+      
+      // For now, just extract all pages individually
+      selectedPages = Array.from({ length: totalPages }, (_, i) => i + 1)
     }
 
-    formData.append("options", JSON.stringify(processedOptions))
-
-    // Call server-side API
-    const response = await fetch("/api/pdf/split", {
-      method: "POST",
-      body: formData,
-    })
-
-    if (!response.ok) {
-      const errorData = await response.json()
-      throw new Error(errorData.error || "Failed to split PDF")
-    }
-
-    // Get the response as blob for download
-    const blob = await response.blob()
-    const downloadUrl = URL.createObjectURL(blob)
-
-    // Determine filename from response headers
-    const contentDisposition = response.headers.get("content-disposition")
-    let filename = `${file.name.replace(".pdf", "")}_split.pdf`
-
-    if (contentDisposition) {
-      const filenameMatch = contentDisposition.match(/filename="([^"]+)"/)
-      if (filenameMatch) {
-        filename = filenameMatch[1]
+    if (selectedPages.length === 0) {
+      return {
+        success: false,
+        error: "No pages selected for extraction"
       }
     }
 
-    return {
-      success: true,
-      downloadUrl,
-      filename,
+    // Use client-side processing
+    const { ClientPDFProcessor } = await import("@/lib/processors/client-pdf-processor")
+    const splitResults = await ClientPDFProcessor.splitPDF(file.originalFile || file.file, {
+      selectedPages
+    })
+
+    if (splitResults.length === 1) {
+      // Single file - return directly
+      const downloadUrl = URL.createObjectURL(splitResults[0])
+      return {
+        success: true,
+        downloadUrl,
+        filename: `${file.name.replace(".pdf", "")}_split.pdf`
+      }
+    } else {
+      // Multiple files - create ZIP
+      const JSZip = (await import("jszip")).default
+      const zip = new JSZip()
+
+      splitResults.forEach((pdfBlob, index) => {
+        const pageNum = selectedPages[index]
+        const filename = `${file.name.replace(".pdf", "")}_page_${pageNum}.pdf`
+        zip.file(filename, pdfBlob)
+      })
+
+      const zipBlob = await zip.generateAsync({ type: "blob" })
+      const downloadUrl = URL.createObjectURL(zipBlob)
+
+      return {
+        success: true,
+        downloadUrl,
+        filename: `${file.name.replace(".pdf", "")}_split.zip`
+      }
     }
+
   } catch (error) {
     console.error("Split PDF error:", error)
     return {

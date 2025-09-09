@@ -73,22 +73,22 @@ async function addWatermarkToPDF(files: any[], options: any) {
       }
     }
 
-    const watermarkOptions = {
+    const watermarkOptions: any = {
       watermarkOpacity: options.opacity / 100,
       fontSize: options.fontSize,
       position: options.position,
       color: options.color,
+      watermarkText: options.watermarkText
     }
 
     if (files.length === 1) {
       // Single file watermarking
-      const watermarkedBytes = await PDFProcessor.addWatermark(
-        files[0].originalFile || files[0].file, 
-        options.watermarkText, 
+      const watermarkedBlob = await ClientPDFProcessor.addWatermark(
+        files[0].originalFile || files[0].file,
+        options.watermarkText,
         watermarkOptions
       )
-      const blob = new Blob([watermarkedBytes], { type: "application/pdf" })
-      const downloadUrl = URL.createObjectURL(blob)
+      const downloadUrl = URL.createObjectURL(watermarkedBlob)
 
       return {
         success: true,
@@ -101,11 +101,12 @@ async function addWatermarkToPDF(files: any[], options: any) {
       const zip = new JSZip()
 
       for (const file of files) {
-        const watermarkedBytes = await PDFProcessor.addWatermark(
-          file.originalFile || file.file, 
-          options.watermarkText, 
+        const watermarkedBlob = await ClientPDFProcessor.addWatermark(
+          file.originalFile || file.file,
+          options.watermarkText,
           watermarkOptions
         )
+        const watermarkedBytes = await watermarkedBlob.arrayBuffer()
         const filename = `watermarked_${file.name}`
         zip.file(filename, watermarkedBytes)
       }

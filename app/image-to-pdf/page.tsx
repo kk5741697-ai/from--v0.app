@@ -67,12 +67,10 @@ async function convertImagesToPDF(files: any[], options: any) {
     // Extract actual File objects
     const imageFiles = files.map((f) => f.originalFile || f.file)
 
-    // Process image to PDF conversion using real PDF-lib
-    const pdfBytes = await PDFProcessor.imagesToPDF(imageFiles, options)
+    // Process image to PDF conversion using client-side processor
+    const pdfBlob = await ClientPDFProcessor.imagesToPDF(imageFiles, options)
 
-    // Create download blob
-    const blob = new Blob([pdfBytes], { type: "application/pdf" })
-    const downloadUrl = URL.createObjectURL(blob)
+    const downloadUrl = URL.createObjectURL(pdfBlob)
 
     return {
       success: true,

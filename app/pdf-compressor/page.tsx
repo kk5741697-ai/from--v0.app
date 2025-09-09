@@ -43,22 +43,22 @@ async function compressPDF(files: any[], options: any) {
       }
     }
 
-    const compressionOptions = {
-      quality: Math.max(10, Math.min(100, options.quality || 80)),
+    const compressionOptions: any = {
       compressionLevel: options.compressionLevel,
       optimizeImages: Boolean(options.optimizeImages),
       removeMetadata: Boolean(options.removeMetadata),
+      preserveMetadata: !Boolean(options.removeMetadata)
     }
 
     if (files.length === 1) {
       // Single file compression
-      const compressedBytes = await PDFProcessor.compressPDF(files[0].originalFile || files[0].file, compressionOptions)
-      const blob = new Blob([compressedBytes], { type: "application/pdf" })
-      const downloadUrl = URL.createObjectURL(blob)
+      const compressedBlob = await ClientPDFProcessor.compressPDF(files[0].originalFile || files[0].file, compressionOptions)
+      const downloadUrl = URL.createObjectURL(compressedBlob)
 
       return {
         success: true,
         downloadUrl,
+        filename: `compressed_${files[0].name}`
       }
     } else {
       // Multiple files - always create ZIP
@@ -66,7 +66,8 @@ async function compressPDF(files: any[], options: any) {
       const zip = new JSZip()
 
       for (const file of files) {
-        const compressedBytes = await PDFProcessor.compressPDF(file.originalFile || file.file, compressionOptions)
+        const compressedBlob = await ClientPDFProcessor.compressPDF(file.originalFile || file.file, compressionOptions)
+        const compressedBytes = await compressedBlob.arrayBuffer()
         const filename = `compressed_${file.name}`
         zip.file(filename, compressedBytes)
       }
@@ -77,6 +78,7 @@ async function compressPDF(files: any[], options: any) {
       return {
         success: true,
         downloadUrl,
+        filename: "compressed_pdfs.zip"
       }
     }
   } catch (error) {

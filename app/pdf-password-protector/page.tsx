@@ -80,13 +80,12 @@ async function protectPDF(files: any[], options: any) {
 
     if (files.length === 1) {
       // Single file protection
-      const protectedBytes = await PDFProcessor.addPasswordProtection(
-        files[0].originalFile || files[0].file, 
-        password, 
+      const protectedBlob = await ClientPDFProcessor.addPasswordProtection(
+        files[0].originalFile || files[0].file,
+        password,
         permissions
       )
-      const blob = new Blob([protectedBytes], { type: "application/pdf" })
-      const downloadUrl = URL.createObjectURL(blob)
+      const downloadUrl = URL.createObjectURL(protectedBlob)
 
       return {
         success: true,
@@ -99,11 +98,12 @@ async function protectPDF(files: any[], options: any) {
       const zip = new JSZip()
 
       for (const file of files) {
-        const protectedBytes = await PDFProcessor.addPasswordProtection(
-          file.originalFile || file.file, 
-          password, 
+        const protectedBlob = await ClientPDFProcessor.addPasswordProtection(
+          file.originalFile || file.file,
+          password,
           permissions
         )
+        const protectedBytes = await protectedBlob.arrayBuffer()
         const filename = `protected_${file.name}`
         zip.file(filename, protectedBytes)
       }

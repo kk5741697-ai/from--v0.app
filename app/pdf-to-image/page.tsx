@@ -53,34 +53,69 @@ async function convertPDFToImage(files: any[], options: any) {
       }
     }
 
-    const conversionOptions = {
+    const conversionOptions: any = {
       outputFormat: options.outputFormat,
       dpi: Number.parseInt(options.resolution),
       colorMode: options.colorMode,
-      imageQuality: 90,
+      quality: 90,
+      selectedPages: options.selectedPages
     }
 
-    // Always create ZIP with all images
-    const JSZip = (await import("jszip")).default
-    const zip = new JSZip()
+    if (files.length === 1) {
+      // Single file conversion
+      const images = await ClientPDFProcessor.pdfToImages(files[0].originalFile || files[0].file, conversionOptions)
+      
+      if (images.length === 1) {
+        // Single image - return directly
+        const downloadUrl = URL.createObjectURL(images[0])
+        return {
+          success: true,
+          downloadUrl,
+          filename: `${files[0].name.replace(".pdf", "")}.${options.outputFormat}`
+        }
+      } else {
+        // Multiple images - create ZIP
+        const JSZip = (await import("jszip")).default
+        const zip = new JSZip()
 
-    for (const file of files) {
-      const images = await PDFProcessor.pdfToImages(file.file, conversionOptions)
+        images.forEach((imageBlob, pageIndex) => {
+          const filename = `${files[0].name.replace(".pdf", "")}_page_${pageIndex + 1}.${options.outputFormat}`
+          zip.file(filename, imageBlob)
+        })
 
-      images.forEach((imageBlob, pageIndex) => {
-        const filename = `${file.name.replace(".pdf", "")}_page_${pageIndex + 1}.${options.outputFormat}`
-        zip.file(filename, imageBlob)
-      })
+        const zipBlob = await zip.generateAsync({ type: "blob" })
+        const downloadUrl = URL.createObjectURL(zipBlob)
+
+        return {
+          success: true,
+          downloadUrl,
+          filename: `${files[0].name.replace(".pdf", "")}_images.zip`
+        }
+      }
+    } else {
+      // Multiple files - create ZIP with all images
+      const JSZip = (await import("jszip")).default
+      const zip = new JSZip()
+
+      for (const file of files) {
+        const images = await ClientPDFProcessor.pdfToImages(file.originalFile || file.file, conversionOptions)
+
+        images.forEach((imageBlob, pageIndex) => {
+          const filename = `${file.name.replace(".pdf", "")}_page_${pageIndex + 1}.${options.outputFormat}`
+          zip.file(filename, imageBlob)
+        })
+      }
+
+      const zipBlob = await zip.generateAsync({ type: "blob" })
+      const downloadUrl = URL.createObjectURL(zipBlob)
+
+      return {
+        success: true,
+        downloadUrl,
+        filename: "pdf_images.zip"
+      }
     }
 
-    const zipBlob = await zip.generateAsync({ type: "blob" })
-    const downloadUrl = URL.createObjectURL(zipBlob)
-
-    return {
-      success: true,
-      downloadUrl,
-      filename: files.length === 1 ? `${files[0].name.replace(".pdf", "")}_images.zip` : "pdf_images.zip",
-    }
   } catch (error) {
     return {
       success: false,
