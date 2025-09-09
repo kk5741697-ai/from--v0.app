@@ -1,0 +1,40 @@
+don't create unnecessary files, update existing files.
+
+## Multi Domain
+based on domain the header, homepage and footer will be change, and other pages will be same
+
+you need to keep same layout of image and pdf tools interface. in qr code tools you need to keep the options for wifi, email, text, url, vcard etc qrcode option in tools header.
+
+the ads from upload page should be show the same loaded ads to before and after the canvas, don't again load the ad slot again when the tool interface are loaded after the file are selected/uploaded.
+
+also you need to add more content
+before and after the upload drop zone.
+
+most high impression keywords related to tools. unique, qualityfull, rich content. for content to each page, the adsense are rejected my application.
+
+also you know this is tools website, in tools related website, user are bounce the pages too much/fast. that's why the adsense mark the traffics as invalid and low quality traffic.
+
+adsense says
+Update your AdSense application
+
+A few quick fixes are needed to get your account approved.
+
+Review your application
+
+A few tweaks and you’re ready to earn
+Thank you for your interest in Google AdSense. We've reviewed your application, and there are a few things you'll need to adjust before it can be approved. Once you’ve done so, one of our specialists will review your site for compliance with our Program policies.
+
+
+also don't remove the .env file
+# AdSense Configuration (Optional - leave empty to disable ads)
+NEXT_PUBLIC_ADSENSE_PUBLISHER_ID=ca-pub-4755003409431265
+
+# Site Configuration
+NEXT_PUBLIC_SITE_URL=https://pixoratools.com
+
+# API Configuration (Optional)
+NEXT_PUBLIC_API_URL=
+
+# Analytics (Optional)
+NEXT_PUBLIC_GA_ID=G-CMZ40J80GE
+Issues like insufficient content or content quality are common and easy to resolve. Learn more about why your site wasn’t approved and how to fix it.
