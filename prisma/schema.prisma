@@ -1,0 +1,182 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Domain {
+  id          String   @id @default(cuid())
+  hostname    String   @unique
+  name        String
+  title       String
+  description String
+  primaryColor String
+  logo        String
+  favicon     String
+  headerHtml  String?
+  footerHtml  String?
+  enableAds   Boolean  @default(true)
+  adSlots     Json     // Store ad slot configuration
+  tools       String[] // Array of allowed tool slugs
+  seoKeywords String[]
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  analytics   Analytics[]
+  toolUsage   ToolUsage[]
+
+  @@map("domains")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String?
+  avatar    String?
+  plan      UserPlan @default(FREE)
+  credits   Int      @default(100)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  sessions    Session[]
+  toolUsage   ToolUsage[]
+  files       ProcessedFile[]
+
+  @@map("users")
+}
+
+model Session {
+  id        String   @id @default(cuid())
+  userId    String
+  token     String   @unique
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  // Relations
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("sessions")
+}
+
+model ToolUsage {
+  id         String   @id @default(cuid())
+  toolSlug   String
+  domainId   String
+  userId     String?
+  sessionId  String?
+  ipAddress  String?
+  userAgent  String?
+  fileSize   Int?     // in bytes
+  fileCount  Int      @default(1)
+  processingTime Int?  // in milliseconds
+  success    Boolean  @default(true)
+  errorMessage String?
+  createdAt  DateTime @default(now())
+
+  // Relations
+  domain Domain @relation(fields: [domainId], references: [id])
+  user   User?  @relation(fields: [userId], references: [id])
+
+  @@index([toolSlug, domainId])
+  @@index([createdAt])
+  @@map("tool_usage")
+}
+
+model ProcessedFile {
+  id           String   @id @default(cuid())
+  userId       String?
+  sessionId    String?
+  originalName String
+  processedName String?
+  originalSize Int
+  processedSize Int?
+  mimeType     String
+  toolSlug     String
+  storageUrl   String?  // For temporary file storage
+  expiresAt    DateTime
+  createdAt    DateTime @default(now())
+
+  // Relations
+  user User? @relation(fields: [userId], references: [id])
+
+  @@index([expiresAt])
+  @@index([sessionId])
+  @@map("processed_files")
+}
+
+model Analytics {
+  id         String   @id @default(cuid())
+  domainId   String
+  date       DateTime @db.Date
+  pageViews  Int      @default(0)
+  uniqueUsers Int     @default(0)
+  toolUsage  Int      @default(0)
+  bounceRate Float    @default(0)
+  avgSessionDuration Int @default(0) // in seconds
+  topTools   Json     // Store top tools data
+  createdAt  DateTime @default(now())
+
+  // Relations
+  domain Domain @relation(fields: [domainId], references: [id])
+
+  @@unique([domainId, date])
+  @@map("analytics")
+}
+
+model AdImpression {
+  id        String   @id @default(cuid())
+  adSlot    String
+  domainId  String?
+  sessionId String?
+  ipAddress String?
+  userAgent String?
+  dwellTime Int?     // Time spent on page before impression
+  clicked   Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  @@index([adSlot, createdAt])
+  @@index([sessionId])
+  @@map("ad_impressions")
+}
+
+model QRCode {
+  id          String   @id @default(cuid())
+  userId      String?
+  sessionId   String?
+  type        QRType
+  content     String
+  style       Json     // Store QR styling options
+  logoUrl     String?
+  downloadCount Int    @default(0)
+  expiresAt   DateTime?
+  createdAt   DateTime @default(now())
+
+  @@index([userId])
+  @@index([sessionId])
+  @@map("qr_codes")
+}
+
+enum UserPlan {
+  FREE
+  PRO
+  BUSINESS
+}
+
+enum QRType {
+  URL
+  TEXT
+  EMAIL
+  PHONE
+  SMS
+  WIFI
+  VCARD
+  EVENT
+  LOCATION
+  BITCOIN
+}
