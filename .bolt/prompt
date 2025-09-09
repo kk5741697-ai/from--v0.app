@@ -37,4 +37,32 @@ NEXT_PUBLIC_API_URL=
 
 # Analytics (Optional)
 NEXT_PUBLIC_GA_ID=G-CMZ40J80GE
+
+# Recommended for most uses
+DATABASE_URL=postgresql://neondb_owner:npg_scKxPafLv3p7@ep-plain-voice-a1wfnvqn-pooler.ap-southeast-1.aws.neon.tech/neondb?sslmode=require
+
+# For uses requiring a connection without pgbouncer
+DATABASE_URL_UNPOOLED=postgresql://neondb_owner:npg_scKxPafLv3p7@ep-plain-voice-a1wfnvqn.ap-southeast-1.aws.neon.tech/neondb?sslmode=require
+
+# Parameters for constructing your own connection string
+PGHOST=ep-plain-voice-a1wfnvqn-pooler.ap-southeast-1.aws.neon.tech
+PGHOST_UNPOOLED=ep-plain-voice-a1wfnvqn.ap-southeast-1.aws.neon.tech
+PGUSER=neondb_owner
+PGDATABASE=neondb
+PGPASSWORD=npg_scKxPafLv3p7
+
+# Parameters for Vercel Postgres Templates
+POSTGRES_URL=postgresql://neondb_owner:npg_scKxPafLv3p7@ep-plain-voice-a1wfnvqn-pooler.ap-southeast-1.aws.neon.tech/neondb?sslmode=require
+POSTGRES_URL_NON_POOLING=postgresql://neondb_owner:npg_scKxPafLv3p7@ep-plain-voice-a1wfnvqn.ap-southeast-1.aws.neon.tech/neondb?sslmode=require
+POSTGRES_USER=neondb_owner
+POSTGRES_HOST=ep-plain-voice-a1wfnvqn-pooler.ap-southeast-1.aws.neon.tech
+POSTGRES_PASSWORD=npg_scKxPafLv3p7
+POSTGRES_DATABASE=neondb
+POSTGRES_URL_NO_SSL=postgresql://neondb_owner:npg_scKxPafLv3p7@ep-plain-voice-a1wfnvqn-pooler.ap-southeast-1.aws.neon.tech/neondb
+POSTGRES_PRISMA_URL=postgresql://neondb_owner:npg_scKxPafLv3p7@ep-plain-voice-a1wfnvqn-pooler.ap-southeast-1.aws.neon.tech/neondb?connect_timeout=15&sslmode=require
+
+# Neon Auth environment variables for Next.js
+NEXT_PUBLIC_STACK_PROJECT_ID=d25c496e-f9d8-44c4-ba9b-e2190a42691f
+NEXT_PUBLIC_STACK_PUBLISHABLE_CLIENT_KEY=pck_gtksh9e872t0bg6xjmh9gad2csjya8x3vhsqfq1c2yd28
+STACK_SECRET_SERVER_KEY=ssk_8nnbfneby6ke9nyw3hbtjnswta5g6fd24ey1ewv3eea5r
 Issues like insufficient content or content quality are common and easy to resolve. Learn more about why your site wasn’t approved and how to fix it.
