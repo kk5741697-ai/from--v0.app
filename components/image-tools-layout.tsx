@@ -587,13 +587,6 @@ export function ImageToolsLayout({
           </div>
         </div>
 
-        {/* Rich Educational Content Before Upload */}
-        <ImageProcessingGuide 
-          toolName={title}
-          toolType={toolType as any}
-          className="mb-8"
-        />
-
         <div className="container mx-auto px-4 py-6 lg:py-8">
           <div className="text-center mb-6 lg:mb-8">
             <div className="inline-flex items-center space-x-2 mb-4">
@@ -645,6 +638,15 @@ export function ImageToolsLayout({
               className="max-w-2xl mx-auto"
             />
           </div>
+
+          
+        {/* Rich Educational Content After Upload */}
+        <ImageProcessingGuide 
+          toolName={title}
+          toolType={toolType as any}
+          className="mb-8"
+        />
+          
         </div>
 
         <Footer />
