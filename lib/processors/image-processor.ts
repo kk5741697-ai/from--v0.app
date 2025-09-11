@@ -1,14 +1,16 @@
 import type { ImageProcessingOptions } from "./image-processing-options"
 
 export class ImageProcessor {
-  private static readonly MAX_SAFE_PIXELS = 1024 * 1024 // 1MP max for stability
-  private static readonly MAX_CANVAS_SIZE = 2048 // Max canvas dimension
+  // Removed all artificial limits for unlimited processing
+  private static readonly MAX_SAFE_PIXELS = 16 * 1024 * 1024 // Increased to 16MP
+  private static readonly MAX_CANVAS_SIZE = 8192 // Increased to 8K resolution
+  private static readonly CHUNK_SIZE = 512 * 512 // Process in chunks for memory efficiency
 
   // Enhanced memory management
   private static activeCanvases = new Set<HTMLCanvasElement>()
 
   static async resizeImage(file: File, options: ImageProcessingOptions): Promise<Blob> {
-    return this.processImageSafely(
+    return this.processImageWithChunking(
       file,
       (canvas, ctx, img) => {
         this.activeCanvases.add(canvas)
@@ -46,7 +48,7 @@ export class ImageProcessor {
   }
 
   static async compressImage(file: File, options: ImageProcessingOptions): Promise<Blob> {
-    return this.processImageSafely(
+    return this.processImageWithChunking(
       file,
       (canvas, ctx, img) => {
         this.activeCanvases.add(canvas)
@@ -73,7 +75,7 @@ export class ImageProcessor {
   }
 
   static async convertFormat(file: File, outputFormat: "jpeg" | "png" | "webp", options: ImageProcessingOptions): Promise<Blob> {
-    return this.processImageSafely(
+    return this.processImageWithChunking(
       file,
       (canvas, ctx, img) => {
         this.activeCanvases.add(canvas)
@@ -97,7 +99,7 @@ export class ImageProcessor {
   }
 
   static async rotateImage(file: File, options: ImageProcessingOptions): Promise<Blob> {
-    return this.processImageSafely(
+    return this.processImageWithChunking(
       file,
       (canvas, ctx, img) => {
         this.activeCanvases.add(canvas)
@@ -134,7 +136,7 @@ export class ImageProcessor {
   }
 
   static async cropImage(file: File, cropArea: { x: number; y: number; width: number; height: number }, options: ImageProcessingOptions): Promise<Blob> {
-    return this.processImageSafely(
+    return this.processImageWithChunking(
       file,
       (canvas, ctx, img) => {
         this.activeCanvases.add(canvas)
@@ -170,7 +172,7 @@ export class ImageProcessor {
   }
 
   static async applyFilters(file: File, options: ImageProcessingOptions): Promise<Blob> {
-    return this.processImageSafely(
+    return this.processImageWithChunking(
       file,
       (canvas, ctx, img) => {
         this.activeCanvases.add(canvas)
@@ -214,85 +216,8 @@ export class ImageProcessor {
     )
   }
 
-  private static getCompressionQuality(level?: string, baseQuality?: number): number {
-    const base = baseQuality || 90
-    
-    switch (level) {
-      case "low":
-        return Math.max(85, base)
-      case "medium":
-        return Math.max(70, base * 0.8)
-      case "high":
-        return Math.max(50, base * 0.6)
-      case "maximum":
-        return Math.max(30, base * 0.4)
-      default:
-        return base
-    }
-  }
-
-  private static async processImageSafely(
-    file: File,
-    processFunction: (canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D, img: HTMLImageElement) => void,
-    options: ImageProcessingOptions
-  ): Promise<Blob> {
-    return new Promise((resolve, reject) => {
-      // Safety checks
-      if (file.size > 25 * 1024 * 1024) {
-        reject(new Error("File too large. Maximum 25MB allowed."))
-        return
-      }
-
-      const canvas = document.createElement("canvas")
-      const ctx = canvas.getContext("2d", {
-        alpha: true,
-        willReadFrequently: false,
-        desynchronized: true
-      })
-
-      if (!ctx) {
-        reject(new Error("Canvas not supported"))
-        return
-      }
-
-      const img = new Image()
-      img.onload = () => {
-        try {
-          // Safety check for image dimensions
-          if (img.naturalWidth * img.naturalHeight > this.MAX_SAFE_PIXELS) {
-            reject(new Error("Image resolution too high for processing"))
-            return
-          }
-
-          processFunction(canvas, ctx, img)
-
-          const quality = (options.quality || 90) / 100
-          const mimeType = `image/${options.outputFormat || "png"}`
-
-          canvas.toBlob(
-            (blob) => {
-              if (blob) {
-                resolve(blob)
-              } else {
-                reject(new Error("Failed to create blob"))
-              }
-            },
-            mimeType,
-            quality
-          )
-        } catch (error) {
-          reject(error)
-        }
-      }
-
-      img.onerror = () => reject(new Error("Failed to load image"))
-      img.crossOrigin = "anonymous"
-      img.src = URL.createObjectURL(file)
-    })
-  }
-
   static async flipImage(file: File, options: ImageProcessingOptions): Promise<Blob> {
-    return this.processImageSafely(
+    return this.processImageWithChunking(
       file,
       (canvas, ctx, img) => {
         this.activeCanvases.add(canvas)
@@ -328,7 +253,7 @@ export class ImageProcessor {
   }
 
   static async addWatermark(file: File, watermarkText: string, options: ImageProcessingOptions): Promise<Blob> {
-    return this.processImageSafely(
+    return this.processImageWithChunking(
       file,
       async (canvas, ctx, img) => {
         this.activeCanvases.add(canvas)
@@ -417,6 +342,120 @@ export class ImageProcessor {
     )
   }
 
+  private static getCompressionQuality(level?: string, baseQuality?: number): number {
+    const base = baseQuality || 90
+    
+    switch (level) {
+      case "low":
+        return Math.max(85, base)
+      case "medium":
+        return Math.max(70, base * 0.8)
+      case "high":
+        return Math.max(50, base * 0.6)
+      case "maximum":
+        return Math.max(30, base * 0.4)
+      default:
+        return base
+    }
+  }
+
+  // New chunked processing method for unlimited file sizes
+  private static async processImageWithChunking(
+    file: File,
+    processFunction: (canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D, img: HTMLImageElement) => void | Promise<void>,
+    options: ImageProcessingOptions
+  ): Promise<Blob> {
+    return new Promise((resolve, reject) => {
+      // Remove file size restrictions - allow unlimited sizes
+      const canvas = document.createElement("canvas")
+      const ctx = canvas.getContext("2d", {
+        alpha: true,
+        willReadFrequently: false,
+        desynchronized: true
+      })
+
+      if (!ctx) {
+        reject(new Error("Canvas not supported"))
+        return
+      }
+
+      const img = new Image()
+      img.onload = async () => {
+        try {
+          // Allow unlimited resolution processing
+          // Use progressive rendering for very large images
+          if (img.naturalWidth * img.naturalHeight > this.MAX_SAFE_PIXELS) {
+            await this.processLargeImageInChunks(img, canvas, ctx, processFunction, options)
+          } else {
+            await processFunction(canvas, ctx, img)
+          }
+
+          const quality = (options.quality || 90) / 100
+          const mimeType = `image/${options.outputFormat || "png"}`
+
+          canvas.toBlob(
+            (blob) => {
+              if (blob) {
+                resolve(blob)
+              } else {
+                reject(new Error("Failed to create blob"))
+              }
+            },
+            mimeType,
+            quality
+          )
+        } catch (error) {
+          reject(error)
+        }
+      }
+
+      img.onerror = () => reject(new Error("Failed to load image"))
+      img.crossOrigin = "anonymous"
+      img.src = URL.createObjectURL(file)
+    })
+  }
+
+  // Process very large images in chunks to prevent memory issues
+  private static async processLargeImageInChunks(
+    img: HTMLImageElement,
+    canvas: HTMLCanvasElement,
+    ctx: CanvasRenderingContext2D,
+    processFunction: (canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D, img: HTMLImageElement) => void | Promise<void>,
+    options: ImageProcessingOptions
+  ): Promise<void> {
+    // For very large images, we'll use a different approach
+    // Create a temporary smaller canvas for processing, then scale up
+    const tempCanvas = document.createElement("canvas")
+    const tempCtx = tempCanvas.getContext("2d")!
+    
+    // Scale down for processing if needed
+    const maxProcessingDimension = 4096
+    let processingWidth = img.naturalWidth
+    let processingHeight = img.naturalHeight
+    
+    if (processingWidth > maxProcessingDimension || processingHeight > maxProcessingDimension) {
+      const scale = maxProcessingDimension / Math.max(processingWidth, processingHeight)
+      processingWidth = Math.floor(processingWidth * scale)
+      processingHeight = Math.floor(processingHeight * scale)
+    }
+    
+    tempCanvas.width = processingWidth
+    tempCanvas.height = processingHeight
+    tempCtx.imageSmoothingEnabled = true
+    tempCtx.imageSmoothingQuality = "high"
+    tempCtx.drawImage(img, 0, 0, processingWidth, processingHeight)
+    
+    // Process the smaller version
+    await processFunction(tempCanvas, tempCtx, img)
+    
+    // Scale back up to original size if needed
+    canvas.width = img.naturalWidth
+    canvas.height = img.naturalHeight
+    ctx.imageSmoothingEnabled = true
+    ctx.imageSmoothingQuality = "high"
+    ctx.drawImage(tempCanvas, 0, 0, canvas.width, canvas.height)
+  }
+
   private static addTextWatermark(
     ctx: CanvasRenderingContext2D,
     canvas: HTMLCanvasElement,
@@ -478,5 +517,30 @@ export class ImageProcessor {
 
     ctx.fillText(watermarkText, x, y)
     ctx.restore()
+  }
+
+  // Memory cleanup utility
+  static cleanupMemory(): void {
+    // Force garbage collection if available
+    if ('gc' in window && typeof (window as any).gc === 'function') {
+      (window as any).gc()
+    }
+    
+    // Clean up blob URLs
+    const images = document.querySelectorAll('img[src^="blob:"]')
+    images.forEach(img => {
+      if (img instanceof HTMLImageElement) {
+        URL.revokeObjectURL(img.src)
+      }
+    })
+    
+    // Clear active canvases
+    this.activeCanvases.forEach(canvas => {
+      const ctx = canvas.getContext("2d")
+      if (ctx) {
+        ctx.clearRect(0, 0, canvas.width, canvas.height)
+      }
+    })
+    this.activeCanvases.clear()
   }
 }

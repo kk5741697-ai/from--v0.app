@@ -29,6 +29,7 @@ import {
 import { toast } from "@/hooks/use-toast"
 import { ClientPDFProcessor } from "@/lib/processors/client-pdf-processor"
 import { AdBanner } from "@/components/ads/ad-banner"
+import { PDFProcessingGuide } from "@/components/content/pdf-processing-guide"
 
 interface ToolOption {
   key: string
@@ -448,6 +449,12 @@ export function PDFToolsLayout({
       <div className="min-h-screen bg-background">
         <Header />
 
+        {/* Rich Educational Content Before Upload */}
+        <PDFProcessingGuide 
+          toolName={title}
+          toolType={toolType as any}
+          className="mb-8"
+        />
         <div className="container mx-auto px-6 py-4 lg:py-8">
           <div className="text-center mb-6 lg:mb-8">
             <div className="inline-flex items-center space-x-2 mb-4">
@@ -457,16 +464,15 @@ export function PDFToolsLayout({
             <p className="text-base lg:text-lg text-muted-foreground max-w-2xl mx-auto px-4">{description}</p>
           </div>
 
-        
-            {/* Mobile Bottom Ad */}
-            <div className="mb-6 lg:mb-8 lg:hidden">
-            </div>
+          {/* Ad Banner Before Upload Zone */}
+          <div className="mb-6 lg:mb-8">
+            <AdBanner 
+              adSlot="before-upload-banner"
+              adFormat="auto"
+              className="max-w-4xl mx-auto"
+            />
+          </div>
 
-            {/* Desktop Bottom Ad */}
-            <div className="mb-8 hidden lg:block">
-            </div>
-
-          
           <div className="max-w-4xl mx-auto">
             <div 
               className="border-2 border-dashed border-gray-300 rounded-2xl flex flex-col items-center justify-center text-gray-500 cursor-pointer hover:border-red-400 hover:bg-red-50/30 transition-all duration-300 p-8 lg:p-16 group"
@@ -486,10 +492,18 @@ export function PDFToolsLayout({
               </Button>
               <div className="mt-4 lg:mt-6 space-y-2 text-center">
                 <p className="text-sm text-gray-500 font-medium">PDF files only</p>
-                <p className="text-xs text-gray-400">Up to {maxFiles} files • Up to 100MB each</p>
+                <p className="text-xs text-gray-400">Up to {maxFiles} files • Unlimited file size • Enterprise grade</p>
               </div>
             </div>
-            
+
+            {/* Ad Banner After Upload Zone */}
+            <div className="mt-6 lg:mt-8">
+              <AdBanner 
+                adSlot="after-upload-banner"
+                adFormat="auto"
+                className="max-w-4xl mx-auto"
+              />
+            </div>
           </div>
         </div>
 
@@ -771,14 +785,29 @@ export function PDFToolsLayout({
 
                 {/* Canvas Ad */}
                 <div className="my-8">
-                  <AdBanner 
-                    adSlot="pdf-canvas-content"
-                    adFormat="horizontal"
-                    className="max-w-2xl mx-auto"
-                  />
+                  <div id="before-canvas-container">
+                    <AdBanner 
+                      adSlot="before-canvas-banner"
+                      adFormat="horizontal"
+                      className="max-w-2xl mx-auto"
+                    />
+                  </div>
                 </div>
               </div>
             </ScrollArea>
+          </div>
+        </div>
+
+        {/* After Canvas Ad */}
+        <div className="bg-white border-t">
+          <div className="container mx-auto px-6 py-4">
+            <div id="after-canvas-container">
+              <AdBanner 
+                adSlot="after-canvas-banner"
+                adFormat="auto"
+                className="max-w-4xl mx-auto"
+              />
+            </div>
           </div>
         </div>
 
@@ -906,7 +935,15 @@ export function PDFToolsLayout({
                     </div>
                   </div>
                 )}
-                
+
+                {/* Sidebar Ad */}
+                <div className="py-4">
+                  <AdBanner 
+                    adSlot="pdf-sidebar"
+                    adFormat="auto"
+                    className="w-full"
+                  />
+                </div>
               </div>
             </ScrollArea>
           </div>

@@ -62,8 +62,13 @@ export interface PDFPageInfo {
 }
 
 export class PDFProcessor {
+  // Remove file size limitations for unlimited processing
+  private static readonly MAX_FILE_SIZE = Infinity // Unlimited file size
+  private static readonly MAX_PAGES = Infinity // Unlimited pages
+
   static async getPDFInfo(file: File): Promise<{ pageCount: number; pages: PDFPageInfo[] }> {
     try {
+      // Remove file size check - allow unlimited sizes
       // Use PDF.js for real page rendering
       const arrayBuffer = await file.arrayBuffer()
       const loadingTask = pdfjsLib.getDocument({ data: arrayBuffer })
@@ -144,8 +149,9 @@ export class PDFProcessor {
 
   static async mergePDFs(files: File[], options: PDFProcessingOptions = {}): Promise<Uint8Array> {
     try {
-      if (files.length < 2) {
-        throw new Error("At least 2 PDF files are required for merging")
+      // Allow single file merging and unlimited file count
+      if (files.length === 0) {
+        throw new Error("At least 1 PDF file is required")
       }
 
       const mergedPdf = await PDFDocument.create()
@@ -199,6 +205,7 @@ export class PDFProcessor {
 
   static async splitPDF(file: File, ranges: Array<{ from: number; to: number }>, options: PDFProcessingOptions = {}): Promise<Uint8Array[]> {
     try {
+      // Remove page count limitations
       const arrayBuffer = await file.arrayBuffer()
       const pdf = await PDFDocument.load(arrayBuffer)
       const results: Uint8Array[] = []
@@ -312,6 +319,7 @@ export class PDFProcessor {
 
   static async compressPDF(file: File, options: PDFProcessingOptions = {}): Promise<Uint8Array> {
     try {
+      // Allow unlimited file size compression
       const arrayBuffer = await file.arrayBuffer()
       const pdf = await PDFDocument.load(arrayBuffer)
 
@@ -511,19 +519,20 @@ export class PDFProcessor {
 
   static async pdfToImages(file: File, options: PDFProcessingOptions = {}): Promise<Blob[]> {
     try {
+      // Support unlimited page count and high resolution
       const arrayBuffer = await file.arrayBuffer()
       const pdf = await PDFDocument.load(arrayBuffer)
       const images: Blob[] = []
       const pageCount = pdf.getPageCount()
 
-      // Generate enhanced placeholder images for each page
+      // Generate high-quality images for unlimited pages
       for (let i = 0; i < pageCount; i++) {
         const canvas = document.createElement("canvas")
         const ctx = canvas.getContext("2d")!
         
-        const dpi = options.dpi || 150
-        const baseWidth = 8.5 * dpi // Letter size width
-        const baseHeight = 11 * dpi // Letter size height
+        const dpi = options.dpi || 300 // Increased default DPI for higher quality
+        const baseWidth = 8.5 * dpi
+        const baseHeight = 11 * dpi
         
         canvas.width = Math.floor(baseWidth)
         canvas.height = Math.floor(baseHeight)

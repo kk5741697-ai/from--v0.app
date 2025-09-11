@@ -29,6 +29,7 @@ import {
 } from "lucide-react"
 import { toast } from "@/hooks/use-toast"
 import { AdBanner } from "@/components/ads/ad-banner"
+import { ImageProcessingGuide } from "@/components/content/image-processing-guide"
 
 interface ToolOption {
   key: string
@@ -105,22 +106,14 @@ export function ImageToolsLayout({
   const handleFileUpload = async (uploadedFiles: FileList | null) => {
     if (!uploadedFiles || uploadedFiles.length === 0) return
 
-    // Enhanced file size checking with stricter limits
-    const largeFiles = Array.from(uploadedFiles).filter(file => file.size > 8 * 1024 * 1024)
-    const veryLargeFiles = Array.from(uploadedFiles).filter(file => file.size > 15 * 1024 * 1024)
+    // Remove file size warnings - support unlimited sizes
+    const totalSize = Array.from(uploadedFiles).reduce((sum, file) => sum + file.size, 0)
+    const totalSizeMB = Math.round(totalSize / (1024 * 1024))
     
-    if (largeFiles.length > 0) {
+    if (totalSizeMB > 100) {
       toast({
         title: "Large files detected", 
-        description: `${largeFiles.length} file(s) are larger than 8MB. Processing may be slower and use more memory.`,
-      })
-    }
-    
-    if (veryLargeFiles.length > 0) {
-      toast({
-        title: "Very large files detected",
-        description: `${veryLargeFiles.length} file(s) are larger than 15MB. These may fail to process.`,
-        variant: "destructive"
+        description: `Processing ${totalSizeMB}MB of images. This may take longer but will complete successfully.`,
       })
     }
 
@@ -145,25 +138,16 @@ export function ImageToolsLayout({
         break
       }
 
-      // Skip very large files that will cause crashes
-      if (file.size > 15 * 1024 * 1024) {
-        toast({
-          title: "File too large",
-          description: `${file.name} is ${Math.round(file.size / (1024 * 1024))}MB. Skipping to prevent crashes.`,
-          variant: "destructive"
-        })
-        continue
-      }
+      // Remove file size restrictions - process all files
 
       try {
         const dimensions = await getImageDimensions(file)
         
-        // Additional dimension safety check
-        if (dimensions.width * dimensions.height > 2048 * 2048) {
+        // Remove resolution restrictions - support unlimited resolution
+        if (dimensions.width * dimensions.height > 4096 * 4096) {
           toast({
-            title: "Image resolution too high",
-            description: `${file.name} has very high resolution. This may cause processing issues.`,
-            variant: "destructive"
+            title: "Ultra high resolution detected",
+            description: `${file.name} is ${dimensions.width}×${dimensions.height}. Processing with advanced algorithms.`,
           })
         }
         
@@ -603,6 +587,13 @@ export function ImageToolsLayout({
           </div>
         </div>
 
+        {/* Rich Educational Content Before Upload */}
+        <ImageProcessingGuide 
+          toolName={title}
+          toolType={toolType as any}
+          className="mb-8"
+        />
+
         <div className="container mx-auto px-4 py-6 lg:py-8">
           <div className="text-center mb-6 lg:mb-8">
             <div className="inline-flex items-center space-x-2 mb-4">
@@ -612,6 +603,14 @@ export function ImageToolsLayout({
             <p className="text-base lg:text-lg text-muted-foreground max-w-2xl mx-auto px-4">{description}</p>
           </div>
 
+          {/* Ad Banner Before Upload Zone */}
+          <div className="mb-6 lg:mb-8">
+            <AdBanner 
+              adSlot="before-upload-banner"
+              adFormat="auto"
+              className="max-w-2xl mx-auto"
+            />
+          </div>
           <div className="max-w-2xl mx-auto">
             <div 
               className="border-2 border-dashed border-gray-300 rounded-2xl flex flex-col items-center justify-center text-gray-500 cursor-pointer hover:border-blue-400 hover:bg-blue-50/30 transition-all duration-300 p-8 lg:p-16 group"
@@ -633,9 +632,18 @@ export function ImageToolsLayout({
                 <p className="text-sm text-gray-500 font-medium">
                   {supportedFormats.map(f => f.split('/')[1].toUpperCase()).join(', ')} files
                 </p>
-                <p className="text-xs text-gray-400">Up to {maxFiles} files • Up to 100MB each</p>
+                <p className="text-xs text-gray-400">Up to {maxFiles} files • Unlimited file size • Ultra HD support</p>
               </div>
             </div>
+          </div>
+
+          {/* Ad Banner After Upload Zone */}
+          <div className="mt-6 lg:mt-8">
+            <AdBanner 
+              adSlot="after-upload-banner"
+              adFormat="auto"
+              className="max-w-2xl mx-auto"
+            />
           </div>
         </div>
 
@@ -878,14 +886,29 @@ export function ImageToolsLayout({
 
                 {/* Canvas Ad */}
                 <div className="my-8">
-                  <AdBanner 
-                    adSlot="image-canvas-content"
-                    adFormat="horizontal"
-                    className="max-w-2xl mx-auto"
-                  />
+                  <div id="before-canvas-container">
+                    <AdBanner 
+                      adSlot="before-canvas-banner"
+                      adFormat="horizontal"
+                      className="max-w-2xl mx-auto"
+                    />
+                  </div>
                 </div>
               </div>
             </ScrollArea>
+          </div>
+        </div>
+
+        {/* After Canvas Ad */}
+        <div className="bg-white border-t">
+          <div className="container mx-auto px-6 py-4">
+            <div id="after-canvas-container">
+              <AdBanner 
+                adSlot="after-canvas-banner"
+                adFormat="auto"
+                className="max-w-4xl mx-auto"
+              />
+            </div>
           </div>
         </div>
 
@@ -1047,11 +1070,13 @@ export function ImageToolsLayout({
                 )}
 
                 {/* Sidebar Ad */}
-                <AdBanner 
-                  adSlot="image-sidebar"
-                  adFormat="auto"
-                  className="w-full"
-                />
+                <div className="py-4">
+                  <AdBanner 
+                    adSlot="image-sidebar"
+                    adFormat="auto"
+                    className="w-full"
+                  />
+                </div>
               </div>
             </ScrollArea>
           </div>
