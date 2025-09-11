@@ -638,7 +638,6 @@ export function ImageToolsLayout({
               className="max-w-2xl mx-auto"
             />
           </div>
-
           
         {/* Rich Educational Content After Upload */}
         <ImageProcessingGuide 
