@@ -4,7 +4,6 @@ import { UnifiedToolLayout } from "@/components/unified-tool-layout"
 import { Crop } from "lucide-react"
 import { ImageProcessor } from "@/lib/processors/image-processor"
 import { ImageProcessingGuide } from "@/components/content/image-processing-guide"
-import { PersistentAdManager } from "@/components/ads/persistent-ad-manager"
 
 const cropOptions = [
   {
@@ -87,23 +86,16 @@ async function cropImages(files: any[], options: any): Promise<{ success: boolea
 
 export default function ImageCropperPage() {
   const richContent = (
-    <>
-      <ImageProcessingGuide 
-        toolName="Image Cropper"
-        toolType="crop"
-        className="py-8"
-      />
-      <PersistentAdManager 
-        beforeCanvasSlot="image-before-canvas"
-        afterCanvasSlot="image-after-canvas"
-        toolType="image"
-      />
-    </>
+    <ImageProcessingGuide 
+      toolName="Image Cropper"
+      toolType="crop"
+      className="py-8"
+    />
   )
 
   return (
     <UnifiedToolLayout
-      title="Image Cropper"
+      title="Crop Image"
       description="Crop images with precision using our advanced visual editor, aspect ratio presets, and grid guides. Professional cropping tools for social media, web optimization, and creative projects."
       icon={Crop}
       toolType="image"

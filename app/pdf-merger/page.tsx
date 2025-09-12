@@ -4,7 +4,6 @@ import { UnifiedToolLayout } from "@/components/unified-tool-layout"
 import { FileType } from "lucide-react"
 import { ClientPDFProcessor } from "@/lib/processors/client-pdf-processor"
 import { PDFProcessingGuide } from "@/components/content/pdf-processing-guide"
-import { PersistentAdManager } from "@/components/ads/persistent-ad-manager"
 
 const mergeOptions = [
   {
@@ -67,18 +66,11 @@ async function mergePDFs(files: any[], options: any): Promise<{ success: boolean
 
 export default function PDFMergerPage() {
   const richContent = (
-    <>
-      <PDFProcessingGuide 
-        toolName="PDF Merger"
-        toolType="merge"
-        className="py-8"
-      />
-      <PersistentAdManager 
-        beforeCanvasSlot="pdf-before-canvas"
-        afterCanvasSlot="pdf-after-canvas"
-        toolType="pdf"
-      />
-    </>
+    <PDFProcessingGuide 
+      toolName="PDF Merger"
+      toolType="merge"
+      className="py-8"
+    />
   )
 
   return (

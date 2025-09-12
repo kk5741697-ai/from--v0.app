@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState } from "react"
 import { UnifiedToolLayout } from "@/components/unified-tool-layout"
 import { QrCode } from "lucide-react"
 import { QRProcessor } from "@/lib/qr-processor"
@@ -12,7 +12,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Button } from "@/components/ui/button"
 import { Download, Copy } from "lucide-react"
 import { toast } from "@/hooks/use-toast"
-import { PersistentAdManager } from "@/components/ads/persistent-ad-manager"
 import { QRCodeGuide } from "@/components/content/qr-code-guide"
 
 const qrOptions = [
@@ -134,33 +133,6 @@ function QRContentForm({ qrType, content, onContentChange }: {
     contactEmail: "",
   })
 
-  useEffect(() => {
-    let generatedContent = ""
-    
-    switch (qrType) {
-      case "url":
-        generatedContent = formData.url
-        break
-      case "text":
-        generatedContent = formData.text
-        break
-      case "email":
-        generatedContent = `mailto:${formData.email}?subject=${encodeURIComponent(formData.subject)}&body=${encodeURIComponent(formData.body)}`
-        break
-      case "phone":
-        generatedContent = `tel:${formData.phone}`
-        break
-      case "wifi":
-        generatedContent = `WIFI:T:${formData.security};S:${formData.ssid};P:${formData.password};;`
-        break
-      case "vcard":
-        generatedContent = `BEGIN:VCARD\nVERSION:3.0\nFN:${formData.firstName} ${formData.lastName}\nORG:${formData.organization}\nTEL:${formData.contactPhone}\nEMAIL:${formData.contactEmail}\nEND:VCARD`
-        break
-    }
-    
-    onContentChange(generatedContent)
-  }, [qrType, formData, onContentChange])
-
   const renderForm = () => {
     switch (qrType) {
       case "url":
@@ -171,8 +143,8 @@ function QRContentForm({ qrType, content, onContentChange }: {
               id="url"
               type="url"
               placeholder="https://example.com"
-              value={formData.url}
-              onChange={(e) => setFormData(prev => ({ ...prev, url: e.target.value }))}
+              value={content}
+              onChange={(e) => onContentChange(e.target.value)}
             />
           </div>
         )
@@ -184,8 +156,8 @@ function QRContentForm({ qrType, content, onContentChange }: {
             <Textarea
               id="text"
               placeholder="Enter your text message..."
-              value={formData.text}
-              onChange={(e) => setFormData(prev => ({ ...prev, text: e.target.value }))}
+              value={content}
+              onChange={(e) => onContentChange(e.target.value)}
               rows={4}
             />
           </div>
@@ -201,7 +173,10 @@ function QRContentForm({ qrType, content, onContentChange }: {
                 type="email"
                 placeholder="contact@example.com"
                 value={formData.email}
-                onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
+                onChange={(e) => {
+                  setFormData(prev => ({ ...prev, email: e.target.value }))
+                  onContentChange(`mailto:${e.target.value}?subject=${encodeURIComponent(formData.subject)}&body=${encodeURIComponent(formData.body)}`)
+                }}
               />
             </div>
             <div>
@@ -210,127 +185,10 @@ function QRContentForm({ qrType, content, onContentChange }: {
                 id="subject"
                 placeholder="Email subject"
                 value={formData.subject}
-                onChange={(e) => setFormData(prev => ({ ...prev, subject: e.target.value }))}
-              />
-            </div>
-            <div>
-              <Label htmlFor="body">Message</Label>
-              <Textarea
-                id="body"
-                placeholder="Email message..."
-                value={formData.body}
-                onChange={(e) => setFormData(prev => ({ ...prev, body: e.target.value }))}
-                rows={3}
-              />
-            </div>
-          </div>
-        )
-
-      case "phone":
-        return (
-          <div>
-            <Label htmlFor="phone">Phone Number</Label>
-            <Input
-              id="phone"
-              type="tel"
-              placeholder="+1 (555) 123-4567"
-              value={formData.phone}
-              onChange={(e) => setFormData(prev => ({ ...prev, phone: e.target.value }))}
-            />
-          </div>
-        )
-
-      case "wifi":
-        return (
-          <div className="space-y-4">
-            <div>
-              <Label htmlFor="ssid">Network Name (SSID)</Label>
-              <Input
-                id="ssid"
-                placeholder="MyWiFiNetwork"
-                value={formData.ssid}
-                onChange={(e) => setFormData(prev => ({ ...prev, ssid: e.target.value }))}
-              />
-            </div>
-            <div>
-              <Label htmlFor="password">Password</Label>
-              <Input
-                id="password"
-                type="password"
-                placeholder="Network password"
-                value={formData.password}
-                onChange={(e) => setFormData(prev => ({ ...prev, password: e.target.value }))}
-              />
-            </div>
-            <div>
-              <Label htmlFor="security">Security Type</Label>
-              <Select
-                value={formData.security}
-                onValueChange={(value) => setFormData(prev => ({ ...prev, security: value }))}
-              >
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="WPA">WPA/WPA2</SelectItem>
-                  <SelectItem value="WEP">WEP</SelectItem>
-                  <SelectItem value="nopass">No Password</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-        )
-
-      case "vcard":
-        return (
-          <div className="space-y-4">
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <Label htmlFor="firstName">First Name</Label>
-                <Input
-                  id="firstName"
-                  placeholder="John"
-                  value={formData.firstName}
-                  onChange={(e) => setFormData(prev => ({ ...prev, firstName: e.target.value }))}
-                />
-              </div>
-              <div>
-                <Label htmlFor="lastName">Last Name</Label>
-                <Input
-                  id="lastName"
-                  placeholder="Doe"
-                  value={formData.lastName}
-                  onChange={(e) => setFormData(prev => ({ ...prev, lastName: e.target.value }))}
-                />
-              </div>
-            </div>
-            <div>
-              <Label htmlFor="organization">Organization</Label>
-              <Input
-                id="organization"
-                placeholder="Company Name"
-                value={formData.organization}
-                onChange={(e) => setFormData(prev => ({ ...prev, organization: e.target.value }))}
-              />
-            </div>
-            <div>
-              <Label htmlFor="contactPhone">Phone</Label>
-              <Input
-                id="contactPhone"
-                type="tel"
-                placeholder="+1 (555) 123-4567"
-                value={formData.contactPhone}
-                onChange={(e) => setFormData(prev => ({ ...prev, contactPhone: e.target.value }))}
-              />
-            </div>
-            <div>
-              <Label htmlFor="contactEmail">Email</Label>
-              <Input
-                id="contactEmail"
-                type="email"
-                placeholder="john@example.com"
-                value={formData.contactEmail}
-                onChange={(e) => setFormData(prev => ({ ...prev, contactEmail: e.target.value }))}
+                onChange={(e) => {
+                  setFormData(prev => ({ ...prev, subject: e.target.value }))
+                  onContentChange(`mailto:${formData.email}?subject=${encodeURIComponent(e.target.value)}&body=${encodeURIComponent(formData.body)}`)
+                }}
               />
             </div>
           </div>
@@ -462,18 +320,11 @@ export default function QRCodeGeneratorPage() {
   }
 
   const richContent = (
-    <>
-      <QRCodeGuide 
-        toolName="QR Code Generator"
-        toolType="generator"
-        className="py-8"
-      />
-      <PersistentAdManager 
-        beforeCanvasSlot="qr-before-canvas"
-        afterCanvasSlot="qr-after-canvas"
-        toolType="qr"
-      />
-    </>
+    <QRCodeGuide 
+      toolName="QR Code Generator"
+      toolType="generator"
+      className="py-8"
+    />
   )
 
   return (
@@ -483,10 +334,7 @@ export default function QRCodeGeneratorPage() {
       icon={QrCode}
       toolType="qr"
       processFunction={processQRGeneration}
-      options={qrOptions.map(option => ({
-        ...option,
-        defaultValue: option.key === "qrType" ? "url" : option.defaultValue
-      }))}
+      options={qrOptions}
       maxFiles={0}
       richContent={richContent}
       allowBatchProcessing={false}

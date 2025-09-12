@@ -1,10 +1,9 @@
 "use client"
 
 import { UnifiedToolLayout } from "@/components/unified-tool-layout"
-import { Maximize } from "lucide-react"
+import { Maximize2 } from "lucide-react"
 import { ImageProcessor } from "@/lib/processors/image-processor"
 import { ImageProcessingGuide } from "@/components/content/image-processing-guide"
-import { PersistentAdManager } from "@/components/ads/persistent-ad-manager"
 
 const resizeOptions = [
   {
@@ -106,25 +105,18 @@ async function resizeImages(files: any[], options: any): Promise<{ success: bool
 
 export default function ImageResizerPage() {
   const richContent = (
-    <>
-      <ImageProcessingGuide 
-        toolName="Image Resizer"
-        toolType="resize"
-        className="py-8"
-      />
-      <PersistentAdManager 
-        beforeCanvasSlot="image-before-canvas"
-        afterCanvasSlot="image-after-canvas"
-        toolType="image"
-      />
-    </>
+    <ImageProcessingGuide 
+      toolName="Image Resizer"
+      toolType="resize"
+      className="py-8"
+    />
   )
 
   return (
     <UnifiedToolLayout
       title="Resize Image"
       description="Resize images with precision using custom dimensions, percentage scaling, and aspect ratio presets. Advanced algorithms maintain quality while optimizing for web, social media, and print applications."
-      icon={Maximize}
+      icon={Maximize2}
       toolType="image"
       processFunction={resizeImages}
       options={resizeOptions}
