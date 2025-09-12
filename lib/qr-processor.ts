@@ -57,6 +57,7 @@ export class QRProcessor {
 
       const qrOptions = {
         width: options.width || 1000,
+        height: options.height || options.width || 1000,
         margin: options.margin || 4,
         color: {
           dark: options.color?.dark || "#000000",
@@ -440,6 +441,11 @@ export class QRProcessor {
 
   static async scanQRCode(imageFile: File): Promise<QRScanResult> {
     try {
+      // Check file size for stability
+      if (imageFile.size > 10 * 1024 * 1024) { // 10MB limit
+        throw new Error("Image file too large for scanning. Please use an image smaller than 10MB.")
+      }
+
       // Enhanced QR scanning simulation with more realistic behavior
       await new Promise(resolve => setTimeout(resolve, 1500))
       
@@ -541,6 +547,11 @@ export class QRProcessor {
     data: Array<{ content: string; filename?: string }>,
     options: QRCodeOptions = {},
   ): Promise<Array<{ dataURL: string; filename: string }>> {
+    // Limit bulk generation to prevent crashes
+    if (data.length > 50) {
+      throw new Error("Too many QR codes requested. Maximum 50 codes per batch.")
+    }
+
     const results = []
 
     for (let i = 0; i < data.length; i++) {

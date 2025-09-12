@@ -1,5 +1,6 @@
 "use client"
 
+import { useState } from "react"
 import { UnifiedToolLayout } from "@/components/unified-tool-layout"
 import { Scissors } from "lucide-react"
 import { ClientPDFProcessor } from "@/lib/processors/client-pdf-processor"
@@ -37,7 +38,7 @@ const splitOptions = [
   },
 ]
 
-async function splitPDF(files: any[], options: any) {
+async function splitPDF(files: any[], options: any): Promise<{ success: boolean; downloadUrl?: string; filename?: string; error?: string }> {
   try {
     if (files.length !== 1) {
       return {
@@ -105,6 +106,16 @@ async function splitPDF(files: any[], options: any) {
 }
 
 export default function PDFSplitterPage() {
+  const [isClient, setIsClient] = useState(false)
+
+  useState(() => {
+    setIsClient(true)
+  }, [])
+
+  if (!isClient) {
+    return null
+  }
+
   const richContent = (
     <PDFProcessingGuide 
       toolName="PDF Splitter"
@@ -116,7 +127,7 @@ export default function PDFSplitterPage() {
   return (
     <UnifiedToolLayout
       title="Split PDF"
-      description="Split large PDF files into smaller documents by extracting specific pages, page ranges, or equal parts."
+      description="Split large PDF files into smaller documents by extracting specific pages, page ranges, or equal parts. Advanced page selection with visual thumbnails and drag-to-reorder functionality."
       icon={Scissors}
       toolType="pdf"
       processFunction={splitPDF}
@@ -124,6 +135,7 @@ export default function PDFSplitterPage() {
       maxFiles={1}
       allowPageSelection={true}
       supportedFormats={["application/pdf"]}
+      showUploadArea={true}
       richContent={richContent}
     />
   )

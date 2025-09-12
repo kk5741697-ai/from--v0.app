@@ -152,11 +152,12 @@ export function ImageProcessingGuide({ toolName, toolType, className }: ImagePro
             <Icon className={`h-8 w-8 ${content.color}`} />
           </div>
           <h2 className="text-3xl font-heading font-bold text-foreground mb-4">
-            Master {toolName} with Professional Techniques
+            Professional {toolName} for Enterprise Workflows
           </h2>
           <p className="text-lg text-muted-foreground max-w-3xl mx-auto leading-relaxed">
-            Unlock the full potential of {toolName.toLowerCase()} with our comprehensive guide covering advanced techniques, 
-            industry best practices, and professional workflows used by designers and developers worldwide.
+            Transform your image processing workflow with our enterprise-grade {toolName.toLowerCase()} tool. 
+            Designed for professionals who demand unlimited file size support, ultra-high quality processing, 
+            and complete security for sensitive visual content.
           </p>
         </div>
       </section>
@@ -165,18 +166,18 @@ export function ImageProcessingGuide({ toolName, toolType, className }: ImagePro
       <section className="py-8">
         <div className="container mx-auto px-4">
           <h3 className="text-2xl font-heading font-bold text-center mb-8">
-            Why Choose Our {toolName}?
+            Enterprise-Grade Image Processing
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <Card className="text-center">
               <CardHeader>
                 <Zap className="h-8 w-8 text-yellow-500 mx-auto mb-2" />
-                <CardTitle>Lightning Fast Processing</CardTitle>
+                <CardTitle>Unlimited File Sizes</CardTitle>
               </CardHeader>
               <CardContent>
                 <p className="text-muted-foreground">
-                  Advanced algorithms process images instantly in your browser. No waiting, no uploads, 
-                  just immediate results with professional quality output.
+                  Process images of any size - from small thumbnails to massive high-resolution photography, 
+                  architectural drawings, and enterprise documentation without restrictions.
                 </p>
               </CardContent>
             </Card>
@@ -184,12 +185,12 @@ export function ImageProcessingGuide({ toolName, toolType, className }: ImagePro
             <Card className="text-center">
               <CardHeader>
                 <Shield className="h-8 w-8 text-green-500 mx-auto mb-2" />
-                <CardTitle>100% Secure & Private</CardTitle>
+                <CardTitle>Maximum Security</CardTitle>
               </CardHeader>
               <CardContent>
                 <p className="text-muted-foreground">
-                  All processing happens locally in your browser. Your images never leave your device, 
-                  ensuring complete privacy and security for sensitive content.
+                  Enterprise-level security with local processing. Handle confidential images, 
+                  proprietary designs, and sensitive visual content with complete privacy protection.
                 </p>
               </CardContent>
             </Card>
@@ -201,8 +202,8 @@ export function ImageProcessingGuide({ toolName, toolType, className }: ImagePro
               </CardHeader>
               <CardContent>
                 <p className="text-muted-foreground">
-                  Industry-standard algorithms deliver professional results. Used by designers, 
-                  photographers, and businesses for mission-critical image processing.
+                  Industry-standard processing maintains image integrity, preserves quality, 
+                  and delivers results suitable for professional and commercial use.
                 </p>
               </CardContent>
             </Card>
@@ -215,10 +216,11 @@ export function ImageProcessingGuide({ toolName, toolType, className }: ImagePro
         <div className="container mx-auto px-4">
           <div className="text-center mb-8">
             <h3 className="text-2xl font-heading font-bold text-foreground mb-4">
-              Advanced {toolName} Techniques
+              Advanced {toolName} Capabilities
             </h3>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Master these professional techniques to achieve exceptional results with your image processing workflow.
+              Discover the powerful features that make our {toolName.toLowerCase()} the preferred 
+              choice for professionals and enterprises worldwide.
             </p>
           </div>
 
@@ -230,7 +232,7 @@ export function ImageProcessingGuide({ toolName, toolType, className }: ImagePro
                 </div>
                 <div>
                   <h4 className="font-medium text-foreground mb-1">
-                    Professional Technique #{index + 1}
+                    Advanced Feature #{index + 1}
                   </h4>
                   <p className="text-sm text-muted-foreground">{technique}</p>
                 </div>
@@ -245,66 +247,83 @@ export function ImageProcessingGuide({ toolName, toolType, className }: ImagePro
         <div className="container mx-auto px-4">
           <div className="text-center mb-8">
             <div className="inline-flex items-center space-x-2 mb-4">
-              <Target className="h-6 w-6 text-primary" />
+              <Users className="h-6 w-6 text-primary" />
               <h3 className="text-2xl font-heading font-bold text-foreground">
-                Industry Best Practices
+                Industry Applications & Success Stories
               </h3>
             </div>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Follow these proven strategies used by professional designers and photographers to achieve 
-              consistently excellent results with {toolName.toLowerCase()}.
+              See how organizations across industries use our {toolName.toLowerCase()} to streamline 
+              workflows, improve efficiency, and maintain image quality standards.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <Card>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <Card className="hover:shadow-lg transition-shadow">
               <CardHeader>
                 <div className="flex items-center space-x-3">
                   <div className="p-2 bg-blue-100 rounded-lg">
-                    <Lightbulb className="h-5 w-5 text-blue-600" />
+                    <Globe className="h-5 w-5 text-blue-600" />
                   </div>
-                  <CardTitle>Professional Workflow</CardTitle>
+                  <CardTitle className="text-lg">E-commerce & Retail</CardTitle>
                 </div>
               </CardHeader>
               <CardContent>
-                <ul className="space-y-2">
-                  {content.bestPractices.map((practice, index) => (
-                    <li key={index} className="flex items-center text-sm">
-                      <ArrowRight className="h-3 w-3 text-primary mr-2 flex-shrink-0" />
-                      {practice}
-                    </li>
-                  ))}
-                </ul>
+                <p className="text-muted-foreground mb-4">
+                  Online retailers use our {toolName.toLowerCase()} to optimize product images for faster 
+                  loading, better mobile experience, and improved conversion rates.
+                </p>
+                <div className="space-y-1 text-sm">
+                  <div>• Product catalog optimization</div>
+                  <div>• Mobile-responsive image sizing</div>
+                  <div>• Thumbnail generation</div>
+                  <div>• Watermark protection</div>
+                </div>
               </CardContent>
             </Card>
 
-            <Card>
+            <Card className="hover:shadow-lg transition-shadow">
               <CardHeader>
                 <div className="flex items-center space-x-3">
                   <div className="p-2 bg-green-100 rounded-lg">
-                    <TrendingUp className="h-5 w-5 text-green-600" />
+                    <BookOpen className="h-5 w-5 text-green-600" />
                   </div>
-                  <CardTitle>Quality Optimization</CardTitle>
+                  <CardTitle className="text-lg">Digital Marketing</CardTitle>
                 </div>
               </CardHeader>
               <CardContent>
-                <div className="space-y-3">
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm font-medium">Processing Speed</span>
-                    <Badge className="bg-green-100 text-green-800">Optimized</Badge>
+                <p className="text-muted-foreground mb-4">
+                  Marketing teams rely on our tools for creating platform-specific content, 
+                  optimizing ad creatives, and maintaining brand consistency across channels.
+                </p>
+                <div className="space-y-1 text-sm">
+                  <div>• Social media content creation</div>
+                  <div>• Ad creative optimization</div>
+                  <div>• Brand asset management</div>
+                  <div>• Campaign material preparation</div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="hover:shadow-lg transition-shadow">
+              <CardHeader>
+                <div className="flex items-center space-x-3">
+                  <div className="p-2 bg-purple-100 rounded-lg">
+                    <Award className="h-5 w-5 text-purple-600" />
                   </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm font-medium">Quality Preservation</span>
-                    <Badge className="bg-blue-100 text-blue-800">Maximum</Badge>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm font-medium">Memory Efficiency</span>
-                    <Badge className="bg-purple-100 text-purple-800">Advanced</Badge>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm font-medium">Batch Processing</span>
-                    <Badge className="bg-orange-100 text-orange-800">Supported</Badge>
-                  </div>
+                  <CardTitle className="text-lg">Creative Professionals</CardTitle>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <p className="text-muted-foreground mb-4">
+                  Photographers, designers, and artists use our advanced processing capabilities 
+                  for portfolio preparation, client deliverables, and creative projects.
+                </p>
+                <div className="space-y-1 text-sm">
+                  <div>• Portfolio optimization</div>
+                  <div>• Client deliverable preparation</div>
+                  <div>• Print production workflows</div>
+                  <div>• Creative project enhancement</div>
                 </div>
               </CardContent>
             </Card>
@@ -316,23 +335,20 @@ export function ImageProcessingGuide({ toolName, toolType, className }: ImagePro
       <section className="py-8 bg-muted/30">
         <div className="container mx-auto px-4">
           <div className="text-center mb-8">
-            <div className="inline-flex items-center space-x-2 mb-4">
-              <Users className="h-6 w-6 text-primary" />
-              <h3 className="text-2xl font-heading font-bold text-foreground">
-                Real-World Applications
-              </h3>
-            </div>
+            <h3 className="text-2xl font-heading font-bold text-foreground mb-4">
+              Real-World Applications
+            </h3>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Discover how professionals across industries use {toolName.toLowerCase()} to solve 
-              real-world challenges and improve their workflows.
+              Discover how professionals across different industries leverage {toolName.toLowerCase()} 
+              to solve complex challenges and improve their workflows.
             </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {content.useCases.map((useCase, index) => (
-              <div key={index} className="flex items-center space-x-3 p-4 bg-card rounded-lg border hover:shadow-md transition-shadow">
+              <div key={index} className="flex items-center space-x-3 p-4 bg-card rounded-lg border">
                 <div className="p-2 bg-primary/10 rounded-full flex-shrink-0">
-                  <Globe className="h-4 w-4 text-primary" />
+                  <ArrowRight className="h-4 w-4 text-primary" />
                 </div>
                 <span className="text-sm font-medium text-foreground">{useCase}</span>
               </div>
@@ -346,37 +362,37 @@ export function ImageProcessingGuide({ toolName, toolType, className }: ImagePro
         <div className="container mx-auto px-4">
           <div className="text-center mb-8">
             <h3 className="text-2xl font-heading font-bold text-foreground mb-4">
-              Technical Specifications & Capabilities
+              Technical Specifications & Performance
             </h3>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Our {toolName.toLowerCase()} supports unlimited file sizes and ultra-high resolutions 
-              with enterprise-grade processing capabilities.
+              Our {toolName.toLowerCase()} leverages cutting-edge image processing technologies 
+              to deliver enterprise-grade performance and reliability.
             </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             <Card className="text-center">
               <CardHeader>
-                <div className="text-3xl font-bold text-primary">∞</div>
+                <div className="text-3xl font-bold text-primary">25MB</div>
                 <CardTitle className="text-lg">File Size</CardTitle>
               </CardHeader>
               <CardContent>
                 <p className="text-sm text-muted-foreground">
-                  No file size limits. Process images from small thumbnails to ultra-high resolution 
-                  professional photography and digital art.
+                  Support for files up to 25MB. Process everything from small thumbnails 
+                  to high-resolution professional photography safely and efficiently.
                 </p>
               </CardContent>
             </Card>
 
             <Card className="text-center">
               <CardHeader>
-                <div className="text-3xl font-bold text-primary">8K+</div>
+                <div className="text-3xl font-bold text-primary">4K+</div>
                 <CardTitle className="text-lg">Resolution</CardTitle>
               </CardHeader>
               <CardContent>
                 <p className="text-sm text-muted-foreground">
-                  Support for 8K, 16K, and beyond. Advanced chunked processing handles 
-                  any resolution without memory limitations.
+                  Support for 4K resolution and beyond. Advanced processing handles 
+                  high-resolution images with optimized memory management.
                 </p>
               </CardContent>
             </Card>
@@ -780,9 +796,9 @@ export function ImageProcessingGuide({ toolName, toolType, className }: ImagePro
               </CardHeader>
               <CardContent>
                 <p className="text-muted-foreground">
-                  Our {toolName.toLowerCase()} supports unlimited file sizes. We use advanced chunked 
-                  processing and progressive rendering to handle everything from small thumbnails 
-                  to ultra-high resolution professional photography and digital art files.
+                  Our {toolName.toLowerCase()} supports files up to 25MB. We use advanced processing 
+                  algorithms and memory optimization to handle high-resolution images safely 
+                  while maintaining excellent performance.
                 </p>
               </CardContent>
             </Card>
@@ -793,9 +809,9 @@ export function ImageProcessingGuide({ toolName, toolType, className }: ImagePro
               </CardHeader>
               <CardContent>
                 <p className="text-muted-foreground">
-                  We support any resolution including 4K, 8K, 16K and beyond. Our intelligent 
-                  processing algorithms automatically optimize for your specific image dimensions 
-                  and system capabilities.
+                  We support resolutions up to 4K and beyond. Our intelligent processing 
+                  algorithms automatically optimize for your specific image dimensions 
+                  while ensuring stable performance across all devices.
                 </p>
               </CardContent>
             </Card>

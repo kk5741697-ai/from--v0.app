@@ -166,18 +166,6 @@
   display: none !important;
 }
 
-/* Show/hide states for tools interface */
-.tools-interface-hidden .tools-header,
-.tools-interface-hidden .canvas,
-.tools-interface-hidden .sidebar {
-  display: none !important;
-}
-
-.upload-interface-hidden .upload-area,
-.upload-interface-hidden .tool-content {
-  display: none !important;
-}
-
 /* Touch-friendly interactions for mobile */
 .touch-friendly {
   @apply min-h-[44px] min-w-[44px];
@@ -250,6 +238,43 @@
   @apply border-blue-500 bg-blue-50 ring-2 ring-blue-200;
 }
 
+/* Tool wrapper layout */
+.tool-wrapper {
+  @apply min-h-screen bg-background;
+}
+
+.tools-header {
+  @apply bg-white border-b shadow-sm;
+}
+
+.ad-slot {
+  @apply bg-white;
+}
+
+.ad-before {
+  @apply border-b;
+}
+
+.ad-after {
+  @apply border-t;
+}
+
+.canvas {
+  @apply bg-gray-50;
+}
+
+.upload-area {
+  @apply bg-white;
+}
+
+.tool-content {
+  @apply bg-white;
+}
+
+.sidebar {
+  @apply bg-white border-l shadow-lg;
+}
+
 /* Responsive grid adjustments */
 @media (max-width: 768px) {
   .canvas {
@@ -283,4 +308,46 @@
   .sidebar {
     @apply w-96;
   }
+}
+
+/* Memory optimization */
+.tool-wrapper img {
+  image-rendering: optimizeQuality;
+}
+
+.tool-wrapper canvas {
+  image-rendering: optimizeQuality;
+}
+
+/* Prevent memory leaks */
+.tool-wrapper .processed-image {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Enhanced interactions */
+.crop-area {
+  transition: all 0.2s ease;
+}
+
+.crop-area:hover {
+  box-shadow: 0 0 0 2px rgba(6, 182, 212, 0.3);
+}
+
+.pdf-page-thumbnail {
+  transition: all 0.2s ease;
+}
+
+.pdf-page-thumbnail:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.qr-preview {
+  transition: all 0.3s ease;
+}
+
+.qr-preview:hover {
+  transform: scale(1.02);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
 }

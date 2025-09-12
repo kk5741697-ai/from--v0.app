@@ -1,5 +1,6 @@
 "use client"
 
+import { useState } from "react"
 import { UnifiedToolLayout } from "@/components/unified-tool-layout"
 import { Crop } from "lucide-react"
 import { ImageProcessor } from "@/lib/processors/image-processor"
@@ -38,7 +39,7 @@ const cropOptions = [
   },
 ]
 
-async function cropImages(files: any[], options: any) {
+async function cropImages(files: any[], options: any): Promise<{ success: boolean; processedFiles?: any[]; error?: string }> {
   try {
     if (files.length === 0) {
       return {
@@ -49,7 +50,7 @@ async function cropImages(files: any[], options: any) {
 
     const processedFiles = await Promise.all(
       files.map(async (file) => {
-        const cropArea = options.cropArea || { x: 10, y: 10, width: 80, height: 80 }
+        const cropArea = options.cropArea || { x: 20, y: 20, width: 60, height: 60 }
         
         const processedBlob = await ImageProcessor.cropImage(file.originalFile || file.file, cropArea, {
           outputFormat: options.outputFormat as "jpeg" | "png" | "webp",
@@ -85,6 +86,16 @@ async function cropImages(files: any[], options: any) {
 }
 
 export default function ImageCropperPage() {
+  const [isClient, setIsClient] = useState(false)
+
+  useState(() => {
+    setIsClient(true)
+  }, [])
+
+  if (!isClient) {
+    return null
+  }
+
   const richContent = (
     <ImageProcessingGuide 
       toolName="Image Cropper"
@@ -96,7 +107,7 @@ export default function ImageCropperPage() {
   return (
     <UnifiedToolLayout
       title="Image Cropper"
-      description="Crop images with precision using our visual editor and aspect ratio presets. Perfect for social media and web optimization."
+      description="Crop images with precision using our advanced visual editor, aspect ratio presets, and grid guides. Professional cropping tools for social media, web optimization, and creative projects."
       icon={Crop}
       toolType="image"
       processFunction={cropImages}
@@ -105,6 +116,7 @@ export default function ImageCropperPage() {
       allowBatchProcessing={false}
       supportedFormats={["image/jpeg", "image/png", "image/webp"]}
       outputFormats={["jpeg", "png", "webp"]}
+      showUploadArea={true}
       richContent={richContent}
     />
   )

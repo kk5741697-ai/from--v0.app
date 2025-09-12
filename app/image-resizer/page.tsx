@@ -1,5 +1,6 @@
 "use client"
 
+import { useState } from "react"
 import { UnifiedToolLayout } from "@/components/unified-tool-layout"
 import { Maximize } from "lucide-react"
 import { ImageProcessor } from "@/lib/processors/image-processor"
@@ -55,7 +56,7 @@ const resizeOptions = [
   },
 ]
 
-async function resizeImages(files: any[], options: any) {
+async function resizeImages(files: any[], options: any): Promise<{ success: boolean; processedFiles?: any[]; error?: string }> {
   try {
     if (files.length === 0) {
       return {
@@ -71,7 +72,8 @@ async function resizeImages(files: any[], options: any) {
           height: options.height,
           maintainAspectRatio: options.maintainAspectRatio,
           outputFormat: options.outputFormat,
-          quality: options.quality
+          quality: options.quality,
+          backgroundColor: options.outputFormat === "jpeg" ? "#ffffff" : undefined
         })
 
         const processedUrl = URL.createObjectURL(processedBlob)
@@ -85,7 +87,7 @@ async function resizeImages(files: any[], options: any) {
           name: newName,
           processedSize: processedBlob.size,
           blob: processedBlob,
-          dimensions: { width: options.width, height: options.height }
+          dimensions: { width: options.width || file.dimensions?.width, height: options.height || file.dimensions?.height }
         }
       })
     )
@@ -103,6 +105,16 @@ async function resizeImages(files: any[], options: any) {
 }
 
 export default function ImageResizerPage() {
+  const [isClient, setIsClient] = useState(false)
+
+  useState(() => {
+    setIsClient(true)
+  }, [])
+
+  if (!isClient) {
+    return null
+  }
+
   const richContent = (
     <ImageProcessingGuide 
       toolName="Image Resizer"
@@ -114,7 +126,7 @@ export default function ImageResizerPage() {
   return (
     <UnifiedToolLayout
       title="Resize Image"
-      description="Resize images with precision using custom dimensions, percentage scaling, and aspect ratio presets. Perfect for web optimization and social media."
+      description="Resize images with precision using custom dimensions, percentage scaling, and aspect ratio presets. Advanced algorithms maintain quality while optimizing for web, social media, and print applications."
       icon={Maximize}
       toolType="image"
       processFunction={resizeImages}
@@ -123,6 +135,7 @@ export default function ImageResizerPage() {
       allowBatchProcessing={true}
       supportedFormats={["image/jpeg", "image/png", "image/webp", "image/gif"]}
       outputFormats={["jpeg", "png", "webp"]}
+      showUploadArea={true}
       richContent={richContent}
     />
   )

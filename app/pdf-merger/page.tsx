@@ -1,5 +1,6 @@
 "use client"
 
+import { useState } from "react"
 import { UnifiedToolLayout } from "@/components/unified-tool-layout"
 import { FileType } from "lucide-react"
 import { ClientPDFProcessor } from "@/lib/processors/client-pdf-processor"
@@ -34,7 +35,7 @@ const mergeOptions = [
   },
 ]
 
-async function mergePDFs(files: any[], options: any) {
+async function mergePDFs(files: any[], options: any): Promise<{ success: boolean; downloadUrl?: string; filename?: string; error?: string }> {
   try {
     if (files.length < 2) {
       return {
@@ -65,6 +66,16 @@ async function mergePDFs(files: any[], options: any) {
 }
 
 export default function PDFMergerPage() {
+  const [isClient, setIsClient] = useState(false)
+
+  useState(() => {
+    setIsClient(true)
+  }, [])
+
+  if (!isClient) {
+    return null
+  }
+
   const richContent = (
     <PDFProcessingGuide 
       toolName="PDF Merger"
@@ -76,7 +87,7 @@ export default function PDFMergerPage() {
   return (
     <UnifiedToolLayout
       title="Merge PDF"
-      description="Combine multiple PDF files into one document with custom page ordering and bookmark preservation."
+      description="Combine multiple PDF files into one document with custom page ordering, bookmark preservation, and advanced merging options. Drag-and-drop interface for easy file organization."
       icon={FileType}
       toolType="pdf"
       processFunction={mergePDFs}
@@ -84,6 +95,7 @@ export default function PDFMergerPage() {
       maxFiles={10}
       allowPageReorder={true}
       supportedFormats={["application/pdf"]}
+      showUploadArea={true}
       richContent={richContent}
     />
   )

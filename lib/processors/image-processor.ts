@@ -1,10 +1,10 @@
 import type { ImageProcessingOptions } from "./image-processing-options"
 
 export class ImageProcessor {
-  // Removed all artificial limits for unlimited processing
-  private static readonly MAX_SAFE_PIXELS = 16 * 1024 * 1024 // Increased to 16MP
-  private static readonly MAX_CANVAS_SIZE = 8192 // Increased to 8K resolution
-  private static readonly CHUNK_SIZE = 512 * 512 // Process in chunks for memory efficiency
+  // Safe limits to prevent browser crashes
+  private static readonly MAX_SAFE_PIXELS = 4 * 1024 * 1024 // 4MP for stability
+  private static readonly MAX_CANVAS_SIZE = 2048 // 2K max for stability
+  private static readonly CHUNK_SIZE = 256 * 256 // Smaller chunks for memory efficiency
 
   // Enhanced memory management
   private static activeCanvases = new Set<HTMLCanvasElement>()
@@ -365,8 +365,12 @@ export class ImageProcessor {
     processFunction: (canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D, img: HTMLImageElement) => void | Promise<void>,
     options: ImageProcessingOptions
   ): Promise<Blob> {
+    // Prevent crashes with large files
+    if (file.size > 25 * 1024 * 1024) { // 25MB limit
+      throw new Error("File too large. Please use an image smaller than 25MB for stability.")
+    }
+
     return new Promise((resolve, reject) => {
-      // Remove file size restrictions - allow unlimited sizes
       const canvas = document.createElement("canvas")
       const ctx = canvas.getContext("2d", {
         alpha: true,
@@ -382,8 +386,34 @@ export class ImageProcessor {
       const img = new Image()
       img.onload = async () => {
         try {
-          // Allow unlimited resolution processing
-          // Use progressive rendering for very large images
+          // Check image dimensions for safety
+          if (img.naturalWidth * img.naturalHeight > this.MAX_SAFE_PIXELS) {
+            const scale = Math.sqrt(this.MAX_SAFE_PIXELS / (img.naturalWidth * img.naturalHeight))
+            const scaledWidth = Math.floor(img.naturalWidth * scale)
+            const scaledHeight = Math.floor(img.naturalHeight * scale)
+            
+            // Create temporary scaled canvas
+            const tempCanvas = document.createElement("canvas")
+            const tempCtx = tempCanvas.getContext("2d")!
+            tempCanvas.width = scaledWidth
+            tempCanvas.height = scaledHeight
+            tempCtx.imageSmoothingEnabled = true
+            tempCtx.imageSmoothingQuality = "high"
+            tempCtx.drawImage(img, 0, 0, scaledWidth, scaledHeight)
+            
+            // Process scaled version
+            await processFunction(tempCanvas, tempCtx, img)
+            
+            // Scale back up if needed
+            canvas.width = Math.min(img.naturalWidth, this.MAX_CANVAS_SIZE)
+            canvas.height = Math.min(img.naturalHeight, this.MAX_CANVAS_SIZE)
+            ctx.imageSmoothingEnabled = true
+            ctx.imageSmoothingQuality = "high"
+            ctx.drawImage(tempCanvas, 0, 0, canvas.width, canvas.height)
+          } else {
+            await processFunction(canvas, ctx, img)
+          }
+
           if (img.naturalWidth * img.naturalHeight > this.MAX_SAFE_PIXELS) {
             await this.processLargeImageInChunks(img, canvas, ctx, processFunction, options)
           } else {
@@ -423,13 +453,12 @@ export class ImageProcessor {
     processFunction: (canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D, img: HTMLImageElement) => void | Promise<void>,
     options: ImageProcessingOptions
   ): Promise<void> {
-    // For very large images, we'll use a different approach
-    // Create a temporary smaller canvas for processing, then scale up
+    // Create a temporary smaller canvas for processing
     const tempCanvas = document.createElement("canvas")
     const tempCtx = tempCanvas.getContext("2d")!
     
-    // Scale down for processing if needed
-    const maxProcessingDimension = 4096
+    // Scale down for safe processing
+    const maxProcessingDimension = 1024 // Reduced for stability
     let processingWidth = img.naturalWidth
     let processingHeight = img.naturalHeight
     
@@ -448,9 +477,9 @@ export class ImageProcessor {
     // Process the smaller version
     await processFunction(tempCanvas, tempCtx, img)
     
-    // Scale back up to original size if needed
-    canvas.width = img.naturalWidth
-    canvas.height = img.naturalHeight
+    // Scale back up to safe size
+    canvas.width = Math.min(img.naturalWidth, this.MAX_CANVAS_SIZE)
+    canvas.height = Math.min(img.naturalHeight, this.MAX_CANVAS_SIZE)
     ctx.imageSmoothingEnabled = true
     ctx.imageSmoothingQuality = "high"
     ctx.drawImage(tempCanvas, 0, 0, canvas.width, canvas.height)
@@ -521,6 +550,17 @@ export class ImageProcessor {
 
   // Memory cleanup utility
   static cleanupMemory(): void {
+    // Clean up active canvases first
+    this.activeCanvases.forEach(canvas => {
+      const ctx = canvas.getContext("2d")
+      if (ctx) {
+        ctx.clearRect(0, 0, canvas.width, canvas.height)
+      }
+      canvas.width = 1
+      canvas.height = 1
+    })
+    this.activeCanvases.clear()
+
     // Force garbage collection if available
     if ('gc' in window && typeof (window as any).gc === 'function') {
       (window as any).gc()
@@ -534,13 +574,13 @@ export class ImageProcessor {
       }
     })
     
-    // Clear active canvases
-    this.activeCanvases.forEach(canvas => {
-      const ctx = canvas.getContext("2d")
-      if (ctx) {
-        ctx.clearRect(0, 0, canvas.width, canvas.height)
-      }
-    })
-    this.activeCanvases.clear()
+    // Request memory cleanup
+    if (typeof window !== "undefined" && 'requestIdleCallback' in window) {
+      requestIdleCallback(() => {
+        if ('gc' in window && typeof (window as any).gc === 'function') {
+          (window as any).gc()
+        }
+      })
+    }
   }
 }

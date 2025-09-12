@@ -78,7 +78,7 @@ const qrOptions = [
   },
 ]
 
-async function generateQRCode(files: any[], options: any) {
+async function generateQRCode(files: any[], options: any): Promise<{ success: boolean; qrDataURL?: string; error?: string }> {
   try {
     if (!options.content || options.content.trim() === "") {
       return {
@@ -90,6 +90,7 @@ async function generateQRCode(files: any[], options: any) {
     const qrDataURL = await QRProcessor.generateQRCode(options.content, {
       width: options.size,
       margin: options.margin,
+      height: options.size,
       color: {
         dark: options.darkColor,
         light: options.lightColor,
@@ -99,7 +100,7 @@ async function generateQRCode(files: any[], options: any) {
 
     return {
       success: true,
-      qrDataURL,
+      qrDataURL
     }
   } catch (error) {
     return {
@@ -410,9 +411,17 @@ function QRPreviewCanvas({ qrDataURL, onDownload, onCopy }: {
 }
 
 export default function QRCodeGeneratorPage() {
+  const [isClient, setIsClient] = useState(false)
   const [content, setContent] = useState("")
   const [qrDataURL, setQrDataURL] = useState("")
-  const [qrType, setQrType] = useState("url")
+
+  useEffect(() => {
+    setIsClient(true)
+  }, [])
+
+  if (!isClient) {
+    return null
+  }
 
   const processQRGeneration = async (files: any[], options: any) => {
     const result = await generateQRCode(files, { ...options, content })
@@ -462,155 +471,12 @@ export default function QRCodeGeneratorPage() {
   const richContent = (
     <div className="py-8">
       <div className="container mx-auto px-4">
-        <div className="text-center mb-8">
-          <h2 className="text-3xl font-heading font-bold text-foreground mb-4">
-            Master QR Code Generation for Business Success
-          </h2>
-          <p className="text-lg text-muted-foreground max-w-3xl mx-auto leading-relaxed">
-            Create professional QR codes that drive engagement, streamline customer interactions, and enhance your marketing campaigns with our advanced generator featuring unlimited customization options and enterprise-grade reliability.
-          </p>
-        </div>
-        
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
-          <Card>
-            <CardHeader>
-              <CardTitle>Marketing & Advertising Excellence</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-muted-foreground mb-4">
-                Transform your marketing campaigns with QR codes that bridge offline and online experiences seamlessly. 
-                Drive traffic, track engagement, and provide instant access to your content with professional-grade QR codes that work reliably across all devices and scanning applications.
-              </p>
-              <ul className="space-y-2 text-sm">
-                <li>• Restaurant menu access and contactless ordering systems</li>
-                <li>• Product information, reviews, and detailed specifications</li>
-                <li>• Event registration, check-ins, and attendee management</li>
-                <li>• Social media profile connections and follower growth</li>
-                <li>• App downloads, promotions, and user acquisition</li>
-                <li>• Contact information sharing and networking efficiency</li>
-                <li>• Digital business cards and professional networking</li>
-                <li>• Customer feedback collection and survey distribution</li>
-              </ul>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle>Business Operations & Efficiency</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-muted-foreground mb-4">
-                Streamline business operations with QR codes for inventory management, customer service, 
-                and operational efficiency across all departments. Reduce manual processes and improve accuracy with automated QR code workflows.
-              </p>
-              <ul className="space-y-2 text-sm">
-                <li>• WiFi network sharing for guests and employees</li>
-                <li>• Digital business card distribution and networking</li>
-                <li>• Payment processing, invoicing, and financial transactions</li>
-                <li>• Location sharing, directions, and venue information</li>
-                <li>• Document access, downloads, and file sharing</li>
-                <li>• Customer feedback collection and service improvement</li>
-                <li>• Inventory tracking and asset management systems</li>
-                <li>• Employee check-ins and time tracking solutions</li>
-              </ul>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle>Technical Integration & Scalability</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-muted-foreground mb-4">
-                Integrate QR codes into your technical workflows with API access, bulk generation capabilities, 
-                and advanced customization options designed for enterprise applications and high-volume usage scenarios.
-              </p>
-              <ul className="space-y-2 text-sm">
-                <li>• API integration for automated QR code generation</li>
-                <li>• Bulk QR code creation from databases and spreadsheets</li>
-                <li>• Custom branding, styling, and logo integration</li>
-                <li>• High-resolution output for professional printing</li>
-                <li>• SVG format support for scalable graphics</li>
-                <li>• Advanced error correction for damaged codes</li>
-                <li>• Dynamic QR codes with tracking and analytics</li>
-                <li>• White-label solutions for enterprise deployment</li>
-              </ul>
-            </CardContent>
-          </Card>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
-          <Card>
-            <CardHeader>
-              <CardTitle>QR Code Best Practices & Guidelines</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                <div>
-                  <h4 className="font-semibold mb-2">Size and Placement Optimization</h4>
-                  <p className="text-sm text-muted-foreground mb-2">
-                    Ensure your QR codes are sized appropriately for their intended scanning distance. 
-                    The general rule is that the scanning distance should be approximately 10 times the width of the QR code.
-                  </p>
-                  <ul className="text-sm space-y-1">
-                    <li>• Minimum size: 2cm x 2cm for close-range scanning</li>
-                    <li>• Business cards: 1.5cm x 1.5cm minimum</li>
-                    <li>• Posters and signage: Scale based on viewing distance</li>
-                    <li>• Digital displays: Ensure high contrast and clarity</li>
-                  </ul>
-                </div>
-
-                <div>
-                  <h4 className="font-semibold mb-2">Color and Contrast Guidelines</h4>
-                  <p className="text-sm text-muted-foreground mb-2">
-                    Maintain sufficient contrast between foreground and background colors to ensure reliable scanning across all devices and lighting conditions.
-                  </p>
-                  <ul className="text-sm space-y-1">
-                    <li>• Use dark colors on light backgrounds</li>
-                    <li>• Avoid low contrast color combinations</li>
-                    <li>• Test in various lighting conditions</li>
-                    <li>• Consider colorblind accessibility</li>
-                  </ul>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle>Advanced QR Code Features</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                <div>
-                  <h4 className="font-semibold mb-2">Error Correction Levels</h4>
-                  <p className="text-sm text-muted-foreground mb-2">
-                    Choose the appropriate error correction level based on your QR code's environment and potential for damage or obstruction.
-                  </p>
-                  <ul className="text-sm space-y-1">
-                    <li>• Low (L): ~7% - Clean environments, digital displays</li>
-                    <li>• Medium (M): ~15% - Standard use, most applications</li>
-                    <li>• Quartile (Q): ~25% - Industrial environments</li>
-                    <li>• High (H): ~30% - Harsh conditions, potential damage</li>
-                  </ul>
-                </div>
-
-                <div>
-                  <h4 className="font-semibold mb-2">Logo Integration Best Practices</h4>
-                  <p className="text-sm text-muted-foreground mb-2">
-                    When adding logos to QR codes, follow these guidelines to maintain scannability while enhancing brand recognition.
-                  </p>
-                  <ul className="text-sm space-y-1">
-                    <li>• Keep logos under 20% of total QR code area</li>
-                    <li>• Use high error correction (H level) with logos</li>
-                    <li>• Ensure logos don't cover corner detection patterns</li>
-                    <li>• Test thoroughly before mass production</li>
-                  </ul>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
+        <h2 className="text-3xl font-heading font-bold text-center mb-8">
+          Professional QR Code Generation for Modern Business
+        </h2>
+        <p className="text-lg text-muted-foreground text-center max-w-3xl mx-auto mb-12">
+          Create professional QR codes that drive engagement, streamline customer interactions, and enhance your marketing campaigns with our advanced generator featuring unlimited customization options and enterprise-grade reliability.
+        </p>
       </div>
     </div>
   )
@@ -618,21 +484,24 @@ export default function QRCodeGeneratorPage() {
   return (
     <UnifiedToolLayout
       title="QR Code Generator"
-      description="Create professional QR codes for websites, WiFi, contacts, payments, and more. Customize colors, add logos, and download in multiple formats."
+      description="Create professional QR codes for websites, WiFi, contacts, payments, and more. Advanced customization with colors, logos, error correction levels, and multiple output formats for business and personal use."
       icon={QrCode}
       toolType="qr"
       processFunction={processQRGeneration}
       options={qrOptions.map(option => ({
         ...option,
-        defaultValue: option.key === "qrType" ? qrType : option.defaultValue
+        defaultValue: option.key === "qrType" ? "url" : option.defaultValue
       }))}
       maxFiles={0}
       showUploadArea={false}
       richContent={richContent}
+      allowBatchProcessing={false}
+      supportedFormats={[]}
+      outputFormats={["png", "svg", "pdf"]}
     >
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <QRContentForm 
-          qrType={qrType} 
+          qrType="url"
           content={content} 
           onContentChange={setContent} 
         />

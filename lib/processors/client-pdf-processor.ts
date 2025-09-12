@@ -29,6 +29,11 @@ export interface ClientPDFOptions {
 export class ClientPDFProcessor {
   // Real PDF to Images conversion using PDF.js
   static async pdfToImages(file: File, options: ClientPDFOptions = {}): Promise<Blob[]> {
+    // Prevent crashes with large files
+    if (file.size > 50 * 1024 * 1024) { // 50MB limit
+      throw new Error("PDF file too large. Please use a file smaller than 50MB for stability.")
+    }
+
     try {
       const arrayBuffer = await file.arrayBuffer()
       const loadingTask = pdfjsLib.getDocument({ data: arrayBuffer })
@@ -42,6 +47,11 @@ export class ClientPDFProcessor {
 
       const totalPages = pdfDoc.numPages
       const selectedPages = options.selectedPages || Array.from({ length: totalPages }, (_, i) => i + 1)
+
+      // Limit pages for stability
+      if (totalPages > 100) {
+        throw new Error("PDF has too many pages. Please use a PDF with fewer than 100 pages.")
+      }
 
       for (const pageNum of selectedPages) {
         if (pageNum < 1 || pageNum > totalPages) continue
@@ -100,6 +110,11 @@ export class ClientPDFProcessor {
 
   // Real PDF splitting using PDF.js and pdf-lib
   static async splitPDF(file: File, options: ClientPDFOptions = {}): Promise<Blob[]> {
+    // Prevent crashes with large files
+    if (file.size > 50 * 1024 * 1024) {
+      throw new Error("PDF file too large. Please use a file smaller than 50MB.")
+    }
+
     try {
       const arrayBuffer = await file.arrayBuffer()
       const pdf = await PDFDocument.load(arrayBuffer)
@@ -148,6 +163,11 @@ export class ClientPDFProcessor {
 
   // Real PDF compression using pdf-lib
   static async compressPDF(file: File, options: ClientPDFOptions = {}): Promise<Blob> {
+    // Prevent crashes with large files
+    if (file.size > 50 * 1024 * 1024) {
+      throw new Error("PDF file too large. Please use a file smaller than 50MB.")
+    }
+
     try {
       const arrayBuffer = await file.arrayBuffer()
       const pdf = await PDFDocument.load(arrayBuffer)
@@ -210,6 +230,12 @@ export class ClientPDFProcessor {
 
   // Real PDF merging using pdf-lib
   static async mergePDFs(files: File[], options: ClientPDFOptions = {}): Promise<Blob> {
+    // Check total size to prevent crashes
+    const totalSize = files.reduce((sum, file) => sum + file.size, 0)
+    if (totalSize > 100 * 1024 * 1024) { // 100MB total limit
+      throw new Error("Combined PDF files too large. Please use files with total size under 100MB.")
+    }
+
     try {
       if (files.length < 2) {
         throw new Error("At least 2 PDF files are required for merging")
@@ -267,6 +293,10 @@ export class ClientPDFProcessor {
 
   // Real PDF watermarking using pdf-lib
   static async addWatermark(file: File, watermarkText: string, options: ClientPDFOptions = {}): Promise<Blob> {
+    if (file.size > 50 * 1024 * 1024) {
+      throw new Error("PDF file too large. Please use a file smaller than 50MB.")
+    }
+
     try {
       if (!watermarkText || watermarkText.trim() === "") {
         throw new Error("Watermark text cannot be empty")
@@ -350,6 +380,10 @@ export class ClientPDFProcessor {
 
   // Real password protection using pdf-lib
   static async addPasswordProtection(file: File, password: string, permissions: string[] = []): Promise<Blob> {
+    if (file.size > 50 * 1024 * 1024) {
+      throw new Error("PDF file too large. Please use a file smaller than 50MB.")
+    }
+
     try {
       if (!password || password.trim() === "") {
         throw new Error("Password cannot be empty")
@@ -405,6 +439,12 @@ export class ClientPDFProcessor {
 
   // Real images to PDF conversion
   static async imagesToPDF(imageFiles: File[], options: ClientPDFOptions = {}): Promise<Blob> {
+    // Check total size
+    const totalSize = imageFiles.reduce((sum, file) => sum + file.size, 0)
+    if (totalSize > 100 * 1024 * 1024) {
+      throw new Error("Combined image files too large. Please use files with total size under 100MB.")
+    }
+
     try {
       if (imageFiles.length === 0) {
         throw new Error("No image files provided")
@@ -595,6 +635,10 @@ export class ClientPDFProcessor {
     pageCount: number
     fileSize: number
   }> {
+    if (file.size > 50 * 1024 * 1024) {
+      throw new Error("PDF file too large for metadata extraction.")
+    }
+
     try {
       const arrayBuffer = await file.arrayBuffer()
       const pdf = await PDFDocument.load(arrayBuffer)

@@ -347,26 +347,26 @@ export function PDFProcessingGuide({ toolName, toolType, className }: PDFProcess
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             <Card className="text-center">
               <CardHeader>
-                <div className="text-3xl font-bold text-primary">∞</div>
+                <div className="text-3xl font-bold text-primary">50MB</div>
                 <CardTitle className="text-lg">File Size</CardTitle>
               </CardHeader>
               <CardContent>
                 <p className="text-sm text-muted-foreground">
-                  No file size limitations. Process everything from small forms to 
-                  massive technical manuals and architectural drawings.
+                  Support for PDF files up to 50MB. Process everything from small forms to 
+                  large technical manuals and comprehensive documentation safely.
                 </p>
               </CardContent>
             </Card>
 
             <Card className="text-center">
               <CardHeader>
-                <div className="text-3xl font-bold text-primary">∞</div>
+                <div className="text-3xl font-bold text-primary">100</div>
                 <CardTitle className="text-lg">Page Count</CardTitle>
               </CardHeader>
               <CardContent>
                 <p className="text-sm text-muted-foreground">
-                  Handle documents with unlimited pages. From single-page forms 
-                  to thousand-page technical documentation.
+                  Handle documents with up to 100 pages efficiently. From single-page forms 
+                  to comprehensive technical documentation with optimized processing.
                 </p>
               </CardContent>
             </Card>
@@ -699,9 +699,9 @@ export function PDFProcessingGuide({ toolName, toolType, className }: PDFProcess
               </CardHeader>
               <CardContent>
                 <p className="text-muted-foreground">
-                  Yes! Our {toolName.toLowerCase()} supports unlimited file sizes. We use advanced 
-                  chunked processing and progressive rendering to handle everything from small 
-                  documents to massive technical manuals and architectural drawings.
+                  Our {toolName.toLowerCase()} supports files up to 50MB. We use advanced 
+                  processing algorithms and memory optimization to handle large documents 
+                  safely while maintaining excellent performance.
                 </p>
               </CardContent>
             </Card>
@@ -712,9 +712,9 @@ export function PDFProcessingGuide({ toolName, toolType, className }: PDFProcess
               </CardHeader>
               <CardContent>
                 <p className="text-muted-foreground">
-                  There's no limit on page count. Our intelligent processing algorithms handle 
-                  documents with thousands of pages efficiently, maintaining quality and 
-                  performance throughout the entire process.
+                  We support documents with up to 100 pages for optimal performance. Our intelligent 
+                  processing algorithms handle large documents efficiently while maintaining 
+                  quality and stability throughout the process.
                 </p>
               </CardContent>
             </Card>
