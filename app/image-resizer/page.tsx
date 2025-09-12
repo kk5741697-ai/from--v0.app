@@ -114,7 +114,7 @@ export default function ImageResizerPage() {
   return (
     <UnifiedToolLayout
       title="Resize Image"
-      description="Define your dimensions by percent or pixel, and resize your images with presets."
+      description="Resize images with precision using custom dimensions, percentage scaling, and aspect ratio presets. Perfect for web optimization and social media."
       icon={Maximize}
       toolType="image"
       processFunction={resizeImages}

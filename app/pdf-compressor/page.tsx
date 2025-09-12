@@ -100,7 +100,7 @@ export default function PDFCompressorPage() {
   return (
     <UnifiedToolLayout
       title="PDF Compressor"
-      description="Reduce PDF file size while maintaining quality. Optimize images, compress fonts, and remove unnecessary metadata."
+      description="Reduce PDF file size while maintaining document quality using advanced compression algorithms. Optimize images, compress fonts, and remove unnecessary metadata for efficient storage and sharing."
       icon={Archive}
       toolType="pdf"
       processFunction={compressPDF}

@@ -99,7 +99,7 @@ export default function ImageConverterPage() {
   return (
     <UnifiedToolLayout
       title="Image Converter"
-      description="Convert images between different formats including JPEG, PNG, and WebP. Adjust quality settings and background colors for optimal results."
+      description="Convert images between different formats including JPEG, PNG, WebP, and AVIF. Advanced quality controls and background color options for professional results."
       icon={RefreshCw}
       toolType="image"
       processFunction={convertImages}

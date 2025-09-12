@@ -102,7 +102,7 @@ export default function ImageCompressorPage() {
   return (
     <UnifiedToolLayout
       title="Image Compressor"
-      description="Reduce image file size while maintaining quality. Perfect for web optimization and storage."
+      description="Reduce image file size while maintaining quality using advanced compression algorithms. Perfect for web optimization and storage efficiency."
       icon={Archive}
       toolType="image"
       processFunction={compressImages}

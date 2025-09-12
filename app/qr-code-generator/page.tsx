@@ -374,12 +374,14 @@ function QRPreviewCanvas({ qrDataURL, onDownload, onCopy }: {
       <CardContent className="space-y-4">
         <div className="flex justify-center">
           {qrDataURL ? (
-            <img
-              src={qrDataURL}
-              alt="Generated QR Code"
-              className="max-w-full h-auto border rounded-lg shadow-lg"
-              style={{ maxWidth: "300px" }}
-            />
+            <div className="qr-preview">
+              <img
+                src={qrDataURL}
+                alt="Generated QR Code"
+                className="max-w-full h-auto border rounded-lg shadow-lg"
+                style={{ maxWidth: "300px" }}
+              />
+            </div>
           ) : (
             <div className="w-64 h-64 bg-gray-100 border-2 border-dashed border-gray-300 rounded-lg flex items-center justify-center">
               <div className="text-center text-gray-500">
@@ -465,68 +467,147 @@ export default function QRCodeGeneratorPage() {
             Master QR Code Generation for Business Success
           </h2>
           <p className="text-lg text-muted-foreground max-w-3xl mx-auto leading-relaxed">
-            Create professional QR codes that drive engagement, streamline customer interactions, and enhance your marketing campaigns with our advanced generator featuring unlimited customization options.
+            Create professional QR codes that drive engagement, streamline customer interactions, and enhance your marketing campaigns with our advanced generator featuring unlimited customization options and enterprise-grade reliability.
           </p>
         </div>
         
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
           <Card>
             <CardHeader>
-              <CardTitle>Marketing & Advertising</CardTitle>
+              <CardTitle>Marketing & Advertising Excellence</CardTitle>
             </CardHeader>
             <CardContent>
               <p className="text-muted-foreground mb-4">
-                Transform your marketing campaigns with QR codes that bridge offline and online experiences. 
-                Drive traffic, track engagement, and provide instant access to your content.
+                Transform your marketing campaigns with QR codes that bridge offline and online experiences seamlessly. 
+                Drive traffic, track engagement, and provide instant access to your content with professional-grade QR codes that work reliably across all devices and scanning applications.
               </p>
               <ul className="space-y-2 text-sm">
-                <li>• Restaurant menu access and ordering</li>
-                <li>• Product information and reviews</li>
-                <li>• Event registration and check-ins</li>
-                <li>• Social media profile connections</li>
-                <li>• App downloads and promotions</li>
-                <li>• Contact information sharing</li>
+                <li>• Restaurant menu access and contactless ordering systems</li>
+                <li>• Product information, reviews, and detailed specifications</li>
+                <li>• Event registration, check-ins, and attendee management</li>
+                <li>• Social media profile connections and follower growth</li>
+                <li>• App downloads, promotions, and user acquisition</li>
+                <li>• Contact information sharing and networking efficiency</li>
+                <li>• Digital business cards and professional networking</li>
+                <li>• Customer feedback collection and survey distribution</li>
               </ul>
             </CardContent>
           </Card>
 
           <Card>
             <CardHeader>
-              <CardTitle>Business Operations</CardTitle>
+              <CardTitle>Business Operations & Efficiency</CardTitle>
             </CardHeader>
             <CardContent>
               <p className="text-muted-foreground mb-4">
                 Streamline business operations with QR codes for inventory management, customer service, 
-                and operational efficiency across all departments.
+                and operational efficiency across all departments. Reduce manual processes and improve accuracy with automated QR code workflows.
               </p>
               <ul className="space-y-2 text-sm">
-                <li>• WiFi network sharing for guests</li>
-                <li>• Digital business card distribution</li>
-                <li>• Payment processing and invoicing</li>
-                <li>• Location sharing and directions</li>
-                <li>• Document access and downloads</li>
-                <li>• Customer feedback collection</li>
+                <li>• WiFi network sharing for guests and employees</li>
+                <li>• Digital business card distribution and networking</li>
+                <li>• Payment processing, invoicing, and financial transactions</li>
+                <li>• Location sharing, directions, and venue information</li>
+                <li>• Document access, downloads, and file sharing</li>
+                <li>• Customer feedback collection and service improvement</li>
+                <li>• Inventory tracking and asset management systems</li>
+                <li>• Employee check-ins and time tracking solutions</li>
               </ul>
             </CardContent>
           </Card>
 
           <Card>
             <CardHeader>
-              <CardTitle>Technical Integration</CardTitle>
+              <CardTitle>Technical Integration & Scalability</CardTitle>
             </CardHeader>
             <CardContent>
               <p className="text-muted-foreground mb-4">
-                Integrate QR codes into your technical workflows with API access, bulk generation, 
-                and advanced customization for enterprise applications.
+                Integrate QR codes into your technical workflows with API access, bulk generation capabilities, 
+                and advanced customization options designed for enterprise applications and high-volume usage scenarios.
               </p>
               <ul className="space-y-2 text-sm">
-                <li>• API integration for automated generation</li>
-                <li>• Bulk QR code creation from databases</li>
-                <li>• Custom branding and styling options</li>
-                <li>• High-resolution output for print</li>
-                <li>• SVG format for scalable graphics</li>
-                <li>• Error correction for damaged codes</li>
+                <li>• API integration for automated QR code generation</li>
+                <li>• Bulk QR code creation from databases and spreadsheets</li>
+                <li>• Custom branding, styling, and logo integration</li>
+                <li>• High-resolution output for professional printing</li>
+                <li>• SVG format support for scalable graphics</li>
+                <li>• Advanced error correction for damaged codes</li>
+                <li>• Dynamic QR codes with tracking and analytics</li>
+                <li>• White-label solutions for enterprise deployment</li>
               </ul>
+            </CardContent>
+          </Card>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
+          <Card>
+            <CardHeader>
+              <CardTitle>QR Code Best Practices & Guidelines</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                <div>
+                  <h4 className="font-semibold mb-2">Size and Placement Optimization</h4>
+                  <p className="text-sm text-muted-foreground mb-2">
+                    Ensure your QR codes are sized appropriately for their intended scanning distance. 
+                    The general rule is that the scanning distance should be approximately 10 times the width of the QR code.
+                  </p>
+                  <ul className="text-sm space-y-1">
+                    <li>• Minimum size: 2cm x 2cm for close-range scanning</li>
+                    <li>• Business cards: 1.5cm x 1.5cm minimum</li>
+                    <li>• Posters and signage: Scale based on viewing distance</li>
+                    <li>• Digital displays: Ensure high contrast and clarity</li>
+                  </ul>
+                </div>
+
+                <div>
+                  <h4 className="font-semibold mb-2">Color and Contrast Guidelines</h4>
+                  <p className="text-sm text-muted-foreground mb-2">
+                    Maintain sufficient contrast between foreground and background colors to ensure reliable scanning across all devices and lighting conditions.
+                  </p>
+                  <ul className="text-sm space-y-1">
+                    <li>• Use dark colors on light backgrounds</li>
+                    <li>• Avoid low contrast color combinations</li>
+                    <li>• Test in various lighting conditions</li>
+                    <li>• Consider colorblind accessibility</li>
+                  </ul>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>Advanced QR Code Features</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                <div>
+                  <h4 className="font-semibold mb-2">Error Correction Levels</h4>
+                  <p className="text-sm text-muted-foreground mb-2">
+                    Choose the appropriate error correction level based on your QR code's environment and potential for damage or obstruction.
+                  </p>
+                  <ul className="text-sm space-y-1">
+                    <li>• Low (L): ~7% - Clean environments, digital displays</li>
+                    <li>• Medium (M): ~15% - Standard use, most applications</li>
+                    <li>• Quartile (Q): ~25% - Industrial environments</li>
+                    <li>• High (H): ~30% - Harsh conditions, potential damage</li>
+                  </ul>
+                </div>
+
+                <div>
+                  <h4 className="font-semibold mb-2">Logo Integration Best Practices</h4>
+                  <p className="text-sm text-muted-foreground mb-2">
+                    When adding logos to QR codes, follow these guidelines to maintain scannability while enhancing brand recognition.
+                  </p>
+                  <ul className="text-sm space-y-1">
+                    <li>• Keep logos under 20% of total QR code area</li>
+                    <li>• Use high error correction (H level) with logos</li>
+                    <li>• Ensure logos don't cover corner detection patterns</li>
+                    <li>• Test thoroughly before mass production</li>
+                  </ul>
+                </div>
+              </div>
             </CardContent>
           </Card>
         </div>

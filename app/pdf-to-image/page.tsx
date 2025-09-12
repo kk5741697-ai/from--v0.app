@@ -116,7 +116,7 @@ export default function PDFToImagePage() {
   return (
     <UnifiedToolLayout
       title="PDF to Image Converter"
-      description="Convert PDF pages to high-quality images in multiple formats. Choose resolution, quality, and color mode for perfect results."
+      description="Convert PDF pages to high-quality images in multiple formats including PNG, JPEG, and WebP. Advanced resolution controls, color mode options, and batch processing for professional results."
       icon={ImageIcon}
       toolType="pdf"
       processFunction={convertPDFToImage}
