@@ -1,10 +1,10 @@
 "use client"
 
-import { useState } from "react"
 import { UnifiedToolLayout } from "@/components/unified-tool-layout"
 import { Maximize } from "lucide-react"
 import { ImageProcessor } from "@/lib/processors/image-processor"
 import { ImageProcessingGuide } from "@/components/content/image-processing-guide"
+import { PersistentAdManager } from "@/components/ads/persistent-ad-manager"
 
 const resizeOptions = [
   {
@@ -105,22 +105,19 @@ async function resizeImages(files: any[], options: any): Promise<{ success: bool
 }
 
 export default function ImageResizerPage() {
-  const [isClient, setIsClient] = useState(false)
-
-  useState(() => {
-    setIsClient(true)
-  }, [])
-
-  if (!isClient) {
-    return null
-  }
-
   const richContent = (
-    <ImageProcessingGuide 
-      toolName="Image Resizer"
-      toolType="resize"
-      className="py-8"
-    />
+    <>
+      <ImageProcessingGuide 
+        toolName="Image Resizer"
+        toolType="resize"
+        className="py-8"
+      />
+      <PersistentAdManager 
+        beforeCanvasSlot="image-before-canvas"
+        afterCanvasSlot="image-after-canvas"
+        toolType="image"
+      />
+    </>
   )
 
   return (
@@ -135,7 +132,6 @@ export default function ImageResizerPage() {
       allowBatchProcessing={true}
       supportedFormats={["image/jpeg", "image/png", "image/webp", "image/gif"]}
       outputFormats={["jpeg", "png", "webp"]}
-      showUploadArea={true}
       richContent={richContent}
     />
   )

@@ -4,6 +4,7 @@ import { UnifiedToolLayout } from "@/components/unified-tool-layout"
 import { Archive } from "lucide-react"
 import { ImageProcessor } from "@/lib/processors/image-processor"
 import { ImageProcessingGuide } from "@/components/content/image-processing-guide"
+import { PersistentAdManager } from "@/components/ads/persistent-ad-manager"
 
 const compressionOptions = [
   {
@@ -92,11 +93,18 @@ async function compressImages(files: any[], options: any) {
 
 export default function ImageCompressorPage() {
   const richContent = (
-    <ImageProcessingGuide 
-      toolName="Image Compressor"
-      toolType="compress"
-      className="py-8"
-    />
+    <>
+      <ImageProcessingGuide 
+        toolName="Image Compressor"
+        toolType="compress"
+        className="py-8"
+      />
+      <PersistentAdManager 
+        beforeCanvasSlot="image-before-canvas"
+        afterCanvasSlot="image-after-canvas"
+        toolType="image"
+      />
+    </>
   )
 
   return (

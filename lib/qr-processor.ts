@@ -86,6 +86,56 @@ export class QRProcessor {
     }
   }
 
+  // Enhanced QR code generation with better error handling
+  static async generateAdvancedQRCode(content: string, options: QRCodeOptions = {}): Promise<string> {
+    try {
+      if (!content || content.trim() === "") {
+        throw new Error("QR code content cannot be empty")
+      }
+
+      // Enhanced content validation
+      if (content.length > 2953) {
+        throw new Error(`Content too long (${content.length} characters). Maximum 2953 characters allowed.`)
+      }
+
+      // Optimize settings based on content type
+      const optimizedOptions = this.optimizeQRSettings(content, options)
+      
+      return await this.generateQRCode(content, optimizedOptions)
+    } catch (error) {
+      console.error("Advanced QR generation failed:", error)
+      throw error
+    }
+  }
+
+  private static optimizeQRSettings(content: string, options: QRCodeOptions): QRCodeOptions {
+    const optimized = { ...options }
+    
+    // Auto-select error correction based on content importance
+    if (!optimized.errorCorrectionLevel) {
+      if (content.startsWith('http') || content.includes('wifi') || content.includes('vcard')) {
+        optimized.errorCorrectionLevel = "M" // Medium for important data
+      } else if (content.length > 1000) {
+        optimized.errorCorrectionLevel = "L" // Low for long content
+      } else {
+        optimized.errorCorrectionLevel = "H" // High for short, critical content
+      }
+    }
+    
+    // Auto-size based on content length
+    if (!optimized.width) {
+      if (content.length > 1500) {
+        optimized.width = 1200 // Larger for dense content
+      } else if (content.length > 500) {
+        optimized.width = 1000
+      } else {
+        optimized.width = 800
+      }
+    }
+    
+    return optimized
+  }
+
   private static async enhanceQRCode(qrDataURL: string, options: QRCodeOptions): Promise<string> {
     return new Promise((resolve, reject) => {
       const canvas = document.createElement("canvas")

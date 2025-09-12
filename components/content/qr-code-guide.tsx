@@ -314,8 +314,37 @@ export function QRCodeGuide({ toolName, toolType, className }: QRCodeGuideProps)
         </div>
       </section>
 
-      {/* Technical Specifications */}
+      {/* Use Cases */}
       <section className="py-8 bg-muted/30">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-8">
+            <div className="inline-flex items-center space-x-2 mb-4">
+              <Globe className="h-6 w-6 text-primary" />
+              <h3 className="text-2xl font-heading font-bold text-foreground">
+                Real-World Applications & Success Stories
+              </h3>
+            </div>
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+              Discover how businesses and organizations worldwide use our {toolName.toLowerCase()} 
+              to solve real challenges and create innovative customer experiences.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            {content.useCases.map((useCase, index) => (
+              <div key={index} className="flex items-center space-x-3 p-4 bg-card rounded-lg border hover:shadow-md transition-shadow">
+                <div className="p-2 bg-primary/10 rounded-full flex-shrink-0">
+                  <QrCode className="h-4 w-4 text-primary" />
+                </div>
+                <span className="text-sm font-medium text-foreground">{useCase}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Technical Specifications */}
+      <section className="py-8">
         <div className="container mx-auto px-4">
           <div className="text-center mb-8">
             <h3 className="text-2xl font-heading font-bold text-foreground mb-4">
@@ -383,217 +412,8 @@ export function QRCodeGuide({ toolName, toolType, className }: QRCodeGuideProps)
         </div>
       </section>
 
-      {/* QR Code Types and Applications */}
-      <section className="py-8">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-8">
-            <h3 className="text-2xl font-heading font-bold text-foreground mb-4">
-              Comprehensive QR Code Types & Applications
-            </h3>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Our {toolName.toLowerCase()} supports all major QR code types with specialized 
-              optimization for each data format and use case.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <Card>
-              <CardHeader>
-                <div className="flex items-center space-x-3">
-                  <Globe className="h-6 w-6 text-blue-600" />
-                  <CardTitle>Website & URL QR Codes</CardTitle>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <p className="text-muted-foreground mb-3">
-                  Direct users to websites, landing pages, and online resources with optimized URL QR codes.
-                </p>
-                <div className="space-y-2 text-sm">
-                  <div className="flex items-center">
-                    <CheckCircle className="h-4 w-4 text-green-600 mr-2" />
-                    <span>Website and landing page access</span>
-                  </div>
-                  <div className="flex items-center">
-                    <CheckCircle className="h-4 w-4 text-green-600 mr-2" />
-                    <span>Social media profile linking</span>
-                  </div>
-                  <div className="flex items-center">
-                    <CheckCircle className="h-4 w-4 text-green-600 mr-2" />
-                    <span>App store download links</span>
-                  </div>
-                  <div className="flex items-center">
-                    <CheckCircle className="h-4 w-4 text-green-600 mr-2" />
-                    <span>Online form and survey access</span>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader>
-                <div className="flex items-center space-x-3">
-                  <Wifi className="h-6 w-6 text-green-600" />
-                  <CardTitle>WiFi & Network QR Codes</CardTitle>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <p className="text-muted-foreground mb-3">
-                  Enable instant WiFi connections without manual password entry, perfect for businesses and events.
-                </p>
-                <div className="space-y-2 text-sm">
-                  <div className="flex items-center">
-                    <CheckCircle className="h-4 w-4 text-green-600 mr-2" />
-                    <span>Guest WiFi access automation</span>
-                  </div>
-                  <div className="flex items-center">
-                    <CheckCircle className="h-4 w-4 text-green-600 mr-2" />
-                    <span>Event and conference networking</span>
-                  </div>
-                  <div className="flex items-center">
-                    <CheckCircle className="h-4 w-4 text-green-600 mr-2" />
-                    <span>Office and workspace connectivity</span>
-                  </div>
-                  <div className="flex items-center">
-                    <CheckCircle className="h-4 w-4 text-green-600 mr-2" />
-                    <span>Retail and hospitality services</span>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader>
-                <div className="flex items-center space-x-3">
-                  <Users className="h-6 w-6 text-purple-600" />
-                  <CardTitle>Contact & vCard QR Codes</CardTitle>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <p className="text-muted-foreground mb-3">
-                  Share complete contact information instantly with vCard QR codes for networking and business cards.
-                </p>
-                <div className="space-y-2 text-sm">
-                  <div className="flex items-center">
-                    <CheckCircle className="h-4 w-4 text-green-600 mr-2" />
-                    <span>Digital business card distribution</span>
-                  </div>
-                  <div className="flex items-center">
-                    <CheckCircle className="h-4 w-4 text-green-600 mr-2" />
-                    <span>Event networking and connections</span>
-                  </div>
-                  <div className="flex items-center">
-                    <CheckCircle className="h-4 w-4 text-green-600 mr-2" />
-                    <span>Professional contact sharing</span>
-                  </div>
-                  <div className="flex items-center">
-                    <CheckCircle className="h-4 w-4 text-green-600 mr-2" />
-                    <span>Team directory and organization</span>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader>
-                <div className="flex items-center space-x-3">
-                  <Mail className="h-6 w-6 text-orange-600" />
-                  <CardTitle>Email & Communication</CardTitle>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <p className="text-muted-foreground mb-3">
-                  Streamline communication with pre-filled email QR codes and SMS messaging capabilities.
-                </p>
-                <div className="space-y-2 text-sm">
-                  <div className="flex items-center">
-                    <CheckCircle className="h-4 w-4 text-green-600 mr-2" />
-                    <span>Pre-filled email composition</span>
-                  </div>
-                  <div className="flex items-center">
-                    <CheckCircle className="h-4 w-4 text-green-600 mr-2" />
-                    <span>SMS messaging with templates</span>
-                  </div>
-                  <div className="flex items-center">
-                    <CheckCircle className="h-4 w-4 text-green-600 mr-2" />
-                    <span>Customer support contact</span>
-                  </div>
-                  <div className="flex items-center">
-                    <CheckCircle className="h-4 w-4 text-green-600 mr-2" />
-                    <span>Feedback and survey collection</span>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader>
-                <div className="flex items-center space-x-3">
-                  <Phone className="h-6 w-6 text-red-600" />
-                  <CardTitle>Phone & Communication</CardTitle>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <p className="text-muted-foreground mb-3">
-                  Enable instant phone calls and communication with optimized phone number QR codes.
-                </p>
-                <div className="space-y-2 text-sm">
-                  <div className="flex items-center">
-                    <CheckCircle className="h-4 w-4 text-green-600 mr-2" />
-                    <span>Direct phone call initiation</span>
-                  </div>
-                  <div className="flex items-center">
-                    <CheckCircle className="h-4 w-4 text-green-600 mr-2" />
-                    <span>Customer service hotlines</span>
-                  </div>
-                  <div className="flex items-center">
-                    <CheckCircle className="h-4 w-4 text-green-600 mr-2" />
-                    <span>Emergency contact information</span>
-                  </div>
-                  <div className="flex items-center">
-                    <CheckCircle className="h-4 w-4 text-green-600 mr-2" />
-                    <span>Business contact automation</span>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader>
-                <div className="flex items-center space-x-3">
-                  <Target className="h-6 w-6 text-cyan-600" />
-                  <CardTitle>Marketing & Analytics</CardTitle>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <p className="text-muted-foreground mb-3">
-                  Drive marketing campaigns and track engagement with analytics-enabled QR codes and tracking.
-                </p>
-                <div className="space-y-2 text-sm">
-                  <div className="flex items-center">
-                    <CheckCircle className="h-4 w-4 text-green-600 mr-2" />
-                    <span>Campaign tracking and analytics</span>
-                  </div>
-                  <div className="flex items-center">
-                    <CheckCircle className="h-4 w-4 text-green-600 mr-2" />
-                    <span>Lead generation and capture</span>
-                  </div>
-                  <div className="flex items-center">
-                    <CheckCircle className="h-4 w-4 text-green-600 mr-2" />
-                    <span>Social media engagement</span>
-                  </div>
-                  <div className="flex items-center">
-                    <CheckCircle className="h-4 w-4 text-green-600 mr-2" />
-                    <span>Cross-platform integration</span>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-        </div>
-      </section>
-
       {/* Best Practices */}
-      <section className="py-8">
+      <section className="py-8 bg-muted/30">
         <div className="container mx-auto px-4">
           <div className="text-center mb-8">
             <div className="inline-flex items-center space-x-2 mb-4">
@@ -660,35 +480,6 @@ export function QRCodeGuide({ toolName, toolType, className }: QRCodeGuideProps)
                 </div>
               </CardContent>
             </Card>
-          </div>
-        </div>
-      </section>
-
-      {/* Use Cases */}
-      <section className="py-8 bg-muted/30">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-8">
-            <div className="inline-flex items-center space-x-2 mb-4">
-              <Globe className="h-6 w-6 text-primary" />
-              <h3 className="text-2xl font-heading font-bold text-foreground">
-                Real-World Applications & Success Stories
-              </h3>
-            </div>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Discover how businesses and organizations worldwide use our {toolName.toLowerCase()} 
-              to solve real challenges and create innovative customer experiences.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            {content.useCases.map((useCase, index) => (
-              <div key={index} className="flex items-center space-x-3 p-4 bg-card rounded-lg border hover:shadow-md transition-shadow">
-                <div className="p-2 bg-primary/10 rounded-full flex-shrink-0">
-                  <QrCode className="h-4 w-4 text-primary" />
-                </div>
-                <span className="text-sm font-medium text-foreground">{useCase}</span>
-              </div>
-            ))}
           </div>
         </div>
       </section>

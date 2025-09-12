@@ -4,6 +4,7 @@ import { UnifiedToolLayout } from "@/components/unified-tool-layout"
 import { Archive } from "lucide-react"
 import { ClientPDFProcessor } from "@/lib/processors/client-pdf-processor"
 import { PDFProcessingGuide } from "@/components/content/pdf-processing-guide"
+import { PersistentAdManager } from "@/components/ads/persistent-ad-manager"
 
 const compressOptions = [
   {
@@ -90,11 +91,18 @@ async function compressPDF(files: any[], options: any) {
 
 export default function PDFCompressorPage() {
   const richContent = (
-    <PDFProcessingGuide 
-      toolName="PDF Compressor"
-      toolType="compress"
-      className="py-8"
-    />
+    <>
+      <PDFProcessingGuide 
+        toolName="PDF Compressor"
+        toolType="compress"
+        className="py-8"
+      />
+      <PersistentAdManager 
+        beforeCanvasSlot="pdf-before-canvas"
+        afterCanvasSlot="pdf-after-canvas"
+        toolType="pdf"
+      />
+    </>
   )
 
   return (

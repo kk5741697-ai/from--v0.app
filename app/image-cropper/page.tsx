@@ -1,10 +1,10 @@
 "use client"
 
-import { useState } from "react"
 import { UnifiedToolLayout } from "@/components/unified-tool-layout"
 import { Crop } from "lucide-react"
 import { ImageProcessor } from "@/lib/processors/image-processor"
 import { ImageProcessingGuide } from "@/components/content/image-processing-guide"
+import { PersistentAdManager } from "@/components/ads/persistent-ad-manager"
 
 const cropOptions = [
   {
@@ -86,22 +86,19 @@ async function cropImages(files: any[], options: any): Promise<{ success: boolea
 }
 
 export default function ImageCropperPage() {
-  const [isClient, setIsClient] = useState(false)
-
-  useState(() => {
-    setIsClient(true)
-  }, [])
-
-  if (!isClient) {
-    return null
-  }
-
   const richContent = (
-    <ImageProcessingGuide 
-      toolName="Image Cropper"
-      toolType="crop"
-      className="py-8"
-    />
+    <>
+      <ImageProcessingGuide 
+        toolName="Image Cropper"
+        toolType="crop"
+        className="py-8"
+      />
+      <PersistentAdManager 
+        beforeCanvasSlot="image-before-canvas"
+        afterCanvasSlot="image-after-canvas"
+        toolType="image"
+      />
+    </>
   )
 
   return (
@@ -116,7 +113,6 @@ export default function ImageCropperPage() {
       allowBatchProcessing={false}
       supportedFormats={["image/jpeg", "image/png", "image/webp"]}
       outputFormats={["jpeg", "png", "webp"]}
-      showUploadArea={true}
       richContent={richContent}
     />
   )

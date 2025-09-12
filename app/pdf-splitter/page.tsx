@@ -1,10 +1,10 @@
 "use client"
 
-import { useState } from "react"
 import { UnifiedToolLayout } from "@/components/unified-tool-layout"
 import { Scissors } from "lucide-react"
 import { ClientPDFProcessor } from "@/lib/processors/client-pdf-processor"
 import { PDFProcessingGuide } from "@/components/content/pdf-processing-guide"
+import { PersistentAdManager } from "@/components/ads/persistent-ad-manager"
 
 const splitOptions = [
   {
@@ -106,22 +106,19 @@ async function splitPDF(files: any[], options: any): Promise<{ success: boolean;
 }
 
 export default function PDFSplitterPage() {
-  const [isClient, setIsClient] = useState(false)
-
-  useState(() => {
-    setIsClient(true)
-  }, [])
-
-  if (!isClient) {
-    return null
-  }
-
   const richContent = (
-    <PDFProcessingGuide 
-      toolName="PDF Splitter"
-      toolType="split"
-      className="py-8"
-    />
+    <>
+      <PDFProcessingGuide 
+        toolName="PDF Splitter"
+        toolType="split"
+        className="py-8"
+      />
+      <PersistentAdManager 
+        beforeCanvasSlot="pdf-before-canvas"
+        afterCanvasSlot="pdf-after-canvas"
+        toolType="pdf"
+      />
+    </>
   )
 
   return (
@@ -135,7 +132,6 @@ export default function PDFSplitterPage() {
       maxFiles={1}
       allowPageSelection={true}
       supportedFormats={["application/pdf"]}
-      showUploadArea={true}
       richContent={richContent}
     />
   )

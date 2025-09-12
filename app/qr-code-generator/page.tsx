@@ -12,6 +12,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Button } from "@/components/ui/button"
 import { Download, Copy } from "lucide-react"
 import { toast } from "@/hooks/use-toast"
+import { PersistentAdManager } from "@/components/ads/persistent-ad-manager"
+import { QRCodeGuide } from "@/components/content/qr-code-guide"
 
 const qrOptions = [
   {
@@ -411,17 +413,8 @@ function QRPreviewCanvas({ qrDataURL, onDownload, onCopy }: {
 }
 
 export default function QRCodeGeneratorPage() {
-  const [isClient, setIsClient] = useState(false)
   const [content, setContent] = useState("")
   const [qrDataURL, setQrDataURL] = useState("")
-
-  useEffect(() => {
-    setIsClient(true)
-  }, [])
-
-  if (!isClient) {
-    return null
-  }
 
   const processQRGeneration = async (files: any[], options: any) => {
     const result = await generateQRCode(files, { ...options, content })
@@ -469,16 +462,18 @@ export default function QRCodeGeneratorPage() {
   }
 
   const richContent = (
-    <div className="py-8">
-      <div className="container mx-auto px-4">
-        <h2 className="text-3xl font-heading font-bold text-center mb-8">
-          Professional QR Code Generation for Modern Business
-        </h2>
-        <p className="text-lg text-muted-foreground text-center max-w-3xl mx-auto mb-12">
-          Create professional QR codes that drive engagement, streamline customer interactions, and enhance your marketing campaigns with our advanced generator featuring unlimited customization options and enterprise-grade reliability.
-        </p>
-      </div>
-    </div>
+    <>
+      <QRCodeGuide 
+        toolName="QR Code Generator"
+        toolType="generator"
+        className="py-8"
+      />
+      <PersistentAdManager 
+        beforeCanvasSlot="qr-before-canvas"
+        afterCanvasSlot="qr-after-canvas"
+        toolType="qr"
+      />
+    </>
   )
 
   return (
@@ -493,7 +488,6 @@ export default function QRCodeGeneratorPage() {
         defaultValue: option.key === "qrType" ? "url" : option.defaultValue
       }))}
       maxFiles={0}
-      showUploadArea={false}
       richContent={richContent}
       allowBatchProcessing={false}
       supportedFormats={[]}
@@ -501,7 +495,7 @@ export default function QRCodeGeneratorPage() {
     >
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <QRContentForm 
-          qrType="url"
+          qrType={qrOptions.find(opt => opt.key === "qrType")?.defaultValue || "url"}
           content={content} 
           onContentChange={setContent} 
         />
