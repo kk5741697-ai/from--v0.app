@@ -123,3 +123,111 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* Unified Tool Layout Styles */
+.tool-wrapper {
+  @apply min-h-screen bg-background;
+}
+
+.tools-header {
+  @apply bg-white border-b shadow-sm;
+}
+
+.ad-slot {
+  @apply bg-white;
+}
+
+.ad-before {
+  @apply border-b;
+}
+
+.ad-after {
+  @apply border-t;
+}
+
+.canvas {
+  @apply bg-gray-50;
+}
+
+.upload-area {
+  @apply bg-white;
+}
+
+.tool-content {
+  @apply bg-white;
+}
+
+.sidebar {
+  @apply bg-white border-l shadow-lg;
+}
+
+/* Utility classes for show/hide */
+.d-none {
+  display: none !important;
+}
+
+/* Touch-friendly interactions for mobile */
+.touch-friendly {
+  @apply min-h-[44px] min-w-[44px];
+}
+
+/* Mobile ad spacing */
+.mobile-device.has-mobile-ad {
+  @apply pb-20;
+}
+
+.mobile-sticky-ad {
+  @apply fixed bottom-0 left-0 right-0 bg-white border-t p-2 z-40;
+}
+
+/* Crop area interactions */
+.crop-handle {
+  @apply absolute w-4 h-4 bg-cyan-500 border-2 border-white rounded-full shadow-lg;
+  @apply hover:scale-125 transition-transform cursor-pointer;
+}
+
+/* PDF page thumbnail interactions */
+.pdf-page-thumbnail {
+  @apply relative cursor-pointer border-2 rounded-lg overflow-hidden transition-all;
+  @apply hover:shadow-md hover:scale-105;
+}
+
+.pdf-page-thumbnail.selected {
+  @apply border-blue-500 ring-2 ring-blue-200;
+}
+
+.pdf-page-thumbnail.dragging {
+  @apply opacity-50 scale-95 z-10;
+}
+
+/* QR code preview styling */
+.qr-preview {
+  @apply border rounded-lg shadow-lg bg-white p-4;
+}
+
+/* Responsive grid adjustments */
+@media (max-width: 768px) {
+  .canvas {
+    @apply p-4;
+  }
+  
+  .sidebar {
+    @apply w-full;
+  }
+  
+  .tools-header {
+    @apply px-4 py-3;
+  }
+}
+
+@media (min-width: 1024px) {
+  .sidebar {
+    @apply w-80;
+  }
+}
+
+@media (min-width: 1280px) {
+  .sidebar {
+    @apply w-96;
+  }
+}

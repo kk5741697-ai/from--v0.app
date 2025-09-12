@@ -1,15 +1,16 @@
 "use client"
 
-import { PDFToolsLayout } from "@/components/pdf-tools-layout"
+import { UnifiedToolLayout } from "@/components/unified-tool-layout"
 import { ImageIcon } from "lucide-react"
-import { PDFProcessor } from "@/lib/processors/pdf-processor"
+import { ClientPDFProcessor } from "@/lib/processors/client-pdf-processor"
+import { PDFProcessingGuide } from "@/components/content/pdf-processing-guide"
 
 const convertOptions = [
   {
     key: "outputFormat",
     label: "Output Format",
     type: "select" as const,
-    defaultValue: "jpg",
+    defaultValue: "png",
     selectOptions: [
       { value: "jpeg", label: "JPEG" },
       { value: "png", label: "PNG" },
@@ -62,11 +63,9 @@ async function convertPDFToImage(files: any[], options: any) {
     }
 
     if (files.length === 1) {
-      // Single file conversion
       const images = await ClientPDFProcessor.pdfToImages(files[0].originalFile || files[0].file, conversionOptions)
       
       if (images.length === 1) {
-        // Single image - return directly
         const downloadUrl = URL.createObjectURL(images[0])
         return {
           success: true,
@@ -74,7 +73,6 @@ async function convertPDFToImage(files: any[], options: any) {
           filename: `${files[0].name.replace(".pdf", "")}.${options.outputFormat}`
         }
       } else {
-        // Multiple images - create ZIP
         const JSZip = (await import("jszip")).default
         const zip = new JSZip()
 
@@ -92,30 +90,12 @@ async function convertPDFToImage(files: any[], options: any) {
           filename: `${files[0].name.replace(".pdf", "")}_images.zip`
         }
       }
-    } else {
-      // Multiple files - create ZIP with all images
-      const JSZip = (await import("jszip")).default
-      const zip = new JSZip()
-
-      for (const file of files) {
-        const images = await ClientPDFProcessor.pdfToImages(file.originalFile || file.file, conversionOptions)
-
-        images.forEach((imageBlob, pageIndex) => {
-          const filename = `${file.name.replace(".pdf", "")}_page_${pageIndex + 1}.${options.outputFormat}`
-          zip.file(filename, imageBlob)
-        })
-      }
-
-      const zipBlob = await zip.generateAsync({ type: "blob" })
-      const downloadUrl = URL.createObjectURL(zipBlob)
-
-      return {
-        success: true,
-        downloadUrl,
-        filename: "pdf_images.zip"
-      }
     }
 
+    return {
+      success: false,
+      error: "Multiple file conversion not supported yet"
+    }
   } catch (error) {
     return {
       success: false,
@@ -125,16 +105,26 @@ async function convertPDFToImage(files: any[], options: any) {
 }
 
 export default function PDFToImagePage() {
+  const richContent = (
+    <PDFProcessingGuide 
+      toolName="PDF to Image Converter"
+      toolType="convert"
+      className="py-8"
+    />
+  )
+
   return (
-    <PDFToolsLayout
+    <UnifiedToolLayout
       title="PDF to Image Converter"
       description="Convert PDF pages to high-quality images in multiple formats. Choose resolution, quality, and color mode for perfect results."
       icon={ImageIcon}
-      toolType="convert"
+      toolType="pdf"
       processFunction={convertPDFToImage}
       options={convertOptions}
       maxFiles={3}
       allowPageSelection={true}
+      supportedFormats={["application/pdf"]}
+      richContent={richContent}
     />
   )
 }

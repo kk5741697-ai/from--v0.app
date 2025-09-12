@@ -1,8 +1,9 @@
 "use client"
 
-import { PDFToolsLayout } from "@/components/pdf-tools-layout"
+import { UnifiedToolLayout } from "@/components/unified-tool-layout"
 import { Archive } from "lucide-react"
-import { PDFProcessor } from "@/lib/processors/pdf-processor"
+import { ClientPDFProcessor } from "@/lib/processors/client-pdf-processor"
+import { PDFProcessingGuide } from "@/components/content/pdf-processing-guide"
 
 const compressOptions = [
   {
@@ -51,7 +52,6 @@ async function compressPDF(files: any[], options: any) {
     }
 
     if (files.length === 1) {
-      // Single file compression
       const compressedBlob = await ClientPDFProcessor.compressPDF(files[0].originalFile || files[0].file, compressionOptions)
       const downloadUrl = URL.createObjectURL(compressedBlob)
 
@@ -61,7 +61,6 @@ async function compressPDF(files: any[], options: any) {
         filename: `compressed_${files[0].name}`
       }
     } else {
-      // Multiple files - always create ZIP
       const JSZip = (await import("jszip")).default
       const zip = new JSZip()
 
@@ -90,15 +89,25 @@ async function compressPDF(files: any[], options: any) {
 }
 
 export default function PDFCompressorPage() {
-  return (
-    <PDFToolsLayout
-      title="PDF Compressor"
-      description="Reduce PDF file size while maintaining quality. Optimize images, compress fonts, and remove unnecessary metadata to create smaller files."
-      icon={Archive}
+  const richContent = (
+    <PDFProcessingGuide 
+      toolName="PDF Compressor"
       toolType="compress"
+      className="py-8"
+    />
+  )
+
+  return (
+    <UnifiedToolLayout
+      title="PDF Compressor"
+      description="Reduce PDF file size while maintaining quality. Optimize images, compress fonts, and remove unnecessary metadata."
+      icon={Archive}
+      toolType="pdf"
       processFunction={compressPDF}
       options={compressOptions}
       maxFiles={5}
+      supportedFormats={["application/pdf"]}
+      richContent={richContent}
     />
   )
 }

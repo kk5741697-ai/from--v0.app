@@ -1,8 +1,9 @@
 "use client"
 
-import { ImageToolsLayout } from "@/components/image-tools-layout"
+import { UnifiedToolLayout } from "@/components/unified-tool-layout"
 import { RefreshCw } from "lucide-react"
 import { ImageProcessor } from "@/lib/processors/image-processor"
+import { ImageProcessingGuide } from "@/components/content/image-processing-guide"
 
 const convertOptions = [
   {
@@ -15,6 +16,7 @@ const convertOptions = [
       { value: "png", label: "PNG" },
       { value: "webp", label: "WebP" },
     ],
+    section: "Output",
   },
   {
     key: "quality",
@@ -24,6 +26,7 @@ const convertOptions = [
     min: 10,
     max: 100,
     step: 5,
+    section: "Output",
     condition: (options) => options.outputFormat === "jpeg" || options.outputFormat === "webp",
   },
   {
@@ -31,6 +34,7 @@ const convertOptions = [
     label: "Background Color (for JPEG)",
     type: "color" as const,
     defaultValue: "#ffffff",
+    section: "Output",
     condition: (options) => options.outputFormat === "jpeg",
   },
 ]
@@ -57,11 +61,8 @@ async function convertImages(files: any[], options: any) {
         )
 
         const processedUrl = URL.createObjectURL(processedBlob)
-
-        // Update file name with correct extension
-        const outputFormat = options.outputFormat || "png"
         const baseName = file.name.split(".")[0]
-        const newName = `${baseName}.${outputFormat}`
+        const newName = `${baseName}.${options.outputFormat}`
 
         return {
           ...file,
@@ -87,18 +88,27 @@ async function convertImages(files: any[], options: any) {
 }
 
 export default function ImageConverterPage() {
+  const richContent = (
+    <ImageProcessingGuide 
+      toolName="Image Converter"
+      toolType="convert"
+      className="py-8"
+    />
+  )
+
   return (
-    <ImageToolsLayout
+    <UnifiedToolLayout
       title="Image Converter"
       description="Convert images between different formats including JPEG, PNG, and WebP. Adjust quality settings and background colors for optimal results."
       icon={RefreshCw}
-      toolType="convert"
+      toolType="image"
       processFunction={convertImages}
       options={convertOptions}
       maxFiles={15}
       allowBatchProcessing={true}
       supportedFormats={["image/jpeg", "image/png", "image/gif", "image/webp"]}
       outputFormats={["jpeg", "png", "webp"]}
+      richContent={richContent}
     />
   )
 }

@@ -1,8 +1,9 @@
 "use client"
 
-import { ImageToolsLayout } from "@/components/image-tools-layout"
+import { UnifiedToolLayout } from "@/components/unified-tool-layout"
 import { Archive } from "lucide-react"
 import { ImageProcessor } from "@/lib/processors/image-processor"
+import { ImageProcessingGuide } from "@/components/content/image-processing-guide"
 
 const compressionOptions = [
   {
@@ -13,6 +14,7 @@ const compressionOptions = [
     min: 10,
     max: 100,
     step: 5,
+    section: "Compression",
   },
   {
     key: "compressionLevel",
@@ -25,6 +27,7 @@ const compressionOptions = [
       { value: "high", label: "High Compression (Small Size)" },
       { value: "maximum", label: "Maximum Compression (Smallest)" },
     ],
+    section: "Compression",
   },
   {
     key: "outputFormat",
@@ -36,6 +39,7 @@ const compressionOptions = [
       { value: "png", label: "PNG" },
       { value: "webp", label: "WebP" },
     ],
+    section: "Output",
   },
 ]
 
@@ -87,18 +91,27 @@ async function compressImages(files: any[], options: any) {
 }
 
 export default function ImageCompressorPage() {
+  const richContent = (
+    <ImageProcessingGuide 
+      toolName="Image Compressor"
+      toolType="compress"
+      className="py-8"
+    />
+  )
+
   return (
-    <ImageToolsLayout
+    <UnifiedToolLayout
       title="Image Compressor"
       description="Reduce image file size while maintaining quality. Perfect for web optimization and storage."
       icon={Archive}
-      toolType="compress"
+      toolType="image"
       processFunction={compressImages}
       options={compressionOptions}
       maxFiles={15}
       allowBatchProcessing={true}
       supportedFormats={["image/jpeg", "image/png", "image/webp"]}
       outputFormats={["jpeg", "png", "webp"]}
+      richContent={richContent}
     />
   )
 }

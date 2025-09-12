@@ -1,8 +1,9 @@
 "use client"
 
-import { ImageToolsLayout } from "@/components/image-tools-layout"
+import { UnifiedToolLayout } from "@/components/unified-tool-layout"
 import { Maximize } from "lucide-react"
 import { ImageProcessor } from "@/lib/processors/image-processor"
+import { ImageProcessingGuide } from "@/components/content/image-processing-guide"
 
 const resizeOptions = [
   {
@@ -30,15 +31,28 @@ const resizeOptions = [
     defaultValue: true,
     section: "Dimensions",
   },
-]
-
-const resizePresets = [
-  { name: "Instagram Post", values: { width: 1080, height: 1080, maintainAspectRatio: false } },
-  { name: "YouTube Thumbnail", values: { width: 1280, height: 720, maintainAspectRatio: false } },
-  { name: "Facebook Cover", values: { width: 1200, height: 630, maintainAspectRatio: false } },
-  { name: "Twitter Header", values: { width: 1500, height: 500, maintainAspectRatio: false } },
-  { name: "LinkedIn Post", values: { width: 1200, height: 627, maintainAspectRatio: false } },
-  { name: "50% Scale", values: { resizeMode: "percentage", width: 50, height: 50 } },
+  {
+    key: "outputFormat",
+    label: "Output Format",
+    type: "select" as const,
+    defaultValue: "png",
+    selectOptions: [
+      { value: "png", label: "PNG" },
+      { value: "jpeg", label: "JPEG" },
+      { value: "webp", label: "WebP" },
+    ],
+    section: "Output",
+  },
+  {
+    key: "quality",
+    label: "Quality",
+    type: "slider" as const,
+    defaultValue: 90,
+    min: 10,
+    max: 100,
+    step: 5,
+    section: "Output",
+  },
 ]
 
 async function resizeImages(files: any[], options: any) {
@@ -52,28 +66,17 @@ async function resizeImages(files: any[], options: any) {
 
     const processedFiles = await Promise.all(
       files.map(async (file) => {
-        let targetWidth = options.width
-        let targetHeight = options.height
-        
-        // Handle percentage mode
-        if (options.resizeMode === "percentage") {
-          if (file.dimensions) {
-            targetWidth = Math.round((file.dimensions.width * options.width) / 100)
-            targetHeight = Math.round((file.dimensions.height * options.height) / 100)
-          }
-        }
-        
         const processedBlob = await ImageProcessor.resizeImage(file.originalFile || file.file, {
-          width: targetWidth,
-          height: targetHeight,
+          width: options.width,
+          height: options.height,
           maintainAspectRatio: options.maintainAspectRatio,
-          outputFormat: "png"
+          outputFormat: options.outputFormat,
+          quality: options.quality
         })
 
         const processedUrl = URL.createObjectURL(processedBlob)
-        
         const baseName = file.name.split(".")[0]
-        const newName = `${baseName}_resized.png`
+        const newName = `${baseName}_resized.${options.outputFormat}`
 
         return {
           ...file,
@@ -82,7 +85,7 @@ async function resizeImages(files: any[], options: any) {
           name: newName,
           processedSize: processedBlob.size,
           blob: processedBlob,
-          dimensions: { width: targetWidth, height: targetHeight }
+          dimensions: { width: options.width, height: options.height }
         }
       })
     )
@@ -100,19 +103,27 @@ async function resizeImages(files: any[], options: any) {
 }
 
 export default function ImageResizerPage() {
+  const richContent = (
+    <ImageProcessingGuide 
+      toolName="Image Resizer"
+      toolType="resize"
+      className="py-8"
+    />
+  )
+
   return (
-    <ImageToolsLayout
+    <UnifiedToolLayout
       title="Resize Image"
       description="Define your dimensions by percent or pixel, and resize your images with presets."
       icon={Maximize}
-      toolType="resize"
+      toolType="image"
       processFunction={resizeImages}
       options={resizeOptions}
       maxFiles={20}
-      presets={resizePresets}
       allowBatchProcessing={true}
       supportedFormats={["image/jpeg", "image/png", "image/webp", "image/gif"]}
       outputFormats={["jpeg", "png", "webp"]}
+      richContent={richContent}
     />
   )
 }
