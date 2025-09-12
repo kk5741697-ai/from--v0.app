@@ -30,52 +30,7 @@ import { toast } from "@/hooks/use-toast"
 import { ClientPDFProcessor } from "@/lib/processors/client-pdf-processor"
 import { AdBanner } from "@/components/ads/ad-banner"
 import { PDFProcessingGuide } from "@/components/content/pdf-processing-guide"
-
-// Helper functions for PDF processing
-async function getFallbackPDFInfo(file: File): Promise<{ pageCount: number; pages: any[] }> {
-  // Fallback method using pdf-lib only
-  try {
-    const arrayBuffer = await file.arrayBuffer()
-    const pdf = await PDFDocument.load(arrayBuffer)
-    const pageCount = pdf.getPageCount()
-    const pages: any[] = []
-
-    for (let i = 0; i < pageCount; i++) {
-      pages.push({
-        pageNumber: i + 1,
-        width: 200,
-        height: 280,
-        thumbnail: createPlaceholderThumbnail(i + 1, pageCount),
-        rotation: 0,
-        selected: false
-      })
-    }
-
-    return { pageCount, pages }
-  } catch (error) {
-    throw new Error("Failed to load PDF file")
-  }
-}
-
-function createPlaceholderThumbnail(pageNum: number, totalPages: number): string {
-  const canvas = document.createElement("canvas")
-  const ctx = canvas.getContext("2d")!
-  canvas.width = 200
-  canvas.height = 280
-  
-  ctx.fillStyle = "#ffffff"
-  ctx.fillRect(0, 0, canvas.width, canvas.height)
-  ctx.strokeStyle = "#e2e8f0"
-  ctx.strokeRect(0, 0, canvas.width, canvas.height)
-  
-  ctx.fillStyle = "#6b7280"
-  ctx.font = "14px Arial"
-  ctx.textAlign = "center"
-  ctx.fillText(`Page ${pageNum}`, canvas.width / 2, canvas.height / 2)
-  ctx.fillText(`of ${totalPages}`, canvas.width / 2, canvas.height / 2 + 20)
-  
-  return canvas.toDataURL("image/png", 0.8)
-}
+import { PDFDocument } from "pdf-lib"
 
 // Helper functions for PDF processing
 async function getFallbackPDFInfo(file: File): Promise<{ pageCount: number; pages: any[] }> {
@@ -205,6 +160,39 @@ export function PDFToolsLayout({
         continue
       }
 
+      try {
+        const pdfInfo = await getFallbackPDFInfo(file)
+        
+        const pdfFile: PDFFile = {
+          id: `${file.name}-${Date.now()}-${Math.random()}`,
+          file,
+          originalFile: file,
+          name: file.name,
+          size: file.size,
+          pageCount: pdfInfo.pageCount,
+          pages: pdfInfo.pages,
+          preview: "/placeholder.svg"
+        }
+
+        newFiles.push(pdfFile)
+      } catch (error) {
+        toast({
+          title: "Error loading PDF",
+          description: `Failed to load ${file.name}`,
+          variant: "destructive"
+        })
+      }
+    }
+
+    if (newFiles.length > 0) {
+      setFiles(prev => [...prev, ...newFiles])
+      setShowUploadArea(false)
+      toast({
+        title: "PDFs uploaded",
+        description: `${newFiles.length} PDF${newFiles.length > 1 ? 's' : ''} loaded successfully`
+      })
+    }
+  }
 
   const handleDrop = useCallback((e: React.DragEvent) => {
     e.preventDefault()

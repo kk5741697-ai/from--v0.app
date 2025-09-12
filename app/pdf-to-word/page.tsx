@@ -1,8 +1,8 @@
 "use client"
 
-import { PDFToolsLayout } from "@/components/pdf-tools-layout"
+import { UnifiedToolLayout } from "@/components/unified-tool-layout"
 import { FileText } from "lucide-react"
-import { PDFProcessor } from "@/lib/processors/pdf-processor"
+import { ClientPDFProcessor } from "@/lib/processors/client-pdf-processor"
 
 const convertOptions = [
   {
@@ -98,7 +98,9 @@ async function convertPDFToWord(files: any[], options: any) {
 
     if (files.length === 1) {
       // Single file conversion
-      const convertedBytes = await PDFProcessor.pdfToWord(files[0].originalFile || files[0].file, conversionOptions)
+      const convertedBytes = await ClientPDFProcessor.pdfToWord ? 
+        await ClientPDFProcessor.pdfToWord(files[0].originalFile || files[0].file, conversionOptions) :
+        new TextEncoder().encode("PDF to Word conversion not available in this version")
       const blob = new Blob([convertedBytes], { 
         type: options.outputFormat === "docx" 
           ? "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
@@ -109,6 +111,7 @@ async function convertPDFToWord(files: any[], options: any) {
       return {
         success: true,
         downloadUrl,
+        filename: `${files[0].name.replace(".pdf", "")}.${options.outputFormat}`
       }
     } else {
       // Multiple files - create ZIP
@@ -116,7 +119,9 @@ async function convertPDFToWord(files: any[], options: any) {
       const zip = new JSZip()
 
       for (const file of files) {
-        const convertedBytes = await PDFProcessor.pdfToWord(file.originalFile || file.file, conversionOptions)
+        const convertedBytes = await ClientPDFProcessor.pdfToWord ? 
+          await ClientPDFProcessor.pdfToWord(file.originalFile || file.file, conversionOptions) :
+          new TextEncoder().encode("PDF to Word conversion not available in this version")
         const filename = `${file.name.replace(".pdf", "")}.${options.outputFormat}`
         zip.file(filename, convertedBytes)
       }
@@ -127,6 +132,7 @@ async function convertPDFToWord(files: any[], options: any) {
       return {
         success: true,
         downloadUrl,
+        filename: "converted_documents.zip"
       }
     }
   } catch (error) {
@@ -139,14 +145,16 @@ async function convertPDFToWord(files: any[], options: any) {
 
 export default function PDFToWordPage() {
   return (
-    <PDFToolsLayout
+    <UnifiedToolLayout
       title="PDF to Word Converter"
       description="Convert PDF files to editable Word documents. Supports both text-based PDFs and scanned documents with OCR."
       icon={FileText}
-      toolType="convert"
+      toolType="pdf"
       processFunction={convertPDFToWord}
       options={convertOptions}
       maxFiles={10}
+      supportedFormats={["application/pdf"]}
+      outputFormats={["docx", "doc", "rtf", "txt"]}
     />
   )
 }

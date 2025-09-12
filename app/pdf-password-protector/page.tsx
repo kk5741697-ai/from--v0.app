@@ -1,8 +1,8 @@
 "use client"
 
-import { PDFToolsLayout } from "@/components/pdf-tools-layout"
+import { UnifiedToolLayout } from "@/components/unified-tool-layout"
 import { Lock } from "lucide-react"
-import { PDFProcessor } from "@/lib/processors/pdf-processor"
+import { ClientPDFProcessor } from "@/lib/processors/client-pdf-processor"
 
 const protectOptions = [
   {
@@ -127,14 +127,16 @@ async function protectPDF(files: any[], options: any) {
 
 export default function PDFPasswordProtectorPage() {
   return (
-    <PDFToolsLayout
+    <UnifiedToolLayout
       title="PDF Password Protector"
       description="Add password protection and security restrictions to your PDF files. Control printing, copying, and editing permissions with strong encryption."
       icon={Lock}
-      toolType="protect"
+      toolType="pdf"
       processFunction={protectPDF}
       options={protectOptions}
       maxFiles={5}
+      supportedFormats={["application/pdf"]}
+      outputFormats={["pdf"]}
     />
   )
 }

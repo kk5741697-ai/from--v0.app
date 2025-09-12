@@ -1,8 +1,8 @@
 "use client"
 
-import { PDFToolsLayout } from "@/components/pdf-tools-layout"
+import { UnifiedToolLayout } from "@/components/unified-tool-layout"
 import { FileImage } from "lucide-react"
-import { PDFProcessor } from "@/lib/processors/pdf-processor"
+import { ClientPDFProcessor } from "@/lib/processors/client-pdf-processor"
 
 const convertOptions = [
   {
@@ -68,7 +68,8 @@ async function convertImagesToPDF(files: any[], options: any) {
     const imageFiles = files.map((f) => f.originalFile || f.file)
 
     // Process image to PDF conversion using client-side processor
-    const pdfBlob = await ClientPDFProcessor.imagesToPDF(imageFiles, options)
+    const pdfBytes = await ClientPDFProcessor.imagesToPDF(imageFiles, options)
+    const pdfBlob = new Blob([pdfBytes], { type: "application/pdf" })
 
     const downloadUrl = URL.createObjectURL(pdfBlob)
 
@@ -87,15 +88,16 @@ async function convertImagesToPDF(files: any[], options: any) {
 
 export default function ImageToPDFPage() {
   return (
-    <PDFToolsLayout
+    <UnifiedToolLayout
       title="Image to PDF Converter"
       description="Convert multiple images (JPG, PNG, WebP) into a single PDF document with custom page layouts, margins, and sizing options."
       icon={FileImage}
-      toolType="convert"
+      toolType="pdf"
       processFunction={convertImagesToPDF}
       options={convertOptions}
       maxFiles={20}
-      allowPageReorder={true}
+      supportedFormats={["image/jpeg", "image/png", "image/webp", "image/gif"]}
+      outputFormats={["pdf"]}
     />
   )
 }

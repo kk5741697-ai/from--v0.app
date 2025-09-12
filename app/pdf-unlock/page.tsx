@@ -1,8 +1,8 @@
 "use client"
 
-import { PDFToolsLayout } from "@/components/pdf-tools-layout"
+import { UnifiedToolLayout } from "@/components/unified-tool-layout"
 import { Unlock } from "lucide-react"
-import { PDFProcessor } from "@/lib/processors/pdf-processor"
+import { ClientPDFProcessor } from "@/lib/processors/client-pdf-processor"
 
 const unlockOptions = [
   {
@@ -42,17 +42,15 @@ async function unlockPDF(files: any[], options: any) {
     }
 
     // Simulate PDF unlocking process
-    const unlockedBytes = await PDFProcessor.compressPDF(files[0].file, {
-      quality: 100,
+    const unlockedBlob = await ClientPDFProcessor.compressPDF(files[0].originalFile || files[0].file, {
       compressionLevel: "low"
     })
-
-    const blob = new Blob([unlockedBytes], { type: "application/pdf" })
     const downloadUrl = URL.createObjectURL(blob)
 
     return {
       success: true,
       downloadUrl,
+      filename: `unlocked_${files[0].name}`
     }
   } catch (error) {
     return {
@@ -64,14 +62,16 @@ async function unlockPDF(files: any[], options: any) {
 
 export default function PDFUnlockPage() {
   return (
-    <PDFToolsLayout
+    <UnifiedToolLayout
       title="Unlock PDF"
       description="Remove password protection and restrictions from PDF files. Unlock encrypted PDFs with the correct password."
       icon={Unlock}
-      toolType="protect"
+      toolType="pdf"
       processFunction={unlockPDF}
       options={unlockOptions}
       maxFiles={1}
+      supportedFormats={["application/pdf"]}
+      outputFormats={["pdf"]}
     />
   )
 }
