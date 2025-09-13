@@ -167,19 +167,19 @@
 
 /* Interface transitions */
 .tool-wrapper .upload-area.hidden {
-  @apply hidden;
+  display: none;
 }
 
 .tool-wrapper .tools-header.hidden {
-  @apply hidden;
+  display: none;
 }
 
 .tool-wrapper .canvas.hidden {
-  @apply hidden;
+  display: none;
 }
 
 .tool-wrapper .sidebar.hidden {
-  @apply hidden;
+  display: none;
 }
 
 /* Enhanced interactions */
