@@ -4,11 +4,7 @@ import { UnifiedToolLayout } from "@/components/unified-tool-layout"
 import { RefreshCw } from "lucide-react"
 import { ImageProcessor } from "@/lib/processors/image-processor"
 import { ImageProcessingGuide } from "@/components/content/image-processing-guide"
-
-export const metadata = {
-  title: "Image Converter - Convert Image Formats Online",
-  description: "Convert images between different formats including JPEG, PNG, WebP, and AVIF. Advanced quality controls and background color options for professional results."
-}
+import { PersistentAdManager } from "@/components/ads/persistent-ad-manager"
 
 const convertOptions = [
   {
@@ -21,9 +17,8 @@ const convertOptions = [
       { value: "jpeg", label: "JPEG" },
       { value: "webp", label: "WebP" },
       { value: "avif", label: "AVIF" },
-    ],
-    section: "Output",
-  },
+    ]
+  }
 ]
 
 async function convertImages(files: any[], options: any) {
@@ -42,8 +37,8 @@ async function convertImages(files: any[], options: any) {
           options.outputFormat as "jpeg" | "png" | "webp",
           {
             outputFormat: options.outputFormat as "jpeg" | "png" | "webp",
-            quality: 90,
-            backgroundColor: "#ffffff",
+            quality: options.quality,
+            backgroundColor: options.backgroundColor,
           },
         )
 
@@ -76,11 +71,18 @@ async function convertImages(files: any[], options: any) {
 
 export default function ImageConverterPage() {
   const richContent = (
-    <ImageProcessingGuide 
-      toolName="Image Converter"
-      toolType="convert"
-      className="py-8"
-    />
+    <>
+      <ImageProcessingGuide 
+        toolName="Image Converter"
+        toolType="convert"
+        className="py-8"
+      />
+      <PersistentAdManager 
+        beforeCanvasSlot="image-before-canvas"
+        afterCanvasSlot="image-after-canvas"
+        toolType="image"
+      />
+    </>
   )
 
   return (

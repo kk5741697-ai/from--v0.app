@@ -24,9 +24,11 @@ const rotateOptions = [
       { value: "180", label: "180° (Half Turn)" },
       { value: "270", label: "270° (Three Quarter Turn)" },
       { value: "custom", label: "Custom Angle" },
+    ]
     section: "Rotation",
     condition: (options) => options.angle === "custom",
     section: "Rotation",
+  }
 ]
 
 async function rotateImages(files: any[], options: any) {
