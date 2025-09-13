@@ -25,6 +25,27 @@ A few tweaks and you’re ready to earn
 Thank you for your interest in Google AdSense. We've reviewed your application, and there are a few things you'll need to adjust before it can be approved. Once you’ve done so, one of our specialists will review your site for compliance with our Program policies.
 
 
+🔹 Layout Structure (Consistent Across All Tools)
+Upload View (when files.length === 0):
+
+Unified before canvas ads
+Upload area
+After canvas ads
+Rich educational content
+Footer
+Tool Interface (when files.length > 0):
+
+Tools header
+Unified before canvas ads
+Canvas/workspace area
+After canvas ads
+Sidebar (desktop) / Mobile panel
+🔹 AdSense Compliance
+Only 2 ad slots: unified-before-canvas and unified-after-canvas
+Persistent ads: Same ads reused, no additional requests
+Rich content: Educational guides for each tool type
+
+
 also don't remove the .env file
 # AdSense Configuration (Optional - leave empty to disable ads)
 NEXT_PUBLIC_ADSENSE_PUBLISHER_ID=ca-pub-4755003409431265
