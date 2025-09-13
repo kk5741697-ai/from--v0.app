@@ -19,6 +19,24 @@ const convertOptions = [
     ]
     section: "Output",
   }
+  {
+    key: "quality",
+    label: "Quality",
+    type: "slider" as const,
+    defaultValue: 90,
+    min: 10,
+    max: 100,
+    step: 5,
+    section: "Output",
+  },
+  {
+    key: "backgroundColor",
+    label: "Background Color (JPEG)",
+    type: "color" as const,
+    defaultValue: "#ffffff",
+    section: "Output",
+    condition: (options) => options.outputFormat === "jpeg",
+  },
 ]
 
 async function convertImages(files: any[], options: any) {
