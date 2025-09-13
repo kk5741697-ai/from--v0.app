@@ -39,7 +39,7 @@ Tools header
 Unified before canvas ads
 Canvas/workspace area
 Unified after canvas ads
-Sidebar (desktop) / Mobile panel
+Sidebar (desktop - right side fixed with position fixed, height full) / Mobile panel
 No footer
 
 🔹 AdSense Compliance
