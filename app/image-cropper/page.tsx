@@ -5,11 +5,6 @@ import { Crop } from "lucide-react"
 import { ImageProcessor } from "@/lib/processors/image-processor"
 import { ImageProcessingGuide } from "@/components/content/image-processing-guide"
 
-export const metadata = {
-  title: "Image Cropper - Crop Images Online",
-  description: "Crop images with precision using our advanced visual editor, aspect ratio presets, and grid guides. Professional cropping tools for social media, web optimization, and creative projects."
-}
-
 const cropOptions = [
   {
     key: "aspectRatio",

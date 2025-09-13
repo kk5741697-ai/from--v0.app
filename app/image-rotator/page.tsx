@@ -5,10 +5,6 @@ import { RotateCw } from "lucide-react"
 import { ImageProcessor } from "@/lib/processors/image-processor"
 import { ImageProcessingGuide } from "@/components/content/image-processing-guide"
 
-export const metadata = {
-  title: "Image Rotator - Rotate Images Online",
-  description: "Rotate images by preset angles (90°, 180°, 270°) or any custom angle. Perfect for fixing orientation and creating artistic effects with precise control."
-}
 const rotateOptions = [
   {
     key: "angle",

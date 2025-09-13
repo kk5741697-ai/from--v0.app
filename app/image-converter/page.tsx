@@ -16,9 +16,9 @@ const convertOptions = [
       { value: "png", label: "PNG" },
       { value: "jpeg", label: "JPEG" },
       { value: "webp", label: "WebP" },
-    ]
+    ],
     section: "Output",
-  }
+  },
   {
     key: "quality",
     label: "Quality",
@@ -89,18 +89,11 @@ async function convertImages(files: any[], options: any) {
 
 export default function ImageConverterPage() {
   const richContent = (
-    <>
-      <ImageProcessingGuide 
-        toolName="Image Converter"
-        toolType="convert"
-        className="py-8"
-      />
-      <PersistentAdManager 
-        beforeCanvasSlot="image-before-canvas"
-        afterCanvasSlot="image-after-canvas"
-        toolType="image"
-      />
-    </>
+    <ImageProcessingGuide 
+      toolName="Image Converter"
+      toolType="convert"
+      className="py-8"
+    />
   )
 
   return (

@@ -4,7 +4,6 @@ import { UnifiedToolLayout } from "@/components/unified-tool-layout"
 import { ImageIcon } from "lucide-react"
 import { ClientPDFProcessor } from "@/lib/processors/client-pdf-processor"
 import { PDFProcessingGuide } from "@/components/content/pdf-processing-guide"
-import { PersistentAdManager } from "@/components/ads/persistent-ad-manager"
 
 const convertOptions = [
   {
@@ -107,13 +106,11 @@ async function convertPDFToImage(files: any[], options: any) {
 
 export default function PDFToImagePage() {
   const richContent = (
-    <>
-      <PDFProcessingGuide 
-        toolName="PDF to Image Converter"
-        toolType="convert"
-        className="py-8"
-      />
-    </>
+    <PDFProcessingGuide 
+      toolName="PDF to Image Converter"
+      toolType="convert"
+      className="py-8"
+    />
   )
 
   return (

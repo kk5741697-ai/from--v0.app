@@ -5,10 +5,6 @@ import { FlipHorizontal } from "lucide-react"
 import { ImageProcessor } from "@/lib/processors/image-processor"
 import { ImageProcessingGuide } from "@/components/content/image-processing-guide"
 
-export const metadata = {
-  title: "Image Flipper - Flip Images Online",
-  description: "Flip images horizontally, vertically, or both directions with batch processing support. Perfect for creating mirror effects and correcting image orientation."
-}
 const flipOptions = [
   {
     key: "flipDirection",
