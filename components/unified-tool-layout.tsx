@@ -109,6 +109,7 @@ export function UnifiedToolLayout({
   const [selectedPages, setSelectedPages] = useState<string[]>([])
   const [zoomLevel, setZoomLevel] = useState(100)
   const [draggedPageIndex, setDraggedPageIndex] = useState<number | null>(null)
+  const [dragOverIndex, setDragOverIndex] = useState<number | null>(null)
   
   const fileInputRef = useRef<HTMLInputElement>(null)
   const canvasRef = useRef<HTMLDivElement>(null)
@@ -122,7 +123,7 @@ export function UnifiedToolLayout({
     setToolOptions(defaultOptions)
   }, [options])
 
-  // Show/hide interface based on files
+  // Show/hide interface based on files - QR tools always show interface
   const showToolsInterface = files.length > 0 || toolType === "qr"
   const showUploadArea = files.length === 0 && toolType !== "qr"
 
@@ -208,14 +209,61 @@ export function UnifiedToolLayout({
   }
 
   const getPDFInfo = async (file: File): Promise<{ pageCount: number; pages: any[] }> => {
-    // Simplified PDF info for demo
-    const pageCount = Math.floor(Math.random() * 20) + 5
-    const pages = Array.from({ length: pageCount }, (_, i) => ({
-      pageNumber: i + 1,
-      thumbnail: createPDFThumbnail(i + 1, pageCount),
-      selected: false
-    }))
-    return { pageCount, pages }
+    try {
+      // Use PDF.js to extract real page thumbnails
+      const pdfjsLib = await import('pdfjs-dist')
+      pdfjsLib.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js`
+      
+      const arrayBuffer = await file.arrayBuffer()
+      const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise
+      const pageCount = pdf.numPages
+      const pages = []
+
+      for (let i = 1; i <= Math.min(pageCount, 20); i++) { // Limit to 20 pages for performance
+        try {
+          const page = await pdf.getPage(i)
+          const viewport = page.getViewport({ scale: 0.5 })
+          
+          const canvas = document.createElement("canvas")
+          const ctx = canvas.getContext("2d")!
+          canvas.width = viewport.width
+          canvas.height = viewport.height
+          
+          await page.render({
+            canvasContext: ctx,
+            viewport: viewport
+          }).promise
+          
+          const thumbnail = canvas.toDataURL("image/png", 0.8)
+          
+          pages.push({
+            pageNumber: i,
+            thumbnail,
+            selected: false
+          })
+        } catch (error) {
+          console.error(`Failed to render page ${i}:`, error)
+          // Fallback to placeholder
+          pages.push({
+            pageNumber: i,
+            thumbnail: createPDFThumbnail(i, pageCount),
+            selected: false
+          })
+        }
+      }
+
+      return { pageCount, pages }
+    } catch (error) {
+      console.error("Failed to process PDF with PDF.js:", error)
+      // Fallback to placeholder thumbnails
+      const pageCount = Math.floor(Math.random() * 20) + 5
+      const pages = Array.from({ length: pageCount }, (_, i) => ({
+        pageNumber: i + 1,
+        thumbnail: createPDFThumbnail(i + 1, pageCount),
+        selected: false
+      }))
+      return { pageCount, pages }
+    }
   }
 
   const createPDFThumbnail = (pageNum: number, totalPages: number): string => {
@@ -337,15 +385,22 @@ export function UnifiedToolLayout({
       return
     }
 
+    // Single file - direct download
     if (processedFiles.length === 1) {
       const file = processedFiles[0]
       const link = document.createElement("a")
       link.href = file.processedPreview || file.preview
       link.download = file.name
       link.click()
+      
+      toast({
+        title: "Download started",
+        description: "File downloaded successfully"
+      })
       return
     }
 
+    // Multiple files - create ZIP
     try {
       const JSZip = (await import("jszip")).default
       const zip = new JSZip()
@@ -356,7 +411,11 @@ export function UnifiedToolLayout({
         }
       })
 
-      const zipBlob = await zip.generateAsync({ type: "blob" })
+      const zipBlob = await zip.generateAsync({ 
+        type: "blob",
+        compression: "DEFLATE",
+        compressionOptions: { level: 6 }
+      })
       const url = URL.createObjectURL(zipBlob)
       const link = document.createElement("a")
       link.href = url
@@ -400,34 +459,42 @@ export function UnifiedToolLayout({
     return acc
   }, {} as Record<string, ToolOption[]>)
 
-  // Crop area handlers for image tools
+  // Enhanced crop area handlers for image tools
   const handleCropMouseDown = (e: React.MouseEvent, handle?: string) => {
     if (toolType !== "image") return
     
     e.preventDefault()
+    e.stopPropagation()
     setIsDragging(true)
+    
     const rect = canvasRef.current?.getBoundingClientRect()
     if (rect) {
-      setDragStart({
-        x: e.clientX - rect.left,
-        y: e.clientY - rect.top
-      })
+      const x = ((e.clientX - rect.left) / rect.width) * 100
+      const y = ((e.clientY - rect.top) / rect.height) * 100
+      setDragStart({ x, y })
     }
   }
 
   const handleCropMouseMove = (e: React.MouseEvent) => {
     if (!isDragging || toolType !== "image") return
     
+    e.preventDefault()
     const rect = canvasRef.current?.getBoundingClientRect()
     if (rect) {
       const x = ((e.clientX - rect.left) / rect.width) * 100
       const y = ((e.clientY - rect.top) / rect.height) * 100
       
+      const deltaX = x - dragStart.x
+      const deltaY = y - dragStart.y
+      
       setCropArea(prev => ({
-        ...prev,
-        x: Math.max(0, Math.min(100 - prev.width, x)),
-        y: Math.max(0, Math.min(100 - prev.height, y))
+        x: Math.max(0, Math.min(100 - prev.width, prev.x + deltaX)),
+        y: Math.max(0, Math.min(100 - prev.height, prev.y + deltaY)),
+        width: prev.width,
+        height: prev.height
       }))
+      
+      setDragStart({ x, y })
     }
   }
 
@@ -435,19 +502,26 @@ export function UnifiedToolLayout({
     setIsDragging(false)
   }
 
-  // Page reordering for PDF tools
+  // Enhanced page reordering for PDF tools
   const handlePageDragStart = (e: React.DragEvent, pageIndex: number) => {
     setDraggedPageIndex(pageIndex)
     e.dataTransfer.effectAllowed = "move"
+    e.dataTransfer.setData("text/plain", pageIndex.toString())
   }
 
-  const handlePageDragOver = (e: React.DragEvent) => {
+  const handlePageDragOver = (e: React.DragEvent, targetIndex: number) => {
     e.preventDefault()
     e.dataTransfer.dropEffect = "move"
+    setDragOverIndex(targetIndex)
+  }
+
+  const handlePageDragLeave = () => {
+    setDragOverIndex(null)
   }
 
   const handlePageDrop = (e: React.DragEvent, targetIndex: number) => {
     e.preventDefault()
+    setDragOverIndex(null)
     
     if (draggedPageIndex === null || draggedPageIndex === targetIndex) return
     
@@ -466,6 +540,59 @@ export function UnifiedToolLayout({
     })
     
     setDraggedPageIndex(null)
+  }
+
+  // Crop area resize handlers
+  const handleCropResize = (e: React.MouseEvent, corner: string) => {
+    e.preventDefault()
+    e.stopPropagation()
+    
+    const rect = canvasRef.current?.getBoundingClientRect()
+    if (!rect) return
+    
+    const startX = e.clientX
+    const startY = e.clientY
+    const startCrop = { ...cropArea }
+    
+    const handleMouseMove = (moveEvent: MouseEvent) => {
+      const deltaX = ((moveEvent.clientX - startX) / rect.width) * 100
+      const deltaY = ((moveEvent.clientY - startY) / rect.height) * 100
+      
+      let newCrop = { ...startCrop }
+      
+      switch (corner) {
+        case "top-left":
+          newCrop.x = Math.max(0, Math.min(startCrop.x + startCrop.width - 5, startCrop.x + deltaX))
+          newCrop.y = Math.max(0, Math.min(startCrop.y + startCrop.height - 5, startCrop.y + deltaY))
+          newCrop.width = startCrop.width - (newCrop.x - startCrop.x)
+          newCrop.height = startCrop.height - (newCrop.y - startCrop.y)
+          break
+        case "top-right":
+          newCrop.y = Math.max(0, Math.min(startCrop.y + startCrop.height - 5, startCrop.y + deltaY))
+          newCrop.width = Math.max(5, Math.min(100 - startCrop.x, startCrop.width + deltaX))
+          newCrop.height = startCrop.height - (newCrop.y - startCrop.y)
+          break
+        case "bottom-left":
+          newCrop.x = Math.max(0, Math.min(startCrop.x + startCrop.width - 5, startCrop.x + deltaX))
+          newCrop.width = startCrop.width - (newCrop.x - startCrop.x)
+          newCrop.height = Math.max(5, Math.min(100 - startCrop.y, startCrop.height + deltaY))
+          break
+        case "bottom-right":
+          newCrop.width = Math.max(5, Math.min(100 - startCrop.x, startCrop.width + deltaX))
+          newCrop.height = Math.max(5, Math.min(100 - startCrop.y, startCrop.height + deltaY))
+          break
+      }
+      
+      setCropArea(newCrop)
+    }
+    
+    const handleMouseUp = () => {
+      document.removeEventListener("mousemove", handleMouseMove)
+      document.removeEventListener("mouseup", handleMouseUp)
+    }
+    
+    document.addEventListener("mousemove", handleMouseMove)
+    document.addEventListener("mouseup", handleMouseUp)
   }
 
   // Mobile Sidebar Component
@@ -618,7 +745,7 @@ export function UnifiedToolLayout({
               size="lg"
             >
               <Download className="h-4 w-4 mr-2" />
-              Download All
+              Download {files.filter(f => f.processed).length === 1 ? 'File' : 'All'}
             </Button>
           )}
         </div>
@@ -689,7 +816,7 @@ export function UnifiedToolLayout({
           {/* Canvas - Hidden until files uploaded (except QR) */}
           <div className={`canvas ${showToolsInterface ? '' : 'hidden'}`}>
             <div className="flex-1 bg-gray-50 p-4 lg:p-6 min-h-[60vh]">
-              {/* Image Tools Canvas */}
+              {/* Image Tools Canvas with Enhanced Cropper */}
               {toolType === "image" && files.length > 0 && (
                 <div className="space-y-4">
                   {files.map((file) => (
@@ -697,37 +824,57 @@ export function UnifiedToolLayout({
                       <CardContent className="p-4">
                         <div 
                           ref={canvasRef}
-                          className="relative w-full aspect-video bg-gray-100 rounded-lg overflow-hidden cursor-crosshair"
+                          className="relative w-full aspect-video bg-gray-100 rounded-lg overflow-hidden cursor-crosshair select-none"
+                          style={{ transform: `scale(${zoomLevel / 100})`, transformOrigin: 'center' }}
                           onMouseDown={handleCropMouseDown}
                           onMouseMove={handleCropMouseMove}
                           onMouseUp={handleCropMouseUp}
-                          style={{ transform: `scale(${zoomLevel / 100})`, transformOrigin: 'center' }}
+                          onMouseLeave={handleCropMouseUp}
                         >
                           <img
                             src={file.processedPreview || file.preview}
                             alt={file.name}
-                            className="w-full h-full object-contain"
+                            className="w-full h-full object-contain pointer-events-none"
+                            draggable={false}
                           />
                           
-                          {/* Crop Area Overlay */}
+                          {/* Enhanced Crop Area Overlay */}
                           <div 
                             className={`crop-area absolute border-2 border-cyan-500 bg-cyan-500/10 ${isDragging ? 'dragging' : ''}`}
                             style={{
                               left: `${cropArea.x}%`,
                               top: `${cropArea.y}%`,
                               width: `${cropArea.width}%`,
-                              height: `${cropArea.height}%`
+                              height: `${cropArea.height}%`,
+                              cursor: isDragging ? 'grabbing' : 'grab'
                             }}
                           >
-                            {/* Crop Handles */}
-                            <div className="crop-handle absolute -top-2 -left-2"></div>
-                            <div className="crop-handle absolute -top-2 -right-2"></div>
-                            <div className="crop-handle absolute -bottom-2 -left-2"></div>
-                            <div className="crop-handle absolute -bottom-2 -right-2"></div>
+                            {/* Enhanced Crop Handles */}
+                            <div 
+                              className="crop-handle absolute -top-2 -left-2 cursor-nw-resize"
+                              onMouseDown={(e) => handleCropResize(e, "top-left")}
+                            ></div>
+                            <div 
+                              className="crop-handle absolute -top-2 -right-2 cursor-ne-resize"
+                              onMouseDown={(e) => handleCropResize(e, "top-right")}
+                            ></div>
+                            <div 
+                              className="crop-handle absolute -bottom-2 -left-2 cursor-sw-resize"
+                              onMouseDown={(e) => handleCropResize(e, "bottom-left")}
+                            ></div>
+                            <div 
+                              className="crop-handle absolute -bottom-2 -right-2 cursor-se-resize"
+                              onMouseDown={(e) => handleCropResize(e, "bottom-right")}
+                            ></div>
                             
                             {/* Move handle */}
-                            <div className="absolute inset-0 flex items-center justify-center">
+                            <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
                               <Move className="h-4 w-4 text-cyan-600 opacity-75" />
+                            </div>
+                            
+                            {/* Crop dimensions display */}
+                            <div className="absolute -top-8 left-0 bg-cyan-600 text-white text-xs px-2 py-1 rounded">
+                              {Math.round(cropArea.width)}% × {Math.round(cropArea.height)}%
                             </div>
                           </div>
                         </div>
@@ -747,7 +894,7 @@ export function UnifiedToolLayout({
                 </div>
               )}
 
-              {/* PDF Tools Canvas */}
+              {/* Enhanced PDF Tools Canvas with Better Drag & Drop */}
               {toolType === "pdf" && files.length > 0 && (
                 <div className="space-y-4">
                   {files.map((file) => (
@@ -780,23 +927,28 @@ export function UnifiedToolLayout({
                               {file.pages.map((page, pageIndex) => {
                                 const pageKey = `${file.id}-page-${page.pageNumber}`
                                 const isSelected = selectedPages.includes(pageKey)
+                                const isDraggedOver = dragOverIndex === pageIndex
                                 
                                 return (
                                   <div
                                     key={pageKey}
                                     className={`pdf-page-thumbnail relative cursor-pointer border-2 rounded-lg overflow-hidden transition-all ${
                                       isSelected ? 'border-red-500 ring-2 ring-red-200' : 'border-gray-200 hover:border-red-300'
-                                    } ${draggedPageIndex === pageIndex ? 'dragging' : ''}`}
+                                    } ${draggedPageIndex === pageIndex ? 'opacity-50 scale-95 z-10' : ''} ${
+                                      isDraggedOver ? 'border-blue-500 bg-blue-50' : ''
+                                    }`}
                                     onClick={() => allowPageSelection && togglePageSelection(pageKey)}
                                     draggable={allowPageReorder}
                                     onDragStart={(e) => allowPageReorder && handlePageDragStart(e, pageIndex)}
-                                    onDragOver={allowPageReorder ? handlePageDragOver : undefined}
+                                    onDragOver={(e) => allowPageReorder && handlePageDragOver(e, pageIndex)}
+                                    onDragLeave={allowPageReorder ? handlePageDragLeave : undefined}
                                     onDrop={(e) => allowPageReorder && handlePageDrop(e, pageIndex)}
                                   >
                                     <img
                                       src={page.thumbnail}
                                       alt={`Page ${page.pageNumber}`}
                                       className="w-full aspect-[3/4] object-cover"
+                                      draggable={false}
                                     />
                                     <div className="absolute bottom-0 left-0 right-0 bg-black/70 text-white text-xs text-center py-1">
                                       {page.pageNumber}
@@ -808,7 +960,13 @@ export function UnifiedToolLayout({
                                     )}
                                     {allowPageReorder && (
                                       <div className="absolute top-1 left-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                                        <GripVertical className="h-4 w-4 text-white bg-black/50 rounded" />
+                                        <GripVertical className="h-4 w-4 text-white bg-black/50 rounded p-0.5" />
+                                      </div>
+                                    )}
+                                    {/* Drop indicator */}
+                                    {isDraggedOver && allowPageReorder && (
+                                      <div className="absolute inset-0 border-2 border-blue-500 bg-blue-500/20 rounded-lg flex items-center justify-center">
+                                        <span className="text-blue-700 font-medium text-xs">Drop here</span>
                                       </div>
                                     )}
                                   </div>
@@ -871,7 +1029,7 @@ export function UnifiedToolLayout({
                     <p className="text-sm text-gray-500 font-medium">
                       {supportedFormats.map(f => f.split('/')[1]?.toUpperCase()).join(', ')} files
                     </p>
-                    <p className="text-xs text-gray-400">Up to {maxFiles} files • Unlimited file size</p>
+                    <p className="text-xs text-gray-400">Up to {maxFiles} files • Max 25MB per file</p>
                   </div>
                 </div>
               </div>
@@ -895,6 +1053,11 @@ export function UnifiedToolLayout({
           {/* Rich Educational Content - Hidden when tools interface shown */}
           <div className={`tool-content ${showUploadArea ? '' : 'hidden'}`}>
             {richContent}
+          </div>
+
+          {/* Footer - Hidden when tools interface shown */}
+          <div className={showUploadArea ? '' : 'hidden'}>
+            <Footer />
           </div>
         </div>
 
@@ -1079,11 +1242,6 @@ export function UnifiedToolLayout({
             )}
           </div>
         </div>
-      </div>
-
-      {/* Footer - Hidden when tools interface shown */}
-      <div className={showUploadArea ? '' : 'hidden'}>
-        <Footer />
       </div>
 
       {/* Mobile Sidebar */}

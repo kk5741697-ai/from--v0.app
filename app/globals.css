@@ -108,16 +108,18 @@
 .crop-area {
   @apply border-2 border-cyan-500 bg-cyan-500/10;
   @apply hover:bg-cyan-500/20 transition-colors;
+  box-shadow: 0 0 0 1px rgba(6, 182, 212, 0.3);
 }
 
 .crop-area.dragging {
-  @apply bg-cyan-500/30 scale-105;
+  @apply bg-cyan-500/30;
+  box-shadow: 0 0 0 2px rgba(6, 182, 212, 0.5);
 }
 
 /* PDF page thumbnail interactions */
 .pdf-page-thumbnail {
   @apply relative cursor-pointer border-2 rounded-lg overflow-hidden transition-all;
-  @apply hover:shadow-md hover:scale-105;
+  @apply hover:shadow-md hover:scale-102;
 }
 
 .pdf-page-thumbnail.selected {
@@ -128,19 +130,14 @@
   @apply opacity-50 scale-95 z-10;
 }
 
-/* PDF page reordering */
-.pdf-page-reorder {
-  @apply cursor-move hover:bg-gray-100 transition-colors;
+/* Enhanced PDF page reordering */
+.pdf-page-thumbnail[draggable="true"] {
+  @apply cursor-move;
 }
 
-.pdf-page-reorder.dragging {
-  @apply opacity-50 scale-95 z-10 shadow-lg;
+.pdf-page-thumbnail[draggable="true"]:hover {
+  @apply shadow-lg;
 }
-
-.pdf-page-reorder:hover .grip-handle {
-  @apply text-gray-600;
-}
-
 /* QR code preview styling */
 .qr-preview {
   @apply border rounded-lg shadow-lg bg-white p-4;

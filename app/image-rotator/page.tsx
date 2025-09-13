@@ -19,15 +19,20 @@ const rotateOptions = [
       { value: "90", label: "90° (Quarter Turn Right)" },
       { value: "-90", label: "-90° (Quarter Turn Left)" },
       { value: "180", label: "180° (Half Turn)" },
-      { value: "90", label: "90° (Quarter Turn Right)" },
-      { value: "-90", label: "-90° (Quarter Turn Left)" },
-      { value: "180", label: "180° (Half Turn)" },
       { value: "270", label: "270° (Three Quarter Turn)" },
       { value: "custom", label: "Custom Angle" },
-    ]
+    ],
+    section: "Rotation",
+  },
+  {
+    key: "customAngle",
+    label: "Custom Angle (degrees)",
+    type: "input" as const,
+    defaultValue: 0,
+    min: -360,
+    max: 360,
     section: "Rotation",
     condition: (options) => options.angle === "custom",
-    section: "Rotation",
   }
 ]
 

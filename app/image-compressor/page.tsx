@@ -99,11 +99,6 @@ export default function ImageCompressorPage() {
         toolType="compress"
         className="py-8"
       />
-      <PersistentAdManager 
-        beforeCanvasSlot="image-before-canvas"
-        afterCanvasSlot="image-after-canvas"
-        toolType="image"
-      />
     </>
   )
 

@@ -21,7 +21,6 @@ const flipOptions = [
       { value: "both", label: "Both Directions" },
     ],
     section: "Flip Settings",
-    section: "Flip Settings",
   },
 ]
 

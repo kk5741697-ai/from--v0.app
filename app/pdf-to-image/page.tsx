@@ -113,11 +113,6 @@ export default function PDFToImagePage() {
         toolType="convert"
         className="py-8"
       />
-      <PersistentAdManager 
-        beforeCanvasSlot="pdf-before-canvas"
-        afterCanvasSlot="pdf-after-canvas"
-        toolType="pdf"
-      />
     </>
   )
 

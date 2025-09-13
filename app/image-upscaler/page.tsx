@@ -139,7 +139,7 @@ export default function ImageUpscalerPage() {
       processFunction={upscaleImages}
       options={upscaleOptions}
       maxFiles={1}
-      allowBatchProcessing={true}
+      allowBatchProcessing={false}
       supportedFormats={["image/jpeg", "image/png", "image/webp"]}
       outputFormats={["png", "jpeg", "webp"]}
       richContent={richContent}

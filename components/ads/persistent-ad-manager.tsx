@@ -1,6 +1,5 @@
 "use client"
 
-import { useEffect, useState } from "react"
 import { AdBanner } from "./ad-banner"
 import { APP_CONFIG } from "@/lib/config"
 
@@ -23,8 +22,26 @@ export function PersistentAdManager({
   }
 
   return (
-    <>
-      {/* These ads are now managed by UnifiedToolLayout */}
-    </>
+    <div className={`persistent-ad-manager ${className}`}>
+      {/* Before Canvas Ad */}
+      <div className="ad-before-canvas mb-4">
+        <AdBanner 
+          adSlot={beforeCanvasSlot}
+          adFormat="auto"
+          className="w-full"
+          mobileOptimized={true}
+        />
+      </div>
+      
+      {/* After Canvas Ad */}
+      <div className="ad-after-canvas mt-4">
+        <AdBanner 
+          adSlot={afterCanvasSlot}
+          adFormat="auto"
+          className="w-full"
+          mobileOptimized={true}
+        />
+      </div>
+    </div>
   )
 }

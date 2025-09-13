@@ -193,7 +193,7 @@ function useToast() {
 
 export { useToast, toast }
 
-// Configure toast position to bottom-left
+// Configure toast position to bottom-left (fixed)
 export const TOAST_CONFIG = {
   position: "bottom-left" as const,
   duration: 4000,

@@ -499,11 +499,17 @@ export class ImageProcessor {
     ctx.save()
     ctx.globalAlpha = options.watermarkOpacity || 0.5
 
-    // Fix font size calculation - use provided fontSize or calculate based on canvas size
-    const fontSize =
-      options.fontSize && options.fontSize > 0
-        ? Math.min(options.fontSize, Math.min(canvas.width, canvas.height) * 0.1) // Cap at 10% of smallest dimension
-        : Math.min(canvas.width, canvas.height) * 0.05 // Default to 5% of smallest dimension
+    // Enhanced font size calculation with proper scaling
+    let fontSize = options.fontSize || Math.min(canvas.width, canvas.height) * 0.05
+    
+    // Scale font size relative to image dimensions
+    if (options.fontSize) {
+      // Use provided font size but scale it appropriately for image size
+      const baseImageSize = 1000 // Reference size
+      const imageSize = Math.min(canvas.width, canvas.height)
+      const scaleFactor = imageSize / baseImageSize
+      fontSize = Math.max(8, Math.min(200, options.fontSize * scaleFactor))
+    }
 
     ctx.font = `bold ${fontSize}px Arial`
     ctx.fillStyle = options.textColor || "#ffffff"
