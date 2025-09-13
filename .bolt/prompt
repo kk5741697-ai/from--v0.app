@@ -38,8 +38,10 @@ Tool Interface (when files.length > 0):
 Tools header
 Unified before canvas ads
 Canvas/workspace area
-After canvas ads
+Unified after canvas ads
 Sidebar (desktop) / Mobile panel
+No footer
+
 🔹 AdSense Compliance
 Only 2 ad slots: unified-before-canvas and unified-after-canvas
 Persistent ads: Same ads reused, no additional requests
