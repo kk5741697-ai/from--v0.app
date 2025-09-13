@@ -44,7 +44,7 @@ No footer
 
 🔹 Canvas preview behavior 
 pdf tools -> selected file are show as list, which tools need page preview - they will be thumbnail page preview. based on the tools specification the pages will be drag to reorder, select, etc. improve overall things for tools specified behavior.
-image tools -> crop tools or which are single file mode, they should be show full preview, not as thumbnail. no need 
+image tools -> crop tools or which are single file mode, they should be show full preview, not as thumbnail. no need `original` and `processed`, this are very bad. you need handle this more smartly. which tools support bulk/multiple files, they should be thumbnails - not full page preview. and many features specified tools.
 
 🔹 AdSense Compliance
 Only 2 ad slots: unified-before-canvas and unified-after-canvas
