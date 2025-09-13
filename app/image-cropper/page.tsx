@@ -68,11 +68,11 @@ async function cropImages(files: any[], options: any): Promise<{ success: boolea
 
     const processedFiles = await Promise.all(
       files.map(async (file) => {
-        const cropArea = {
-          x: options.cropX || 20,
-          y: options.cropY || 20,
-          width: options.cropWidth || 60,
-          height: options.cropHeight || 60
+        const cropArea = options.cropArea || {
+          x: 20,
+          y: 20,
+          width: 60,
+          height: 60
         }
         
         const processedBlob = await ImageProcessor.cropImage(file.originalFile || file.file, cropArea, {

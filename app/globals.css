@@ -106,14 +106,19 @@
 
 /* Enhanced crop area styling */
 .crop-area {
-  @apply border-2 border-cyan-500 bg-cyan-500/10;
-  @apply hover:bg-cyan-500/20 transition-colors;
-  box-shadow: 0 0 0 1px rgba(6, 182, 212, 0.3);
+  @apply border-2 border-primary bg-primary/10 cursor-move;
+  @apply hover:bg-primary/20 transition-all duration-200;
+  box-shadow: 0 0 0 1px rgba(59, 130, 246, 0.3);
 }
 
 .crop-area.dragging {
-  @apply bg-cyan-500/30;
-  box-shadow: 0 0 0 2px rgba(6, 182, 212, 0.5);
+  @apply bg-primary/30;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.5);
+}
+
+.crop-handle {
+  @apply absolute w-4 h-4 bg-primary border-2 border-white rounded-full shadow-lg;
+  @apply hover:scale-125 transition-transform cursor-pointer;
 }
 
 /* PDF page thumbnail interactions */
@@ -153,23 +158,6 @@
   @apply border-primary ring-2 ring-primary/20;
 }
 
-/* Crop area styling - only for image cropper */
-.crop-area {
-  @apply border-2 border-primary bg-primary/10 cursor-move;
-  @apply hover:bg-primary/20 transition-all duration-200;
-  box-shadow: 0 0 0 1px rgba(59, 130, 246, 0.3);
-}
-
-.crop-area.dragging {
-  @apply bg-primary/30;
-  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.5);
-}
-
-.crop-handle {
-  @apply absolute w-4 h-4 bg-primary border-2 border-white rounded-full shadow-lg;
-  @apply hover:scale-125 transition-transform cursor-pointer;
-}
-
 /* QR code preview styling */
 .qr-preview {
   @apply border rounded-lg shadow-lg bg-white p-4;
@@ -184,6 +172,45 @@
 
 .qr-style-option.selected {
   @apply border-blue-500 bg-blue-50 ring-2 ring-blue-200;
+}
+
+/* Unified tool layout styles */
+.tools-header {
+  @apply bg-white border-b shadow-sm;
+}
+
+.canvas {
+  @apply flex-1 overflow-hidden p-4 lg:p-6;
+}
+
+.sidebar {
+  @apply hidden lg:flex w-80 xl:w-96 bg-white border-l shadow-lg flex-col;
+}
+
+.upload-area {
+  @apply max-w-2xl mx-auto;
+}
+
+.tool-content {
+  @apply bg-gray-50;
+}
+
+/* Ad slot styling */
+.ad-slot {
+  @apply py-3;
+}
+
+.ad-before {
+  @apply bg-white border-b;
+}
+
+.ad-after {
+  @apply bg-white border-t;
+}
+
+.unified-before-canvas,
+.unified-after-canvas {
+  @apply container mx-auto px-4;
 }
 
 /* Enhanced mobile interactions */
@@ -209,6 +236,10 @@
   
   .mobile-sticky-ad {
     @apply fixed bottom-0 left-0 right-0 bg-white border-t p-2 z-40;
+  }
+  
+  .sidebar {
+    @apply hidden; /* Hide desktop sidebar on mobile */
   }
 }
 
