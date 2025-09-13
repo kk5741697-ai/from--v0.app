@@ -42,6 +42,10 @@ Unified after canvas ads
 Sidebar (desktop - right side fixed with position fixed, height full, top: 0, bottom: 0, right: 0) / Mobile panel
 No footer
 
+🔹 Canvas preview behavior 
+pdf tools -> selected file are show as list, which tools need page preview - they will be thumbnail page preview. based on the tools specification the pages will be drag to reorder, select, etc. improve overall things for tools specified behavior.
+image tools -> crop tools or which are single file mode, they should be show full preview, not as thumbnail. no need 
+
 🔹 AdSense Compliance
 Only 2 ad slots: unified-before-canvas and unified-after-canvas
 Persistent ads: Same ads reused, no additional requests
