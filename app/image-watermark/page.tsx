@@ -10,6 +10,7 @@ const watermarkOptions = [
     label: "Watermark Text",
     type: "text" as const,
     defaultValue: "© Your Brand",
+    section: "Text Watermark",
     condition: (options) => !options.useImageWatermark,
   },
   {
@@ -17,12 +18,14 @@ const watermarkOptions = [
     label: "Use Image Watermark",
     type: "checkbox" as const,
     defaultValue: false,
+    section: "Watermark Type",
   },
   {
     key: "watermarkImageUrl",
     label: "Watermark Image URL",
     type: "text" as const,
     defaultValue: "",
+    section: "Image Watermark",
     condition: (options) => options.useImageWatermark,
   },
   {
@@ -33,6 +36,7 @@ const watermarkOptions = [
     min: 12,
     max: 120,
     step: 4,
+    section: "Text Watermark",
     condition: (options) => !options.useImageWatermark,
   },
   {
@@ -43,6 +47,7 @@ const watermarkOptions = [
     min: 10,
     max: 100,
     step: 5,
+    section: "Appearance",
   },
   {
     key: "position",
@@ -57,12 +62,14 @@ const watermarkOptions = [
       { value: "bottom-right", label: "Bottom Right" },
       { value: "diagonal", label: "Diagonal" },
     ],
+    section: "Appearance",
   },
   {
     key: "textColor",
     label: "Text Color",
     type: "color" as const,
     defaultValue: "#ffffff",
+    section: "Text Watermark",
     condition: (options) => !options.useImageWatermark,
   },
 ]

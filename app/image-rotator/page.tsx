@@ -1,43 +1,32 @@
 "use client"
 
-import { ImageToolsLayout } from "@/components/image-tools-layout"
+import { UnifiedToolLayout } from "@/components/unified-tool-layout"
 import { RotateCw } from "lucide-react"
 import { ImageProcessor } from "@/lib/processors/image-processor"
+import { ImageProcessingGuide } from "@/components/content/image-processing-guide"
 
+export const metadata = {
+  title: "Image Rotator - Rotate Images Online",
+  description: "Rotate images by preset angles (90°, 180°, 270°) or any custom angle. Perfect for fixing orientation and creating artistic effects with precise control."
+}
 const rotateOptions = [
   {
-    key: "rotationMode",
-    label: "Rotation Mode",
-    type: "select" as const,
-    defaultValue: "preset",
-    selectOptions: [
-      { value: "preset", label: "Preset Angles" },
-      { value: "custom", label: "Custom Angle" },
-    ],
-  },
-  {
-    key: "presetAngle",
-    label: "Preset Angle",
+    key: "angle",
+    label: "Rotation Angle",
     type: "select" as const,
     defaultValue: "90",
     selectOptions: [
       { value: "90", label: "90° (Quarter Turn Right)" },
       { value: "-90", label: "-90° (Quarter Turn Left)" },
       { value: "180", label: "180° (Half Turn)" },
+      { value: "90", label: "90° (Quarter Turn Right)" },
+      { value: "-90", label: "-90° (Quarter Turn Left)" },
+      { value: "180", label: "180° (Half Turn)" },
       { value: "270", label: "270° (Three Quarter Turn)" },
-    ],
-    condition: (options) => options.rotationMode === "preset",
-  },
-  {
-    key: "customAngle",
-    label: "Custom Angle (degrees)",
-    type: "slider" as const,
-    defaultValue: 0,
-    min: -180,
-    max: 180,
-    step: 5,
-    condition: (options) => options.rotationMode === "custom",
-  },
+      { value: "custom", label: "Custom Angle" },
+    section: "Rotation",
+    condition: (options) => options.angle === "custom",
+    section: "Rotation",
 ]
 
 async function rotateImages(files: any[], options: any) {
@@ -52,7 +41,7 @@ async function rotateImages(files: any[], options: any) {
     const processedFiles = await Promise.all(
       files.map(async (file) => {
         const angle =
-          options.rotationMode === "preset" ? Number.parseInt(options.presetAngle) || 90 : options.customAngle || 0
+          options.angle === "custom" ? options.customAngle || 0 : Number.parseInt(options.angle) || 90
 
         const processedBlob = await ImageProcessor.rotateImage(file.originalFile || file.file, {
           customRotation: angle,
@@ -96,18 +85,27 @@ async function rotateImages(files: any[], options: any) {
 }
 
 export default function ImageRotatorPage() {
+  const richContent = (
+    <ImageProcessingGuide 
+      toolName="Image Rotator"
+      toolType="rotate"
+      className="py-8"
+    />
+  )
+
   return (
-    <ImageToolsLayout
+    <UnifiedToolLayout
       title="Image Rotator"
       description="Rotate images by preset angles (90°, 180°, 270°) or any custom angle. Perfect for fixing orientation and creating artistic effects with precise control."
       icon={RotateCw}
-      toolType="rotate"
+      toolType="image"
       processFunction={rotateImages}
       options={rotateOptions}
       maxFiles={10}
       allowBatchProcessing={true}
       supportedFormats={["image/jpeg", "image/png", "image/webp"]}
       outputFormats={["jpeg", "png", "webp"]}
+      richContent={richContent}
     />
   )
 }

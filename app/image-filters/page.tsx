@@ -109,6 +109,7 @@ export default function ImageFiltersPage() {
   const [zoomLevel, setZoomLevel] = useState(100)
   const [showUploadArea, setShowUploadArea] = useState(true)
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false)
+  const [isFullscreen, setIsFullscreen] = useState(false)
   
   const fileInputRef = useRef<HTMLInputElement>(null)
 

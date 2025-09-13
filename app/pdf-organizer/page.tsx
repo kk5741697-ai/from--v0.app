@@ -84,7 +84,7 @@ export default function PDFOrganizerPage() {
       processFunction={organizePDF}
       options={organizeOptions}
       maxFiles={1}
-      allowPageSelection={true}
+      allowPageReorder={true}
       supportedFormats={["application/pdf"]}
       outputFormats={["pdf"]}
     />

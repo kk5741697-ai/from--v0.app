@@ -138,7 +138,7 @@ export default function ImageUpscalerPage() {
       toolType="image"
       processFunction={upscaleImages}
       options={upscaleOptions}
-      maxFiles={5}
+      maxFiles={1}
       allowBatchProcessing={true}
       supportedFormats={["image/jpeg", "image/png", "image/webp"]}
       outputFormats={["png", "jpeg", "webp"]}

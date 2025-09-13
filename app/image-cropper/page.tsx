@@ -5,36 +5,74 @@ import { Crop } from "lucide-react"
 import { ImageProcessor } from "@/lib/processors/image-processor"
 import { ImageProcessingGuide } from "@/components/content/image-processing-guide"
 
+export const metadata = {
+  title: "Image Cropper - Crop Images Online",
+  description: "Crop images with precision using our advanced visual editor, aspect ratio presets, and grid guides. Professional cropping tools for social media, web optimization, and creative projects."
+}
+
 const cropOptions = [
+  {
+    key: "aspectRatio",
+    label: "Aspect Ratio",
+    type: "select" as const,
+    defaultValue: "free",
+    selectOptions: [
+      { value: "free", label: "Free Form" },
+      { value: "1:1", label: "Square (1:1)" },
+      { value: "4:3", label: "Standard (4:3)" },
+      { value: "16:9", label: "Widescreen (16:9)" },
+      { value: "3:2", label: "Photo (3:2)" },
+      { value: "9:16", label: "Portrait (9:16)" },
+    ],
+    section: "Crop Settings",
+  },
+  {
+    key: "cropX",
+    label: "X Position (%)",
+    type: "input" as const,
+    defaultValue: 20,
+    min: 0,
+    max: 100,
+    section: "Position",
+  },
+  {
+    key: "cropY",
+    label: "Y Position (%)",
+    type: "input" as const,
+    defaultValue: 20,
+    min: 0,
+    max: 100,
+    section: "Position",
+  },
+  {
+    key: "cropWidth",
+    label: "Width (%)",
+    type: "input" as const,
+    defaultValue: 60,
+    min: 1,
+    max: 100,
+    section: "Dimensions",
+  },
+  {
+    key: "cropHeight",
+    label: "Height (%)",
+    type: "input" as const,
+    defaultValue: 60,
+    min: 1,
+    max: 100,
+    section: "Dimensions",
+  },
   {
     key: "outputFormat",
     label: "Output Format",
     type: "select" as const,
     defaultValue: "png",
     selectOptions: [
-      { value: "jpeg", label: "JPEG" },
       { value: "png", label: "PNG" },
+      { value: "jpeg", label: "JPEG" },
       { value: "webp", label: "WebP" },
     ],
     section: "Output",
-  },
-  {
-    key: "quality",
-    label: "Quality",
-    type: "slider" as const,
-    defaultValue: 95,
-    min: 10,
-    max: 100,
-    step: 5,
-    section: "Output",
-  },
-  {
-    key: "backgroundColor",
-    label: "Background Color (for JPEG)",
-    type: "color" as const,
-    defaultValue: "#ffffff",
-    section: "Output",
-    condition: (options) => options.outputFormat === "jpeg",
   },
 ]
 
@@ -49,12 +87,17 @@ async function cropImages(files: any[], options: any): Promise<{ success: boolea
 
     const processedFiles = await Promise.all(
       files.map(async (file) => {
-        const cropArea = options.cropArea || { x: 20, y: 20, width: 60, height: 60 }
+        const cropArea = {
+          x: options.cropX || 20,
+          y: options.cropY || 20,
+          width: options.cropWidth || 60,
+          height: options.cropHeight || 60
+        }
         
         const processedBlob = await ImageProcessor.cropImage(file.originalFile || file.file, cropArea, {
           outputFormat: options.outputFormat as "jpeg" | "png" | "webp",
-          quality: options.quality,
-          backgroundColor: options.backgroundColor
+          quality: 95,
+          backgroundColor: options.outputFormat === "jpeg" ? "#ffffff" : undefined
         })
 
         const processedUrl = URL.createObjectURL(processedBlob)

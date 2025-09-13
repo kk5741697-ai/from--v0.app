@@ -20,9 +20,9 @@ export async function POST(request: NextRequest) {
     const imageBuffers = await ServerPDFProcessor.pdfToImages(buffer, options)
 
     if (imageBuffers.length === 1) {
-      // Single image - return directly
+      // Single image - return directly with proper filename
       const format = options.outputFormat || "png"
-      const filename = `${file.name.replace(".pdf", "")}.${format}`
+      const filename = `${file.name.replace(".pdf", "")}_page_1.${format}`
       const mimeType = format === "jpeg" || format === "jpg" ? "image/jpeg" : "image/png"
 
       return new NextResponse(imageBuffers[0], {
@@ -46,6 +46,7 @@ export async function POST(request: NextRequest) {
         type: "nodebuffer",
         compression: "DEFLATE",
         compressionOptions: { level: 6 },
+        streamFiles: true
       })
 
       const zipFilename = `${file.name.replace(".pdf", "")}_images.zip`

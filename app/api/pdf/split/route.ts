@@ -16,12 +16,18 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "File must be a PDF" }, { status: 400 })
     }
 
+    // Validate selected pages
+    if (!options.selectedPages || options.selectedPages.length === 0) {
+      return NextResponse.json({ error: "No pages selected for extraction" }, { status: 400 })
+    }
+
     const buffer = Buffer.from(await file.arrayBuffer())
     const splitResults = await ServerPDFProcessor.splitPDF(buffer, options)
 
     if (splitResults.length === 1) {
       // Single file - return directly
-      const filename = `${file.name.replace(".pdf", "")}_split.pdf`
+      const pageNum = options.selectedPages[0]
+      const filename = `${file.name.replace(".pdf", "")}_page_${pageNum}.pdf`
 
       return new NextResponse(splitResults[0], {
         headers: {
@@ -35,10 +41,8 @@ export async function POST(request: NextRequest) {
       const zip = new JSZip()
 
       splitResults.forEach((pdfBuffer, index) => {
-        const filename =
-          options.selectedPages && options.selectedPages[index]
-            ? `${file.name.replace(".pdf", "")}_page_${options.selectedPages[index]}.pdf`
-            : `${file.name.replace(".pdf", "")}_part_${index + 1}.pdf`
+        const pageNum = options.selectedPages[index]
+        const filename = `${file.name.replace(".pdf", "")}_page_${pageNum}.pdf`
         zip.file(filename, pdfBuffer)
       })
 
@@ -46,6 +50,7 @@ export async function POST(request: NextRequest) {
         type: "nodebuffer",
         compression: "DEFLATE",
         compressionOptions: { level: 6 },
+        streamFiles: true
       })
 
       const zipFilename = `${file.name.replace(".pdf", "")}_split.zip`
@@ -60,6 +65,9 @@ export async function POST(request: NextRequest) {
     }
   } catch (error) {
     console.error("PDF split API error:", error)
-    return NextResponse.json({ error: error instanceof Error ? error.message : "Failed to split PDF" }, { status: 500 })
+    return NextResponse.json(
+      { error: error instanceof Error ? error.message : "Failed to split PDF" }, 
+      { status: 500 }
+    )
   }
 }

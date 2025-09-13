@@ -29,7 +29,8 @@ import {
   Eye,
   Move,
   RotateCw,
-  Crop
+  Crop,
+  GripVertical
 } from "lucide-react"
 import { toast } from "@/hooks/use-toast"
 import { AdBanner } from "@/components/ads/ad-banner"
@@ -101,13 +102,13 @@ export function UnifiedToolLayout({
   const [toolOptions, setToolOptions] = useState<Record<string, any>>({})
   const [isProcessing, setIsProcessing] = useState(false)
   const [processingProgress, setProcessingProgress] = useState(0)
-  const [showUploadArea, setShowUploadArea] = useState(true)
-  const [showToolsInterface, setShowToolsInterface] = useState(false)
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false)
   const [cropArea, setCropArea] = useState({ x: 20, y: 20, width: 60, height: 60 })
   const [isDragging, setIsDragging] = useState(false)
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 })
   const [selectedPages, setSelectedPages] = useState<string[]>([])
+  const [zoomLevel, setZoomLevel] = useState(100)
+  const [draggedPageIndex, setDraggedPageIndex] = useState<number | null>(null)
   
   const fileInputRef = useRef<HTMLInputElement>(null)
   const canvasRef = useRef<HTMLDivElement>(null)
@@ -121,12 +122,9 @@ export function UnifiedToolLayout({
     setToolOptions(defaultOptions)
   }, [options])
 
-  // Update interface visibility based on files
-  useEffect(() => {
-    const hasFiles = files.length > 0
-    setShowUploadArea(!hasFiles)
-    setShowToolsInterface(hasFiles || toolType === "qr")
-  }, [files.length, toolType])
+  // Show/hide interface based on files
+  const showToolsInterface = files.length > 0 || toolType === "qr"
+  const showUploadArea = files.length === 0 && toolType !== "qr"
 
   const handleFileUpload = async (uploadedFiles: FileList | null) => {
     if (!uploadedFiles || uploadedFiles.length === 0) return
@@ -437,6 +435,39 @@ export function UnifiedToolLayout({
     setIsDragging(false)
   }
 
+  // Page reordering for PDF tools
+  const handlePageDragStart = (e: React.DragEvent, pageIndex: number) => {
+    setDraggedPageIndex(pageIndex)
+    e.dataTransfer.effectAllowed = "move"
+  }
+
+  const handlePageDragOver = (e: React.DragEvent) => {
+    e.preventDefault()
+    e.dataTransfer.dropEffect = "move"
+  }
+
+  const handlePageDrop = (e: React.DragEvent, targetIndex: number) => {
+    e.preventDefault()
+    
+    if (draggedPageIndex === null || draggedPageIndex === targetIndex) return
+    
+    setFiles(prev => {
+      const newFiles = [...prev]
+      const file = newFiles[0] // Assuming single PDF for reordering
+      if (file.pages) {
+        const pages = [...file.pages]
+        const draggedPage = pages[draggedPageIndex]
+        pages.splice(draggedPageIndex, 1)
+        pages.splice(targetIndex, 0, draggedPage)
+        
+        newFiles[0] = { ...file, pages }
+      }
+      return newFiles
+    })
+    
+    setDraggedPageIndex(null)
+  }
+
   // Mobile Sidebar Component
   const MobileSidebar = () => (
     <Sheet open={isMobileSidebarOpen} onOpenChange={setIsMobileSidebarOpen}>
@@ -596,7 +627,7 @@ export function UnifiedToolLayout({
   )
 
   return (
-    <div className="tool-wrapper">
+    <div className="tool-wrapper min-h-screen bg-background">
       <Header />
 
       {/* Tools Header - Hidden until files uploaded (except QR) */}
@@ -621,6 +652,20 @@ export function UnifiedToolLayout({
             >
               <Settings className="h-4 w-4" />
             </Button>
+            {toolType === "image" && files.length > 0 && (
+              <div className="hidden lg:flex items-center space-x-1 border rounded-md">
+                <Button variant="ghost" size="sm" onClick={() => setZoomLevel(prev => Math.max(25, prev - 25))}>
+                  <ZoomOut className="h-4 w-4" />
+                </Button>
+                <span className="text-sm px-2">{zoomLevel}%</span>
+                <Button variant="ghost" size="sm" onClick={() => setZoomLevel(prev => Math.min(400, prev + 25))}>
+                  <ZoomIn className="h-4 w-4" />
+                </Button>
+                <Button variant="ghost" size="sm" onClick={() => setZoomLevel(100)}>
+                  <Maximize2 className="h-4 w-4" />
+                </Button>
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -643,7 +688,8 @@ export function UnifiedToolLayout({
 
           {/* Canvas - Hidden until files uploaded (except QR) */}
           <div className={`canvas ${showToolsInterface ? '' : 'hidden'}`}>
-            <div className="flex-1 bg-gray-50 p-4 lg:p-6">
+            <div className="flex-1 bg-gray-50 p-4 lg:p-6 min-h-[60vh]">
+              {/* Image Tools Canvas */}
               {toolType === "image" && files.length > 0 && (
                 <div className="space-y-4">
                   {files.map((file) => (
@@ -655,6 +701,7 @@ export function UnifiedToolLayout({
                           onMouseDown={handleCropMouseDown}
                           onMouseMove={handleCropMouseMove}
                           onMouseUp={handleCropMouseUp}
+                          style={{ transform: `scale(${zoomLevel / 100})`, transformOrigin: 'center' }}
                         >
                           <img
                             src={file.processedPreview || file.preview}
@@ -664,7 +711,7 @@ export function UnifiedToolLayout({
                           
                           {/* Crop Area Overlay */}
                           <div 
-                            className="crop-area absolute border-2 border-cyan-500 bg-cyan-500/10"
+                            className={`crop-area absolute border-2 border-cyan-500 bg-cyan-500/10 ${isDragging ? 'dragging' : ''}`}
                             style={{
                               left: `${cropArea.x}%`,
                               top: `${cropArea.y}%`,
@@ -677,6 +724,11 @@ export function UnifiedToolLayout({
                             <div className="crop-handle absolute -top-2 -right-2"></div>
                             <div className="crop-handle absolute -bottom-2 -left-2"></div>
                             <div className="crop-handle absolute -bottom-2 -right-2"></div>
+                            
+                            {/* Move handle */}
+                            <div className="absolute inset-0 flex items-center justify-center">
+                              <Move className="h-4 w-4 text-cyan-600 opacity-75" />
+                            </div>
                           </div>
                         </div>
                         
@@ -695,6 +747,7 @@ export function UnifiedToolLayout({
                 </div>
               )}
 
+              {/* PDF Tools Canvas */}
               {toolType === "pdf" && files.length > 0 && (
                 <div className="space-y-4">
                   {files.map((file) => (
@@ -717,12 +770,14 @@ export function UnifiedToolLayout({
                         </div>
                       </CardHeader>
                       
-                      {allowPageSelection && file.pages && (
+                      {(allowPageSelection || allowPageReorder) && file.pages && (
                         <CardContent>
                           <div className="space-y-3">
-                            <Label className="text-sm font-medium">Select Pages</Label>
-                            <div className="grid grid-cols-6 md:grid-cols-8 lg:grid-cols-10 gap-2 max-h-48 overflow-y-auto">
-                              {file.pages.map((page) => {
+                            <Label className="text-sm font-medium">
+                              {allowPageReorder ? "Drag to Reorder Pages" : "Select Pages"}
+                            </Label>
+                            <div className="grid grid-cols-6 md:grid-cols-8 lg:grid-cols-10 gap-2 max-h-96 overflow-y-auto">
+                              {file.pages.map((page, pageIndex) => {
                                 const pageKey = `${file.id}-page-${page.pageNumber}`
                                 const isSelected = selectedPages.includes(pageKey)
                                 
@@ -731,8 +786,12 @@ export function UnifiedToolLayout({
                                     key={pageKey}
                                     className={`pdf-page-thumbnail relative cursor-pointer border-2 rounded-lg overflow-hidden transition-all ${
                                       isSelected ? 'border-red-500 ring-2 ring-red-200' : 'border-gray-200 hover:border-red-300'
-                                    }`}
-                                    onClick={() => togglePageSelection(pageKey)}
+                                    } ${draggedPageIndex === pageIndex ? 'dragging' : ''}`}
+                                    onClick={() => allowPageSelection && togglePageSelection(pageKey)}
+                                    draggable={allowPageReorder}
+                                    onDragStart={(e) => allowPageReorder && handlePageDragStart(e, pageIndex)}
+                                    onDragOver={allowPageReorder ? handlePageDragOver : undefined}
+                                    onDrop={(e) => allowPageReorder && handlePageDrop(e, pageIndex)}
                                   >
                                     <img
                                       src={page.thumbnail}
@@ -742,16 +801,21 @@ export function UnifiedToolLayout({
                                     <div className="absolute bottom-0 left-0 right-0 bg-black/70 text-white text-xs text-center py-1">
                                       {page.pageNumber}
                                     </div>
-                                    {isSelected && (
+                                    {isSelected && allowPageSelection && (
                                       <div className="absolute top-1 right-1">
                                         <CheckCircle className="h-4 w-4 text-red-600 bg-white rounded-full" />
+                                      </div>
+                                    )}
+                                    {allowPageReorder && (
+                                      <div className="absolute top-1 left-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                        <GripVertical className="h-4 w-4 text-white bg-black/50 rounded" />
                                       </div>
                                     )}
                                   </div>
                                 )
                               })}
                             </div>
-                            {selectedPages.length > 0 && (
+                            {selectedPages.length > 0 && allowPageSelection && (
                               <p className="text-sm text-gray-600">
                                 {selectedPages.length} page{selectedPages.length !== 1 ? 's' : ''} selected
                               </p>
@@ -764,6 +828,7 @@ export function UnifiedToolLayout({
                 </div>
               )}
 
+              {/* QR Tools Canvas */}
               {toolType === "qr" && (
                 <div className="max-w-2xl mx-auto">
                   {children}
@@ -1009,7 +1074,7 @@ export function UnifiedToolLayout({
                 size="lg"
               >
                 <Download className="h-4 w-4 mr-2" />
-                Download All ({files.filter(f => f.processed).length})
+                Download {files.filter(f => f.processed).length === 1 ? 'File' : 'All'}
               </Button>
             )}
           </div>

@@ -227,6 +227,11 @@ export class ImageProcessor {
         ctx.imageSmoothingEnabled = true
         ctx.imageSmoothingQuality = "high"
 
+        // Apply background for JPEG
+        if (options.outputFormat === "jpeg") {
+          ctx.fillStyle = options.backgroundColor || "#ffffff"
+          ctx.fillRect(0, 0, canvas.width, canvas.height)
+        }
         // Apply flip transformations
         switch (options.flipDirection) {
           case "horizontal":

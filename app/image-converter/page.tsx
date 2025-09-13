@@ -4,7 +4,11 @@ import { UnifiedToolLayout } from "@/components/unified-tool-layout"
 import { RefreshCw } from "lucide-react"
 import { ImageProcessor } from "@/lib/processors/image-processor"
 import { ImageProcessingGuide } from "@/components/content/image-processing-guide"
-import { PersistentAdManager } from "@/components/ads/persistent-ad-manager"
+
+export const metadata = {
+  title: "Image Converter - Convert Image Formats Online",
+  description: "Convert images between different formats including JPEG, PNG, WebP, and AVIF. Advanced quality controls and background color options for professional results."
+}
 
 const convertOptions = [
   {
@@ -13,30 +17,12 @@ const convertOptions = [
     type: "select" as const,
     defaultValue: "png",
     selectOptions: [
-      { value: "jpeg", label: "JPEG" },
       { value: "png", label: "PNG" },
+      { value: "jpeg", label: "JPEG" },
       { value: "webp", label: "WebP" },
+      { value: "avif", label: "AVIF" },
     ],
     section: "Output",
-  },
-  {
-    key: "quality",
-    label: "Quality",
-    type: "slider" as const,
-    defaultValue: 90,
-    min: 10,
-    max: 100,
-    step: 5,
-    section: "Output",
-    condition: (options) => options.outputFormat === "jpeg" || options.outputFormat === "webp",
-  },
-  {
-    key: "backgroundColor",
-    label: "Background Color (for JPEG)",
-    type: "color" as const,
-    defaultValue: "#ffffff",
-    section: "Output",
-    condition: (options) => options.outputFormat === "jpeg",
   },
 ]
 
@@ -56,8 +42,8 @@ async function convertImages(files: any[], options: any) {
           options.outputFormat as "jpeg" | "png" | "webp",
           {
             outputFormat: options.outputFormat as "jpeg" | "png" | "webp",
-            quality: options.quality,
-            backgroundColor: options.backgroundColor,
+            quality: 90,
+            backgroundColor: "#ffffff",
           },
         )
 
@@ -90,18 +76,11 @@ async function convertImages(files: any[], options: any) {
 
 export default function ImageConverterPage() {
   const richContent = (
-    <>
-      <ImageProcessingGuide 
-        toolName="Image Converter"
-        toolType="convert"
-        className="py-8"
-      />
-      <PersistentAdManager 
-        beforeCanvasSlot="image-before-canvas"
-        afterCanvasSlot="image-after-canvas"
-        toolType="image"
-      />
-    </>
+    <ImageProcessingGuide 
+      toolName="Image Converter"
+      toolType="convert"
+      className="py-8"
+    />
   )
 
   return (

@@ -9,7 +9,10 @@ import { APP_CONFIG } from '@/lib/config'
 import './globals.css'
 
 export const metadata: Metadata = {
-  title: 'PixoraTools - Professional Online Tools Platform',
+  title: {
+    template: '%s | PixoraTools',
+    default: 'PixoraTools - Professional Online Tools Platform'
+  },
   description: '300+ professional web tools for PDF, image, QR, code, and SEO tasks. Fast, secure, and free.',
   generator: 'PixoraTools',
   keywords: ['online tools', 'web tools', 'PDF tools', 'image tools', 'QR generator', 'free tools'],
@@ -22,12 +25,18 @@ export const metadata: Metadata = {
     locale: 'en_US',
     url: 'https://pixoratools.com',
     siteName: 'PixoraTools',
-    title: 'PixoraTools - Professional Online Tools Platform',
+    title: {
+      template: '%s | PixoraTools',
+      default: 'PixoraTools - Professional Online Tools Platform'
+    },
     description: '300+ professional web tools for PDF, image, QR, code, and SEO tasks. Fast, secure, and free.',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'PixoraTools - Professional Online Tools Platform',
+    title: {
+      template: '%s | PixoraTools',
+      default: 'PixoraTools - Professional Online Tools Platform'
+    },
     description: '300+ professional web tools for PDF, image, QR, code, and SEO tasks. Fast, secure, and free.',
     creator: '@pixoratools',
   },

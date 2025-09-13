@@ -1,9 +1,14 @@
 "use client"
 
-import { ImageToolsLayout } from "@/components/image-tools-layout"
+import { UnifiedToolLayout } from "@/components/unified-tool-layout"
 import { FlipHorizontal } from "lucide-react"
 import { ImageProcessor } from "@/lib/processors/image-processor"
+import { ImageProcessingGuide } from "@/components/content/image-processing-guide"
 
+export const metadata = {
+  title: "Image Flipper - Flip Images Online",
+  description: "Flip images horizontally, vertically, or both directions with batch processing support. Perfect for creating mirror effects and correcting image orientation."
+}
 const flipOptions = [
   {
     key: "flipDirection",
@@ -15,6 +20,8 @@ const flipOptions = [
       { value: "vertical", label: "Vertical (Top ↔ Bottom)" },
       { value: "both", label: "Both Directions" },
     ],
+    section: "Flip Settings",
+    section: "Flip Settings",
   },
 ]
 
@@ -56,18 +63,27 @@ async function flipImages(files: any[], options: any) {
 }
 
 export default function ImageFlipperPage() {
+  const richContent = (
+    <ImageProcessingGuide 
+      toolName="Image Flipper"
+      toolType="flip"
+      className="py-8"
+    />
+  )
+
   return (
-    <ImageToolsLayout
+    <UnifiedToolLayout
       title="Flip Image"
       description="Flip images horizontally, vertically, or both directions with batch processing support. Perfect for creating mirror effects and correcting image orientation."
       icon={FlipHorizontal}
-      toolType="flip"
+      toolType="image"
       processFunction={flipImages}
       options={flipOptions}
       maxFiles={20}
       allowBatchProcessing={true}
       supportedFormats={["image/jpeg", "image/png", "image/webp", "image/gif"]}
       outputFormats={["png", "jpeg", "webp"]}
+      richContent={richContent}
     />
   )
 }

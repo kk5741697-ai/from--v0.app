@@ -15,8 +15,22 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "File must be a PDF" }, { status: 400 })
     }
 
-    if (!options.userPassword) {
-      return NextResponse.json({ error: "Password is required" }, { status: 400 })
+    if (!options.userPassword || options.userPassword.trim() === "") {
+      return NextResponse.json({ error: "Password cannot be empty" }, { status: 400 })
+    }
+
+    if (options.userPassword.length < 6) {
+      return NextResponse.json({ error: "Password too short (minimum 6 characters)" }, { status: 400 })
+    }
+
+    if (options.userPassword.length > 32) {
+      return NextResponse.json({ error: "Password too long (maximum 32 characters)" }, { status: 400 })
+    }
+
+    // Check for invalid characters
+    const invalidChars = /[^\x20-\x7E]/
+    if (invalidChars.test(options.userPassword)) {
+      return NextResponse.json({ error: "Password contains unsupported characters. Please use only ASCII characters." }, { status: 400 })
     }
 
     const buffer = Buffer.from(await file.arrayBuffer())
@@ -33,8 +47,21 @@ export async function POST(request: NextRequest) {
     })
   } catch (error) {
     console.error("PDF protect API error:", error)
+    
+    // Provide user-friendly error messages
+    let errorMessage = "Failed to protect PDF"
+    if (error instanceof Error) {
+      if (error.message.includes("password")) {
+        errorMessage = "Password validation failed. Please use 6-32 ASCII characters."
+      } else if (error.message.includes("corrupt")) {
+        errorMessage = "PDF file appears to be corrupted or invalid."
+      } else {
+        errorMessage = error.message
+      }
+    }
+    
     return NextResponse.json(
-      { error: error instanceof Error ? error.message : "Failed to protect PDF" },
+      { error: errorMessage },
       { status: 500 },
     )
   }

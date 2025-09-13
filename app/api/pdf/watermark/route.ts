@@ -31,6 +31,7 @@ export async function POST(request: NextRequest) {
 
     const filename = `${file.name.replace(".pdf", "")}_watermarked.pdf`
 
+    // Always return single file directly (no ZIP for single file)
     return new NextResponse(watermarkedBuffer, {
       headers: {
         "Content-Type": "application/pdf",

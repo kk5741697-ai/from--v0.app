@@ -17,40 +17,14 @@ export function PersistentAdManager({
   toolType,
   className = ""
 }: PersistentAdManagerProps) {
-  const [adsInitialized, setAdsInitialized] = useState(false)
-
-  useEffect(() => {
-    // Initialize ads only once when component mounts
-    if (!adsInitialized && APP_CONFIG.enableAds) {
-      setAdsInitialized(true)
-    }
-  }, [adsInitialized])
 
   if (!APP_CONFIG.enableAds) {
     return null
   }
 
   return (
-    <div className={`persistent-ad-manager ${className}`}>
-      {/* Before Canvas Ad - Always visible */}
-      <div className="ad-slot ad-before">
-        <AdBanner 
-          adSlot={beforeCanvasSlot}
-          adFormat="auto"
-          className="w-full max-w-4xl mx-auto"
-          mobileOptimized={true}
-        />
-      </div>
-
-      {/* After Canvas Ad - Always visible */}
-      <div className="ad-slot ad-after">
-        <AdBanner 
-          adSlot={afterCanvasSlot}
-          adFormat="auto"
-          className="w-full max-w-4xl mx-auto"
-          mobileOptimized={true}
-        />
-      </div>
-    </div>
+    <>
+      {/* These ads are now managed by UnifiedToolLayout */}
+    </>
   )
 }
