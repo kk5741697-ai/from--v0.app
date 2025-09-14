@@ -232,31 +232,52 @@
 
 /* Enhanced mobile responsiveness */
 @media (max-width: 768px) {
-  .tools-header .container {
+  .crop-handle {
+    @apply w-6 h-6; /* Larger touch targets on mobile */
+  }
+  
+  .mobile-sticky-ad {
+    @apply fixed bottom-0 left-0 right-0 bg-white border-t p-2 z-40;
+  }
+  
+  .desktop-sidebar {
+    @apply hidden; /* Hide desktop sidebar on mobile */
+  }
+  
+  .tools-interface-active,
+  .tools-header-responsive {
+    margin-right: 0 !important;
+  }
+  
+  /* Enhanced mobile spacing */
+  .tools-header {
     padding-left: 0.5rem;
     padding-right: 0.5rem;
   }
   
-  .canvas .container {
-    padding-left: 0.5rem;
-    padding-right: 0.5rem;
-  }
-  
-  .unified-before-canvas .container,
-  .unified-after-canvas .container {
+  .canvas {
     padding-left: 0.5rem;
     padding-right: 0.5rem;
   }
 }
 
-/* Tablet adjustments */
+/* Tablet responsive adjustments */
 @media (min-width: 768px) and (max-width: 1023px) {
-  .tools-header .container {
+  .desktop-sidebar {
+    @apply hidden; /* Hide sidebar on tablet */
+  }
+  
+  .tools-interface-active,
+  .tools-header-responsive {
+    margin-right: 0 !important;
+  }
+  
+  .tools-header {
     padding-left: 1rem;
     padding-right: 1rem;
   }
   
-  .canvas .container {
+  .canvas {
     padding-left: 1rem;
     padding-right: 1rem;
   }
