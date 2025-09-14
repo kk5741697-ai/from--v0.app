@@ -44,7 +44,7 @@ export function MobileOptionPanel({
 
   return (
     <StableSheet open={isOpen} onOpenChange={handleOpenChange}>
-      <StableSheetContent side="bottom" className={`h-[85vh] p-0 ${className || ""}`}>
+      <StableSheetContent side="bottom" className={`h-[80vh] sm:h-[85vh] p-0 ${className || ""}`}>
         <StableSheetHeader className="px-6 py-4 border-b bg-gray-50 flex-shrink-0">
           <StableSheetTitle className="flex items-center space-x-2">
             {icon || <Settings className="h-5 w-5 text-gray-600" />}
@@ -52,9 +52,9 @@ export function MobileOptionPanel({
           </StableSheetTitle>
         </StableSheetHeader>
 
-        <ScrollArea className="flex-1 h-full">
+        <ScrollArea className="flex-1 h-full px-2">
           <div
-            className="p-6 space-y-6"
+            className="p-4 sm:p-6 space-y-4 sm:space-y-6"
             onFocus={() => handleFormInteraction(true)}
             onBlur={() => setTimeout(() => handleFormInteraction(false), 100)}
             onPointerDown={() => handleFormInteraction(true)}
@@ -64,7 +64,7 @@ export function MobileOptionPanel({
           </div>
         </ScrollArea>
 
-        {footer && <div className="p-4 border-t bg-white flex-shrink-0">{footer}</div>}
+        {footer && <div className="p-3 sm:p-4 border-t bg-white flex-shrink-0">{footer}</div>}
       </StableSheetContent>
     </StableSheet>
   )
@@ -80,7 +80,7 @@ interface MobileOptionTriggerProps {
 
 export function MobileOptionTrigger({ onClick, icon, label = "Settings", className }: MobileOptionTriggerProps) {
   return (
-    <Button variant="outline" size="sm" onClick={onClick} className={`lg:hidden ${className || ""}`}>
+    <Button variant="outline" size="sm" onClick={onClick} className={`lg:hidden touch-friendly ${className || ""}`}>
       {icon || <Settings className="h-4 w-4" />}
       {label && <span className="ml-2">{label}</span>}
     </Button>

@@ -721,12 +721,8 @@ export function QRCodeToolsLayout({
         </MobileOptionPanel>
       </div>
 
-      {/* Rich Educational Content */}
-      {richContent && (
-        <div className="bg-gray-50">
-          {richContent}
-        </div>
-      )}
+      {/* Rich Educational Content - Always show for QR tools after canvas */}
+      {children}
     </div>
   )
 }

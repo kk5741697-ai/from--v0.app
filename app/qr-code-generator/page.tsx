@@ -103,14 +103,6 @@ async function generateQRCode(files: any[], options: any) {
 }
 
 export default function QRCodeGeneratorPage() {
-  const richContent = (
-    <QRCodeGuide 
-      toolName="QR Code Generator"
-      toolType="generator"
-      className="py-8"
-    />
-  )
-
   return (
     <QRCodeToolsLayout
       title="QR Code Generator"
@@ -120,10 +112,18 @@ export default function QRCodeGeneratorPage() {
       processFunction={generateQRCode}
       options={qrOptions}
       maxFiles={0}
-      richContent={richContent}
       allowBatchProcessing={false}
       supportedFormats={[]}
       outputFormats={["png", "svg", "pdf"]}
-    />
+    >
+      {/* Rich content will be shown after canvas for QR tools */}
+      <div className="bg-gray-50">
+        <QRCodeGuide 
+          toolName="QR Code Generator"
+          toolType="generator"
+          className="py-8"
+        />
+      </div>
+    </QRCodeToolsLayout>
   )
 }
