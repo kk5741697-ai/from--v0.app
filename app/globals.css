@@ -180,11 +180,7 @@
 }
 
 .canvas {
-  @apply flex-1 overflow-hidden p-4 lg:p-6;
-}
-
-.sidebar {
-  @apply hidden lg:flex w-80 xl:w-96 bg-white border-l shadow-lg flex-col;
+  @apply flex-1 overflow-auto;
 }
 
 .upload-area {
@@ -193,6 +189,16 @@
 
 .tool-content {
   @apply bg-gray-50;
+}
+
+/* Fixed sidebar positioning */
+.desktop-sidebar {
+  @apply w-96 bg-white border-l shadow-lg flex flex-col fixed top-16 bottom-0 right-0 z-30;
+}
+
+/* Canvas margin for desktop sidebar */
+.canvas-with-sidebar {
+  @apply lg:mr-96;
 }
 
 /* Ad slot styling */
