@@ -56,6 +56,7 @@ export function UtilitiesToolsLayout({
   const [isProcessing, setIsProcessing] = useState(false)
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false)
   const [stats, setStats] = useState<any>(null)
+  const [isToolInterfaceActive, setIsToolInterfaceActive] = useState(true) // Utility tools are always active
 
   // Initialize options with defaults
   useEffect(() => {
@@ -155,10 +156,10 @@ export function UtilitiesToolsLayout({
       </div>
 
       {/* Main Content Area with proper spacing */}
-      <div className="pt-32 min-h-screen">
+      <div className="pt-32 min-h-screen tools-main-content">
         {/* Unified Before Canvas Ad */}
-        <div className="unified-before-canvas bg-white border-b">
-          <div className="container mx-auto px-4 py-3 tools-header-responsive">
+        <div className="unified-before-canvas bg-white border-b tools-header-responsive">
+          <div className="container mx-auto px-4 py-3">
             <AdBanner 
               adSlot="unified-before-canvas"
               adFormat="auto"
@@ -170,8 +171,8 @@ export function UtilitiesToolsLayout({
         </div>
 
         {/* Canvas Area with proper responsive margins */}
-        <div className="canvas bg-gray-50 min-h-[60vh] tools-interface-active">
-          <div className="container mx-auto px-4 py-6">
+        <div className="canvas bg-gray-50 min-h-[60vh] tools-interface-active overflow-y-auto">
+          <div className="container mx-auto px-4 py-6 tools-header-responsive">
             {children ? (
               children
             ) : (
@@ -268,8 +269,8 @@ export function UtilitiesToolsLayout({
         </div>
 
         {/* Unified After Canvas Ad */}
-        <div className="unified-after-canvas bg-white border-t">
-          <div className="container mx-auto px-4 py-3 tools-header-responsive">
+        <div className="unified-after-canvas bg-white border-t tools-header-responsive">
+          <div className="container mx-auto px-4 py-3">
             <AdBanner 
               adSlot="unified-after-canvas"
               adFormat="auto"
@@ -281,7 +282,7 @@ export function UtilitiesToolsLayout({
         </div>
 
         {/* Fixed Desktop Right Sidebar */}
-        <div className="desktop-sidebar">
+        <div className="desktop-sidebar overflow-y-auto">
           <div className="px-6 py-4 border-b bg-gray-50 flex-shrink-0">
             <div className="flex items-center space-x-2">
               <Icon className="h-5 w-5 text-purple-600" />
@@ -290,8 +291,8 @@ export function UtilitiesToolsLayout({
             <p className="text-sm text-gray-600 mt-1">Configure processing settings</p>
           </div>
 
-          <div className="flex-1 overflow-hidden">
-            <ScrollArea className="h-full px-2">
+          <div className="flex-1 overflow-y-auto">
+            <ScrollArea className="h-full">
               <div className="p-6 space-y-6">
                 {options.map((option) => (
                   <div key={option.key} className="space-y-2">
@@ -343,7 +344,7 @@ export function UtilitiesToolsLayout({
         </MobileOptionPanel>
       </div>
 
-      {/* Rich Educational Content */}
+      {/* Rich Educational Content - Always visible for utility tools */}
       {richContent && (
         <div className="bg-gray-50">
           {richContent}

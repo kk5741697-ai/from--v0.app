@@ -76,6 +76,7 @@ export function ImageToolsLayout({
   const [zoomLevel, setZoomLevel] = useState(100)
   const [showUploadArea, setShowUploadArea] = useState(true)
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false)
+  const [isToolInterfaceActive, setIsToolInterfaceActive] = useState(false)
   
   const fileInputRef = useRef<HTMLInputElement>(null)
 
@@ -139,6 +140,7 @@ export function ImageToolsLayout({
     if (newFiles.length > 0) {
       setFiles(prev => [...prev, ...newFiles])
       setShowUploadArea(false)
+      setIsToolInterfaceActive(true)
       toast({
         title: "Images uploaded",
         description: `${newFiles.length} image(s) loaded successfully`
@@ -184,6 +186,7 @@ export function ImageToolsLayout({
     setFiles([])
     setProcessingProgress(0)
     setShowUploadArea(true)
+    setIsToolInterfaceActive(false)
     setIsMobileSidebarOpen(false)
   }
 
@@ -367,7 +370,7 @@ export function ImageToolsLayout({
   }, {} as Record<string, any[]>)
 
   // Show upload area if no files
-  if (showUploadArea && files.length === 0) {
+  if (!isToolInterfaceActive && files.length === 0) {
     return (
       <div className="min-h-screen bg-background">
         <Header />
@@ -544,7 +547,7 @@ export function ImageToolsLayout({
 
   // Tool interface when files are loaded
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background tools-interface-container">
       {/* Fixed Header */}
       <div className="fixed top-0 left-0 right-0 z-50">
         <Header />
@@ -591,10 +594,10 @@ export function ImageToolsLayout({
       </div>
 
       {/* Main Content Area with proper spacing */}
-      <div className="pt-32 min-h-screen">
+      <div className="pt-32 min-h-screen tools-main-content">
         {/* Unified Before Canvas Ad */}
-        <div className="unified-before-canvas bg-white border-b">
-          <div className="container mx-auto px-4 py-3 tools-header-responsive">
+        <div className="unified-before-canvas bg-white border-b tools-header-responsive">
+          <div className="container mx-auto px-4 py-3">
             <AdBanner 
               adSlot="unified-before-canvas"
               adFormat="auto"
@@ -606,11 +609,11 @@ export function ImageToolsLayout({
         </div>
 
         {/* Canvas Area with proper responsive margins */}
-        <div className="canvas bg-gray-50 min-h-[60vh] tools-interface-active">
-          <div className="container mx-auto px-4 py-6">
+        <div className="canvas bg-gray-50 min-h-[60vh] tools-interface-active overflow-y-auto">
+          <div className="container mx-auto px-4 py-6 tools-header-responsive">
             {!allowBatchProcessing && files.length > 0 ? (
               // Single image full preview
-              <div className="flex justify-center items-center">
+              <div className="flex justify-center items-center min-h-[50vh]">
                 <div className="max-w-full">
                   <img
                     src={files[0].processedPreview || files[0].preview}
@@ -702,8 +705,8 @@ export function ImageToolsLayout({
         </div>
 
         {/* Unified After Canvas Ad */}
-        <div className="unified-after-canvas bg-white border-t">
-          <div className="container mx-auto px-4 py-3 tools-header-responsive">
+        <div className="unified-after-canvas bg-white border-t tools-header-responsive">
+          <div className="container mx-auto px-4 py-3">
             <AdBanner 
               adSlot="unified-after-canvas"
               adFormat="auto"
@@ -715,7 +718,7 @@ export function ImageToolsLayout({
         </div>
 
         {/* Fixed Desktop Right Sidebar */}
-        <div className="desktop-sidebar">
+        <div className="desktop-sidebar overflow-y-auto">
           <div className="px-6 py-4 border-b bg-gray-50 flex-shrink-0">
             <div className="flex items-center space-x-2">
               <Icon className="h-5 w-5 text-purple-600" />
@@ -724,8 +727,8 @@ export function ImageToolsLayout({
             <p className="text-sm text-gray-600 mt-1">Configure processing options</p>
           </div>
 
-          <div className="flex-1 overflow-hidden">
-            <ScrollArea className="h-full px-2">
+          <div className="flex-1 overflow-y-auto">
+            <ScrollArea className="h-full">
               <div className="p-6 space-y-6">
                 {Object.entries(groupedOptions).map(([section, sectionOptions]) => (
                   <div key={section} className="space-y-4">
@@ -832,8 +835,8 @@ export function ImageToolsLayout({
         </MobileOptionPanel>
       </div>
 
-      {/* Rich Educational Content */}
-      {richContent && (
+      {/* Rich Educational Content - Hidden when tool interface is active */}
+      {richContent && !isToolInterfaceActive && (
         <div className="bg-gray-50">
           {richContent}
         </div>

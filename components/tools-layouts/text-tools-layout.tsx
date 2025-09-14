@@ -30,28 +30,30 @@ interface TextToolsLayoutProps {
   title: string
   description: string
   icon: any
-  placeholder: string
-  outputPlaceholder: string
+  placeholder?: string
+  outputPlaceholder?: string
   processFunction: (input: string, options: any) => { output: string; error?: string; stats?: any }
   validateFunction?: (input: string) => { isValid: boolean; error?: string }
   options?: any[]
   examples?: Array<{ name: string; content: string }>
   fileExtensions?: string[]
   richContent?: React.ReactNode
+  children?: React.ReactNode
 }
 
 export function TextToolsLayout({
   title,
   description,
   icon: Icon,
-  placeholder,
-  outputPlaceholder,
+  placeholder = "Enter text here...",
+  outputPlaceholder = "Output will appear here...",
   processFunction,
   validateFunction,
   options = [],
   examples = [],
   fileExtensions = [".txt"],
-  richContent
+  richContent,
+  children
 }: TextToolsLayoutProps) {
   const [input, setInput] = useState("")
   const [output, setOutput] = useState("")
@@ -60,6 +62,7 @@ export function TextToolsLayout({
   const [stats, setStats] = useState<any>(null)
   const [toolOptions, setToolOptions] = useState<Record<string, any>>({})
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false)
+  const [isToolInterfaceActive, setIsToolInterfaceActive] = useState(true) // Text tools are always active
 
   // Initialize options with defaults
   useEffect(() => {
@@ -240,10 +243,10 @@ export function TextToolsLayout({
       </div>
 
       {/* Main Content Area with proper spacing */}
-      <div className="pt-32 min-h-screen">
+      <div className="pt-32 min-h-screen tools-main-content">
         {/* Unified Before Canvas Ad */}
-        <div className="unified-before-canvas bg-white border-b">
-          <div className="container mx-auto px-4 py-3 tools-header-responsive">
+        <div className="unified-before-canvas bg-white border-b tools-header-responsive">
+          <div className="container mx-auto px-4 py-3">
             <AdBanner 
               adSlot="unified-before-canvas"
               adFormat="auto"
@@ -255,9 +258,12 @@ export function TextToolsLayout({
         </div>
 
         {/* Canvas Area with proper responsive margins */}
-        <div className="canvas bg-gray-50 min-h-[60vh] tools-interface-active">
-          <div className="container mx-auto px-4 py-6">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+        <div className="canvas bg-gray-50 min-h-[60vh] tools-interface-active overflow-y-auto">
+          <div className="container mx-auto px-4 py-6 tools-header-responsive">
+            {children ? (
+              children
+            ) : (
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
               {/* Input Panel */}
               <Card>
                 <CardHeader className="pb-2">
@@ -329,9 +335,11 @@ export function TextToolsLayout({
                 </CardContent>
               </Card>
             </div>
+            )}
 
             {/* Process Button */}
-            <div className="text-center mb-8 lg:hidden">
+            {!children && (
+              <div className="text-center mb-8 lg:hidden">
               <Button 
                 onClick={processText}
                 disabled={!input.trim()}
@@ -342,9 +350,10 @@ export function TextToolsLayout({
                 Process Text
               </Button>
             </div>
+            )}
 
             {/* Stats Display */}
-            {stats && (
+            {!children && stats && (
               <Card className="max-w-2xl mx-auto">
                 <CardHeader>
                   <CardTitle>Processing Statistics</CardTitle>
@@ -363,7 +372,7 @@ export function TextToolsLayout({
             )}
 
             {/* Examples */}
-            {examples.length > 0 && (
+            {!children && examples.length > 0 && (
               <div className="max-w-4xl mx-auto mt-8">
                 <h3 className="text-lg font-semibold mb-4">Examples</h3>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -389,8 +398,8 @@ export function TextToolsLayout({
         </div>
 
         {/* Unified After Canvas Ad */}
-        <div className="unified-after-canvas bg-white border-t">
-          <div className="container mx-auto px-4 py-3 tools-header-responsive">
+        <div className="unified-after-canvas bg-white border-t tools-header-responsive">
+          <div className="container mx-auto px-4 py-3">
             <AdBanner 
               adSlot="unified-after-canvas"
               adFormat="auto"
@@ -402,7 +411,7 @@ export function TextToolsLayout({
         </div>
 
         {/* Fixed Desktop Right Sidebar */}
-        <div className="desktop-sidebar">
+        <div className="desktop-sidebar overflow-y-auto">
           <div className="px-6 py-4 border-b bg-gray-50 flex-shrink-0">
             <div className="flex items-center space-x-2">
               <Icon className="h-5 w-5 text-green-600" />
@@ -411,8 +420,8 @@ export function TextToolsLayout({
             <p className="text-sm text-gray-600 mt-1">Configure processing options</p>
           </div>
 
-          <div className="flex-1 overflow-hidden">
-            <ScrollArea className="h-full px-2">
+          <div className="flex-1 overflow-y-auto">
+            <ScrollArea className="h-full">
               <div className="p-6 space-y-6">
                 {Object.entries(groupedOptions).map(([section, sectionOptions]) => (
                   <div key={section} className="space-y-4">
@@ -492,7 +501,7 @@ export function TextToolsLayout({
         </MobileOptionPanel>
       </div>
 
-      {/* Rich Educational Content */}
+      {/* Rich Educational Content - Always visible for text tools */}
       {richContent && (
         <div className="bg-gray-50">
           {richContent}

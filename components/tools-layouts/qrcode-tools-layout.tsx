@@ -79,6 +79,7 @@ export function QRCodeToolsLayout({
   const [toolOptions, setToolOptions] = useState<Record<string, any>>({})
   const [isProcessing, setIsProcessing] = useState(false)
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false)
+  const [isToolInterfaceActive, setIsToolInterfaceActive] = useState(true) // QR tools are always active
 
   // QR-specific form data
   const [formData, setFormData] = useState({
@@ -513,10 +514,10 @@ export function QRCodeToolsLayout({
       </div>
 
       {/* Main Content Area with proper spacing */}
-      <div className="pt-40 min-h-screen">
+      <div className="pt-40 min-h-screen tools-main-content">
         {/* Unified Before Canvas Ad */}
-        <div className="unified-before-canvas bg-white border-b">
-          <div className="container mx-auto px-4 py-3 tools-header-responsive">
+        <div className="unified-before-canvas bg-white border-b tools-header-responsive">
+          <div className="container mx-auto px-4 py-3">
             <AdBanner 
               adSlot="unified-before-canvas"
               adFormat="auto"
@@ -528,11 +529,11 @@ export function QRCodeToolsLayout({
         </div>
 
         {/* Canvas Area with proper responsive margins */}
-        <div className="canvas bg-gray-50 min-h-[60vh] tools-interface-active">
+        <div className="canvas bg-gray-50 min-h-[60vh] tools-interface-active overflow-y-auto">
           {children ? (
             children
           ) : (
-            <div className="container mx-auto px-4 py-6">
+            <div className="container mx-auto px-4 py-6 tools-header-responsive">
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 {/* QR Content Form */}
                 <Card>
@@ -606,8 +607,8 @@ export function QRCodeToolsLayout({
         </div>
 
         {/* Unified After Canvas Ad */}
-        <div className="unified-after-canvas bg-white border-t">
-          <div className="container mx-auto px-4 py-3 tools-header-responsive">
+        <div className="unified-after-canvas bg-white border-t tools-header-responsive">
+          <div className="container mx-auto px-4 py-3">
             <AdBanner 
               adSlot="unified-after-canvas"
               adFormat="auto"
@@ -619,7 +620,7 @@ export function QRCodeToolsLayout({
         </div>
 
         {/* Fixed Desktop Right Sidebar */}
-        <div className="desktop-sidebar" style={{ top: '10rem' }}>
+        <div className="desktop-sidebar overflow-y-auto" style={{ top: '10rem' }}>
           <div className="px-6 py-4 border-b bg-gray-50 flex-shrink-0">
             <div className="flex items-center space-x-2">
               <QrCode className="h-5 w-5 text-green-600" />
@@ -628,7 +629,7 @@ export function QRCodeToolsLayout({
             <p className="text-sm text-gray-600 mt-1">Customize your QR code</p>
           </div>
 
-          <div className="flex-1 overflow-hidden">
+          <div className="flex-1 overflow-y-auto">
             <ScrollArea className="h-full">
               <div className="p-6 space-y-6">
                 {Object.entries(groupedOptions).map(([section, sectionOptions]) => (
@@ -721,7 +722,7 @@ export function QRCodeToolsLayout({
         </MobileOptionPanel>
       </div>
 
-      {/* Rich Educational Content - Always show for QR tools after canvas */}
+      {/* Rich Educational Content - Show AFTER canvas for QR tools */}
       {richContent && (
         <div className="bg-gray-50">
           {richContent}

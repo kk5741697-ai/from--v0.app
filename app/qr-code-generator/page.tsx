@@ -1,6 +1,6 @@
 "use client"
 
-import { QRCodeToolsLayout } from "@/components/tools-layouts/qrcode-tools-layout"
+import { UnifiedToolLayout } from "@/components/unified-tool-layout"
 import { QrCode } from "lucide-react"
 import { QRProcessor } from "@/lib/qr-processor"
 import { QRCodeGuide } from "@/components/content/qr-code-guide"
@@ -104,26 +104,24 @@ async function generateQRCode(files: any[], options: any) {
 
 export default function QRCodeGeneratorPage() {
   return (
-    <QRCodeToolsLayout
+    <UnifiedToolLayout
       title="QR Code Generator"
       description="Create professional QR codes for websites, WiFi, contacts, payments, and more. Advanced customization with colors, logos, error correction levels, and multiple output formats for business and personal use."
       icon={QrCode}
-      toolType="generator"
+      toolType="qr"
       processFunction={generateQRCode}
       options={qrOptions}
       maxFiles={0}
       allowBatchProcessing={false}
       supportedFormats={[]}
       outputFormats={["png", "svg", "pdf"]}
-    >
-      {/* Rich content will be shown after canvas for QR tools */}
-      <div className="bg-gray-50">
+      richContent={
         <QRCodeGuide 
           toolName="QR Code Generator"
           toolType="generator"
           className="py-8"
         />
-      </div>
-    </QRCodeToolsLayout>
+      }
+    />
   )
 }

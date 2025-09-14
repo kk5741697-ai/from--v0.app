@@ -184,8 +184,82 @@
 
 /* Fixed sidebar positioning - Updated for better responsive design */
 /* Enhanced responsive sidebar positioning */
+/* Enhanced layout management for tools interface */
+.tools-interface-container {
+  @apply relative;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.tools-main-content {
+  @apply flex-1;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Canvas area specific styling */
+.canvas {
+  @apply flex-1;
+  min-height: 60vh;
+  max-height: calc(100vh - 16rem);
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+/* Prevent body scroll when tools are active */
+.tools-interface-container .canvas {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(156, 163, 175, 0.3) transparent;
+}
+
+.tools-interface-container .canvas::-webkit-scrollbar {
+  width: 8px;
+}
+
+.tools-interface-container .canvas::-webkit-scrollbar-track {
+  background: rgba(243, 244, 246, 0.5);
+  border-radius: 4px;
+}
+
+.tools-interface-container .canvas::-webkit-scrollbar-thumb {
+  background-color: rgba(156, 163, 175, 0.5);
+  border-radius: 4px;
+  border: 2px solid rgba(243, 244, 246, 0.5);
+}
+
+.tools-interface-container .canvas::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(156, 163, 175, 0.7);
+}
+
+/* Enhanced responsive sidebar positioning with overflow protection */
 .desktop-sidebar {
   @apply hidden lg:flex w-80 xl:w-96 bg-white border-l shadow-lg flex-col fixed top-32 bottom-0 right-0 z-30;
+  max-height: calc(100vh - 8rem);
+  overflow-y: auto;
+}
+
+/* Sidebar scrolling */
+.desktop-sidebar {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(156, 163, 175, 0.3) transparent;
+}
+
+.desktop-sidebar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.desktop-sidebar::-webkit-scrollbar-track {
+  background: rgba(243, 244, 246, 0.3);
+}
+
+.desktop-sidebar::-webkit-scrollbar-thumb {
+  background-color: rgba(156, 163, 175, 0.4);
+  border-radius: 3px;
+}
+
+.desktop-sidebar::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(156, 163, 175, 0.6);
 }
 
 /* Responsive content margins for tools interface */
@@ -197,24 +271,41 @@
   @apply lg:mr-80 xl:mr-96;
 }
 
-/* Enhanced responsive adjustments */
+/* Enhanced responsive adjustments with overflow protection */
 @media (min-width: 1024px) {
   .tools-interface-active {
     margin-right: 320px; /* w-80 = 320px */
+    max-width: calc(100vw - 340px); /* Extra 20px for safety */
   }
   
   .tools-header-responsive {
     margin-right: 320px;
+    max-width: calc(100vw - 340px);
+  }
+  
+  .desktop-sidebar {
+    @apply flex;
+    width: 320px;
+  }
+  
+  .canvas {
+    max-height: calc(100vh - 16rem);
   }
 }
 
 @media (min-width: 1280px) {
   .tools-interface-active {
     margin-right: 384px; /* w-96 = 384px */
+    max-width: calc(100vw - 404px); /* Extra 20px for safety */
   }
   
   .tools-header-responsive {
     margin-right: 384px;
+    max-width: calc(100vw - 404px);
+  }
+  
+  .desktop-sidebar {
+    width: 384px;
   }
 }
 
@@ -227,6 +318,11 @@
   .tools-interface-active,
   .tools-header-responsive {
     margin-right: 0 !important;
+    max-width: 100vw !important;
+  }
+  
+  .canvas {
+    max-height: calc(100vh - 12rem);
   }
 }
 
@@ -251,13 +347,18 @@
   
   /* Enhanced mobile spacing */
   .tools-header {
-    padding-left: 0.5rem;
-    padding-right: 0.5rem;
+    @apply px-2;
   }
   
   .canvas {
-    padding-left: 0.5rem;
-    padding-right: 0.5rem;
+    @apply px-2;
+  }
+  
+  /* Ensure canvas is scrollable on mobile */
+  .canvas {
+    max-height: calc(100vh - 10rem);
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
   }
 }
 
@@ -273,13 +374,18 @@
   }
   
   .tools-header {
-    padding-left: 1rem;
-    padding-right: 1rem;
+    @apply px-4;
   }
   
   .canvas {
-    padding-left: 1rem;
-    padding-right: 1rem;
+    @apply px-4;
+  }
+  
+  /* Ensure canvas is scrollable on tablet */
+  .canvas {
+    max-height: calc(100vh - 12rem);
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
   }
 }
 
@@ -369,29 +475,6 @@
   }
 }
 
-/* Desktop sidebar positioning with overflow protection */
-@media (min-width: 1024px) {
-  .desktop-sidebar {
-    @apply flex; /* Show sidebar on desktop */
-    max-width: calc(100vw - 320px); /* Prevent overflow */
-  }
-  
-  /* Ensure content doesn't overlap sidebar */
-  .tools-interface-active {
-    max-width: calc(100vw - 320px);
-  }
-}
-
-@media (min-width: 1280px) {
-  .desktop-sidebar {
-    max-width: calc(100vw - 384px); /* w-96 = 384px */
-  }
-  
-  .tools-interface-active {
-    max-width: calc(100vw - 384px);
-  }
-}
-
 /* Touch-friendly interactions */
 .touch-friendly {
   @apply min-h-[44px] min-w-[44px];
@@ -453,8 +536,30 @@
 }
 
 /* Prevent content jumping during sidebar transitions */
-.tools-layout-container {
+.tools-interface-container {
   @apply relative overflow-x-hidden;
+  min-height: 100vh;
+}
+
+/* Smooth layout transitions */
+.tools-main-content {
+  transition: margin-right 0.3s ease-in-out, max-width 0.3s ease-in-out;
+}
+
+/* Enhanced sidebar positioning */
+.desktop-sidebar {
+  transition: width 0.3s ease-in-out;
+  will-change: width;
+}
+
+/* Layout stability improvements */
+.tools-header-responsive {
+  transition: margin-right 0.3s ease-in-out, max-width 0.3s ease-in-out;
+}
+
+/* Prevent layout shift during transitions */
+.tools-interface-active {
+  transition: margin-right 0.3s ease-in-out, max-width 0.3s ease-in-out;
 }
 
 /* Enhanced touch targets for mobile */
@@ -465,5 +570,98 @@
   
   .mobile-option-trigger {
     @apply h-12 px-4 text-base;
+  }
+  
+  /* Mobile-specific canvas behavior */
+  .tools-interface-container {
+    @apply overflow-hidden;
+  }
+  
+  /* Improve mobile scrolling performance */
+  .tools-interface-container {
+    -webkit-overflow-scrolling: touch;
+    overflow-scrolling: touch;
+  }
+}
+
+/* Enhanced responsive grid adjustments for tool layouts */
+@media (max-width: 640px) {
+  .tools-header {
+    @apply px-2 py-2;
+  }
+  
+  .canvas {
+    @apply px-2;
+    max-height: calc(100vh - 8rem);
+  }
+}
+
+/* Large screen optimizations */
+@media (min-width: 1536px) {
+  .desktop-sidebar {
+    width: 28rem; /* w-112 equivalent */
+  }
+  
+  .tools-interface-active,
+  .tools-header-responsive {
+    margin-right: 28rem;
+    max-width: calc(100vw - 29rem);
+  }
+}
+
+/* Ultra-wide screen support */
+@media (min-width: 1920px) {
+  .container {
+    max-width: 1400px;
+  }
+  
+  .desktop-sidebar {
+    width: 32rem; /* w-128 equivalent */
+  }
+  
+  .tools-interface-active,
+  .tools-header-responsive {
+    margin-right: 32rem;
+    max-width: calc(100vw - 33rem);
+  }
+}
+
+/* High DPI display optimizations */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+  .tools-interface-container {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+}
+
+/* Reduced motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  .tools-main-content,
+  .desktop-sidebar,
+  .tools-header-responsive,
+  .tools-interface-active {
+    transition: none;
+  }
+}
+
+/* Focus management for accessibility */
+.tools-interface-container:focus-within .canvas {
+  outline: 2px solid rgba(59, 130, 246, 0.5);
+  outline-offset: -2px;
+}
+
+/* Print styles */
+@media print {
+  .desktop-sidebar,
+  .tools-header,
+  .unified-before-canvas,
+  .unified-after-canvas {
+    display: none !important;
+  }
+  
+  .tools-interface-active,
+  .tools-header-responsive {
+    margin-right: 0 !important;
+    max-width: 100% !important;
   }
 }

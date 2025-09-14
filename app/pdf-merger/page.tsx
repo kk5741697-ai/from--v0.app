@@ -1,6 +1,6 @@
 "use client"
 
-import { PDFToolsLayout } from "@/components/tools-layouts/pdf-tools-layout"
+import { UnifiedToolLayout } from "@/components/unified-tool-layout"
 import { FileType } from "lucide-react"
 import { ClientPDFProcessor } from "@/lib/processors/client-pdf-processor"
 import { PDFProcessingGuide } from "@/components/content/pdf-processing-guide"
@@ -74,11 +74,11 @@ export default function PDFMergerPage() {
   )
 
   return (
-    <PDFToolsLayout
+    <UnifiedToolLayout
       title="Merge PDF"
       description="Combine multiple PDF files into one document with custom page ordering, bookmark preservation, and advanced merging options. Drag-and-drop interface for easy file organization."
       icon={FileType}
-      toolType="merge"
+      toolType="pdf"
       processFunction={mergePDFs}
       options={mergeOptions}
       maxFiles={10}

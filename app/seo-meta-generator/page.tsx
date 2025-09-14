@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { SEOToolsLayout } from "@/components/tools-layouts/seo-tools-layout"
+import { UnifiedToolLayout } from "@/components/unified-tool-layout"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -130,15 +130,15 @@ const seoExamples = [
 
 export default function SEOMetaGeneratorPage() {
   return (
-    <SEOToolsLayout
+    <UnifiedToolLayout
       title="SEO Meta Generator"
       description="Generate optimized meta tags, Open Graph, and Twitter Card tags for better SEO and social media sharing."
       icon={Globe}
-      toolType="meta-generator"
+      toolType="seo"
       processFunction={processMetaTags}
       options={[]}
       outputFormats={["html"]}
-    >
+    >{
       <div className="max-w-4xl mx-auto space-y-6">
         <Card>
           <CardHeader>
@@ -168,6 +168,6 @@ export default function SEOMetaGeneratorPage() {
           </CardContent>
         </Card>
       </div>
-    </SEOToolsLayout>
+    </UnifiedToolLayout>
   )
 }
