@@ -1,6 +1,6 @@
 "use client"
 
-import { UnifiedToolLayout } from "@/components/unified-tool-layout"
+import { PDFToolsLayout } from "@/components/tools-layouts/pdf-tools-layout"
 import { ImageIcon } from "lucide-react"
 import { ClientPDFProcessor } from "@/lib/processors/client-pdf-processor"
 import { PDFProcessingGuide } from "@/components/content/pdf-processing-guide"
@@ -114,11 +114,11 @@ export default function PDFToImagePage() {
   )
 
   return (
-    <UnifiedToolLayout
+    <PDFToolsLayout
       title="PDF to Image Converter"
       description="Convert PDF pages to high-quality images in multiple formats including PNG, JPEG, and WebP. Advanced resolution controls, color mode options, and batch processing for professional results."
       icon={ImageIcon}
-      toolType="pdf"
+      toolType="convert"
       processFunction={convertPDFToImage}
       options={convertOptions}
       maxFiles={3}

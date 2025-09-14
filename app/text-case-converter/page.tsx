@@ -1,6 +1,6 @@
 "use client"
 
-import { TextToolLayout } from "@/components/text-tool-layout"
+import { TextToolsLayout } from "@/components/tools-layouts/text-tools-layout"
 import { Type } from "lucide-react"
 
 const caseExamples = [

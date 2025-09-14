@@ -1,6 +1,6 @@
 "use client"
 
-import { UnifiedToolLayout } from "@/components/unified-tool-layout"
+import { PDFToolsLayout } from "@/components/tools-layouts/pdf-tools-layout"
 import { Unlock } from "lucide-react"
 import { ClientPDFProcessor } from "@/lib/processors/client-pdf-processor"
 
@@ -62,11 +62,11 @@ async function unlockPDF(files: any[], options: any) {
 
 export default function PDFUnlockPage() {
   return (
-    <UnifiedToolLayout
+    <PDFToolsLayout
       title="Unlock PDF"
       description="Remove password protection and restrictions from PDF files. Unlock encrypted PDFs with the correct password."
       icon={Unlock}
-      toolType="pdf"
+      toolType="unlock"
       processFunction={unlockPDF}
       options={unlockOptions}
       maxFiles={1}

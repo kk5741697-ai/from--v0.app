@@ -1,6 +1,6 @@
 "use client"
 
-import { UnifiedToolLayout } from "@/components/unified-tool-layout"
+import { ImageToolsLayout } from "@/components/tools-layouts/image-tools-layout"
 import { RefreshCw } from "lucide-react"
 import { ImageProcessor } from "@/lib/processors/image-processor"
 import { ImageProcessingGuide } from "@/components/content/image-processing-guide"
@@ -97,11 +97,11 @@ export default function ImageConverterPage() {
   )
 
   return (
-    <UnifiedToolLayout
+    <ImageToolsLayout
       title="Image Converter"
       description="Convert images between different formats including JPEG, PNG, WebP, and AVIF. Advanced quality controls and background color options for professional results."
       icon={RefreshCw}
-      toolType="image"
+      toolType="convert"
       processFunction={convertImages}
       options={convertOptions}
       maxFiles={15}

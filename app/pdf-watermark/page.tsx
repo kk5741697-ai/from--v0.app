@@ -1,6 +1,6 @@
 "use client"
 
-import { UnifiedToolLayout } from "@/components/unified-tool-layout"
+import { PDFToolsLayout } from "@/components/tools-layouts/pdf-tools-layout"
 import { Droplets } from "lucide-react"
 import { ClientPDFProcessor } from "@/lib/processors/client-pdf-processor"
 
@@ -130,11 +130,11 @@ async function addWatermarkToPDF(files: any[], options: any) {
 
 export default function PDFWatermarkPage() {
   return (
-    <UnifiedToolLayout
+    <PDFToolsLayout
       title="PDF Watermark"
       description="Add text watermarks to your PDF documents. Customize opacity, position, size, and color to protect your documents or add branding."
       icon={Droplets}
-      toolType="pdf"
+      toolType="watermark"
       processFunction={addWatermarkToPDF}
       options={watermarkOptions}
       maxFiles={10}

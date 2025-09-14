@@ -1,6 +1,6 @@
 "use client"
 
-import { QRCodeToolsLayout } from "@/components/qrcode-tools-layout"
+import { QRCodeToolsLayout } from "@/components/tools-layouts/qrcode-tools-layout"
 import { QrCode } from "lucide-react"
 import { QRProcessor } from "@/lib/qr-processor"
 import { QRCodeGuide } from "@/components/content/qr-code-guide"

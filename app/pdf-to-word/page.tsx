@@ -1,6 +1,6 @@
 "use client"
 
-import { UnifiedToolLayout } from "@/components/unified-tool-layout"
+import { PDFToolsLayout } from "@/components/tools-layouts/pdf-tools-layout"
 import { FileText } from "lucide-react"
 import { ClientPDFProcessor } from "@/lib/processors/client-pdf-processor"
 
@@ -145,11 +145,11 @@ async function convertPDFToWord(files: any[], options: any) {
 
 export default function PDFToWordPage() {
   return (
-    <UnifiedToolLayout
+    <PDFToolsLayout
       title="PDF to Word Converter"
       description="Convert PDF files to editable Word documents. Supports both text-based PDFs and scanned documents with OCR."
       icon={FileText}
-      toolType="pdf"
+      toolType="convert"
       processFunction={convertPDFToWord}
       options={convertOptions}
       maxFiles={10}

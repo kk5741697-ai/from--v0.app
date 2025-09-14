@@ -1,6 +1,6 @@
 "use client"
 
-import { UnifiedToolLayout } from "@/components/unified-tool-layout"
+import { PDFToolsLayout } from "@/components/tools-layouts/pdf-tools-layout"
 import { Scissors } from "lucide-react"
 import { ClientPDFProcessor } from "@/lib/processors/client-pdf-processor"
 import { PDFProcessingGuide } from "@/components/content/pdf-processing-guide"
@@ -114,11 +114,11 @@ export default function PDFSplitterPage() {
   )
 
   return (
-    <UnifiedToolLayout
+    <PDFToolsLayout
       title="Split PDF"
       description="Split large PDF files into smaller documents by extracting specific pages, page ranges, or equal parts. Advanced page selection with visual thumbnails and drag-to-reorder functionality."
       icon={Scissors}
-      toolType="pdf"
+      toolType="split"
       processFunction={splitPDF}
       options={splitOptions}
       maxFiles={1}

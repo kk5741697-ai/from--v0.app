@@ -1,6 +1,6 @@
 "use client"
 
-import { TextToolLayout } from "@/components/text-tool-layout"
+import { TextToolsLayout } from "@/components/tools-layouts/text-tools-layout"
 import { Lock } from "lucide-react"
 
 const base64Examples = [

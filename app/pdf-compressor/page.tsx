@@ -1,6 +1,6 @@
 "use client"
 
-import { UnifiedToolLayout } from "@/components/unified-tool-layout"
+import { PDFToolsLayout } from "@/components/tools-layouts/pdf-tools-layout"
 import { Archive } from "lucide-react"
 import { ClientPDFProcessor } from "@/lib/processors/client-pdf-processor"
 import { PDFProcessingGuide } from "@/components/content/pdf-processing-guide"
@@ -101,11 +101,11 @@ export default function PDFCompressorPage() {
   )
 
   return (
-    <UnifiedToolLayout
+    <PDFToolsLayout
       title="PDF Compressor"
       description="Reduce PDF file size while maintaining document quality using advanced compression algorithms. Optimize images, compress fonts, and remove unnecessary metadata for efficient storage and sharing."
       icon={Archive}
-      toolType="pdf"
+      toolType="compress"
       processFunction={compressPDF}
       options={compressOptions}
       maxFiles={5}

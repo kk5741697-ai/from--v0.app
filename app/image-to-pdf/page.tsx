@@ -1,6 +1,6 @@
 "use client"
 
-import { UnifiedToolLayout } from "@/components/unified-tool-layout"
+import { PDFToolsLayout } from "@/components/tools-layouts/pdf-tools-layout"
 import { FileImage } from "lucide-react"
 import { ClientPDFProcessor } from "@/lib/processors/client-pdf-processor"
 
@@ -88,11 +88,11 @@ async function convertImagesToPDF(files: any[], options: any) {
 
 export default function ImageToPDFPage() {
   return (
-    <UnifiedToolLayout
+    <PDFToolsLayout
       title="Image to PDF Converter"
       description="Convert multiple images (JPG, PNG, WebP) into a single PDF document with custom page layouts, margins, and sizing options."
       icon={FileImage}
-      toolType="pdf"
+      toolType="convert"
       processFunction={convertImagesToPDF}
       options={convertOptions}
       maxFiles={20}

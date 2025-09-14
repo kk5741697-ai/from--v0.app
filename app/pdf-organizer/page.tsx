@@ -1,6 +1,6 @@
 "use client"
 
-import { UnifiedToolLayout } from "@/components/unified-tool-layout"
+import { PDFToolsLayout } from "@/components/tools-layouts/pdf-tools-layout"
 import { ArrowUpDown } from "lucide-react"
 import { ClientPDFProcessor } from "@/lib/processors/client-pdf-processor"
 
@@ -76,11 +76,11 @@ async function organizePDF(files: any[], options: any) {
 
 export default function PDFOrganizerPage() {
   return (
-    <UnifiedToolLayout
+    <PDFToolsLayout
       title="Organize PDF"
       description="Reorder, sort, and organize PDF pages. Remove blank pages, add page numbers, and customize page arrangement."
       icon={ArrowUpDown}
-      toolType="pdf"
+      toolType="organize"
       processFunction={organizePDF}
       options={organizeOptions}
       maxFiles={1}

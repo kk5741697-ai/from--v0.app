@@ -1,6 +1,6 @@
 "use client"
 
-import { TextToolsLayout } from "@/components/text-tools-layout"
+import { TextToolsLayout } from "@/components/tools-layouts/text-tools-layout"
 import { Braces } from "lucide-react"
 import { TextProcessor } from "@/lib/processors/text-processor"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"

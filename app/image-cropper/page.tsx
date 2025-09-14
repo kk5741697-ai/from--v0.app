@@ -1,6 +1,6 @@
 "use client"
 
-import { UnifiedToolLayout } from "@/components/unified-tool-layout"
+import { ImageToolsLayout } from "@/components/tools-layouts/image-tools-layout"
 import { Crop } from "lucide-react"
 import { ImageProcessor } from "@/lib/processors/image-processor"
 import { ImageProcessingGuide } from "@/components/content/image-processing-guide"
@@ -118,11 +118,11 @@ export default function ImageCropperPage() {
   )
 
   return (
-    <UnifiedToolLayout
+    <ImageToolsLayout
       title="Crop Image"
       description="Crop images with precision using our advanced visual editor, aspect ratio presets, and grid guides. Professional cropping tools for social media, web optimization, and creative projects."
       icon={Crop}
-      toolType="image"
+      toolType="crop"
       processFunction={cropImages}
       options={cropOptions}
       maxFiles={1}

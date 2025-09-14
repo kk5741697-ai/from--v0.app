@@ -1,6 +1,6 @@
 "use client"
 
-import { UnifiedToolLayout } from "@/components/unified-tool-layout"
+import { ImageToolsLayout } from "@/components/tools-layouts/image-tools-layout"
 import { RotateCw } from "lucide-react"
 import { ImageProcessor } from "@/lib/processors/image-processor"
 import { ImageProcessingGuide } from "@/components/content/image-processing-guide"
@@ -97,11 +97,11 @@ export default function ImageRotatorPage() {
   )
 
   return (
-    <UnifiedToolLayout
+    <ImageToolsLayout
       title="Image Rotator"
       description="Rotate images by preset angles (90°, 180°, 270°) or any custom angle. Perfect for fixing orientation and creating artistic effects with precise control."
       icon={RotateCw}
-      toolType="image"
+      toolType="rotate"
       processFunction={rotateImages}
       options={rotateOptions}
       maxFiles={10}

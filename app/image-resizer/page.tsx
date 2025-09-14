@@ -1,6 +1,6 @@
 "use client"
 
-import { ImageToolsLayout } from "@/components/image-tools-layout"
+import { ImageToolsLayout } from "@/components/tools-layouts/image-tools-layout"
 import { Maximize2 } from "lucide-react"
 import { ImageProcessor } from "@/lib/processors/image-processor"
 import { ImageProcessingGuide } from "@/components/content/image-processing-guide"

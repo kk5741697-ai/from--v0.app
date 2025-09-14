@@ -1,6 +1,6 @@
 "use client"
 
-import { UnifiedToolLayout } from "@/components/unified-tool-layout"
+import { ImageToolsLayout } from "@/components/tools-layouts/image-tools-layout"
 import { Archive } from "lucide-react"
 import { ImageProcessor } from "@/lib/processors/image-processor"
 import { ImageProcessingGuide } from "@/components/content/image-processing-guide"
@@ -100,11 +100,11 @@ export default function ImageCompressorPage() {
   )
 
   return (
-    <UnifiedToolLayout
+    <ImageToolsLayout
       title="Image Compressor"
       description="Reduce image file size while maintaining quality using advanced compression algorithms. Perfect for web optimization and storage efficiency."
       icon={Archive}
-      toolType="image"
+      toolType="compress"
       processFunction={compressImages}
       options={compressionOptions}
       maxFiles={15}

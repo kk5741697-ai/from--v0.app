@@ -1,6 +1,6 @@
 "use client"
 
-import { UnifiedToolLayout } from "@/components/unified-tool-layout"
+import { ImageToolsLayout } from "@/components/tools-layouts/image-tools-layout"
 import { FlipHorizontal } from "lucide-react"
 import { ImageProcessor } from "@/lib/processors/image-processor"
 import { ImageProcessingGuide } from "@/components/content/image-processing-guide"
@@ -67,11 +67,11 @@ export default function ImageFlipperPage() {
   )
 
   return (
-    <UnifiedToolLayout
+    <ImageToolsLayout
       title="Flip Image"
       description="Flip images horizontally, vertically, or both directions with batch processing support. Perfect for creating mirror effects and correcting image orientation."
       icon={FlipHorizontal}
-      toolType="image"
+      toolType="flip"
       processFunction={flipImages}
       options={flipOptions}
       maxFiles={20}
