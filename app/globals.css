@@ -234,7 +234,7 @@
 
 /* Enhanced responsive sidebar positioning with overflow protection */
 .desktop-sidebar {
-  @apply hidden lg:flex w-80 xl:w-96 bg-white border-l shadow-lg flex-col fixed top-32 bottom-0 right-0 z-30;
+  @apply hidden lg:flex w-80 xl:w-96 bg-white border-l shadow-lg flex-col fixed bottom-0 right-0 z-30;
   max-height: calc(100vh - 8rem);
   overflow-y: auto;
 }
@@ -274,13 +274,13 @@
 /* Enhanced responsive adjustments with overflow protection */
 @media (min-width: 1024px) {
   .tools-interface-active {
-    margin-right: 320px; /* w-80 = 320px */
-    max-width: calc(100vw - 340px); /* Extra 20px for safety */
+    margin-right: 320px !important; /* w-80 = 320px */
+    max-width: calc(100vw - 340px) !important; /* Extra 20px for safety */
   }
   
   .tools-header-responsive {
-    margin-right: 320px;
-    max-width: calc(100vw - 340px);
+    margin-right: 320px !important;
+    max-width: calc(100vw - 340px) !important;
   }
   
   .desktop-sidebar {
@@ -295,13 +295,13 @@
 
 @media (min-width: 1280px) {
   .tools-interface-active {
-    margin-right: 384px; /* w-96 = 384px */
-    max-width: calc(100vw - 404px); /* Extra 20px for safety */
+    margin-right: 384px !important; /* w-96 = 384px */
+    max-width: calc(100vw - 404px) !important; /* Extra 20px for safety */
   }
   
   .tools-header-responsive {
-    margin-right: 384px;
-    max-width: calc(100vw - 404px);
+    margin-right: 384px !important;
+    max-width: calc(100vw - 404px) !important;
   }
   
   .desktop-sidebar {
@@ -541,27 +541,6 @@
   min-height: 100vh;
 }
 
-/* Smooth layout transitions */
-.tools-main-content {
-  transition: margin-right 0.3s ease-in-out, max-width 0.3s ease-in-out;
-}
-
-/* Enhanced sidebar positioning */
-.desktop-sidebar {
-  transition: width 0.3s ease-in-out;
-  will-change: width;
-}
-
-/* Layout stability improvements */
-.tools-header-responsive {
-  transition: margin-right 0.3s ease-in-out, max-width 0.3s ease-in-out;
-}
-
-/* Prevent layout shift during transitions */
-.tools-interface-active {
-  transition: margin-right 0.3s ease-in-out, max-width 0.3s ease-in-out;
-}
-
 /* Enhanced touch targets for mobile */
 @media (max-width: 768px) {
   .touch-target {
@@ -636,11 +615,9 @@
 
 /* Reduced motion preferences */
 @media (prefers-reduced-motion: reduce) {
-  .tools-main-content,
-  .desktop-sidebar,
-  .tools-header-responsive,
-  .tools-interface-active {
-    transition: none;
+  * {
+    transition: none !important;
+    animation: none !important;
   }
 }
 

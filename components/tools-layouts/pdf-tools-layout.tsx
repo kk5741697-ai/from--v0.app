@@ -497,8 +497,8 @@ export function PDFToolsLayout({
       </div>
 
       {/* Fixed Tools Header */}
-      <div className="fixed top-16 left-0 right-0 z-40 tools-header bg-white border-b shadow-sm">
-        <div className="container mx-auto px-4 py-3 tools-header-responsive">
+      <div className="fixed top-16 left-0 right-0 z-40 tools-header bg-white border-b shadow-sm tools-header-responsive">
+        <div className="container mx-auto px-4 py-3">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-2">
               <Icon className="h-5 w-5 text-red-600" />
@@ -525,7 +525,7 @@ export function PDFToolsLayout({
       {/* Main Content Area with proper spacing */}
       <div className="pt-32 min-h-screen tools-main-content">
         {/* Unified Before Canvas Ad */}
-        <div className="unified-before-canvas bg-white border-b tools-header-responsive">
+        <div className="unified-before-canvas bg-white border-b">
           <div className="container mx-auto px-4 py-3">
             <AdBanner 
               adSlot="unified-before-canvas"
@@ -538,8 +538,8 @@ export function PDFToolsLayout({
         </div>
 
         {/* Canvas Area with proper responsive margins */}
-        <div className="canvas bg-gray-50 min-h-[60vh] tools-interface-active overflow-y-auto">
-          <div className="container mx-auto px-4 py-6 tools-header-responsive">
+        <div className="canvas bg-gray-50 min-h-[60vh] overflow-y-auto tools-interface-active">
+          <div className="container mx-auto px-4 py-6">
             <div className="space-y-4">
               {files.map((file) => (
                 <Card key={file.id} className="p-4">
@@ -602,7 +602,7 @@ export function PDFToolsLayout({
         </div>
 
         {/* Unified After Canvas Ad */}
-        <div className="unified-after-canvas bg-white border-t tools-header-responsive">
+        <div className="unified-after-canvas bg-white border-t">
           <div className="container mx-auto px-4 py-3">
             <AdBanner 
               adSlot="unified-after-canvas"
@@ -615,7 +615,7 @@ export function PDFToolsLayout({
         </div>
 
         {/* Fixed Desktop Right Sidebar */}
-        <div className="desktop-sidebar overflow-y-auto">
+        <div className="desktop-sidebar overflow-y-auto" style={{ top: '4rem' }}>
           <div className="px-6 py-4 border-b bg-gray-50 flex-shrink-0">
             <div className="flex items-center space-x-2">
               <Icon className="h-5 w-5 text-red-600" />

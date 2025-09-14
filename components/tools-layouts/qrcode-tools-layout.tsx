@@ -469,8 +469,8 @@ export function QRCodeToolsLayout({
       </div>
 
       {/* Fixed QR Type Header */}
-      <div className="fixed top-16 left-0 right-0 z-40 tools-header bg-white border-b shadow-sm">
-        <div className="container mx-auto px-4 py-3 tools-header-responsive">
+      <div className="fixed top-16 left-0 right-0 z-40 tools-header bg-white border-b shadow-sm tools-header-responsive">
+        <div className="container mx-auto px-4 py-3">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center space-x-2">
               <Icon className="h-5 w-5 text-green-600" />
@@ -516,7 +516,7 @@ export function QRCodeToolsLayout({
       {/* Main Content Area with proper spacing */}
       <div className="pt-40 min-h-screen tools-main-content">
         {/* Unified Before Canvas Ad */}
-        <div className="unified-before-canvas bg-white border-b tools-header-responsive">
+        <div className="unified-before-canvas bg-white border-b">
           <div className="container mx-auto px-4 py-3">
             <AdBanner 
               adSlot="unified-before-canvas"
@@ -529,11 +529,11 @@ export function QRCodeToolsLayout({
         </div>
 
         {/* Canvas Area with proper responsive margins */}
-        <div className="canvas bg-gray-50 min-h-[60vh] tools-interface-active overflow-y-auto">
+        <div className="canvas bg-gray-50 min-h-[60vh] overflow-y-auto tools-interface-active">
           {children ? (
             children
           ) : (
-            <div className="container mx-auto px-4 py-6 tools-header-responsive">
+            <div className="container mx-auto px-4 py-6">
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 {/* QR Content Form */}
                 <Card>
@@ -607,7 +607,7 @@ export function QRCodeToolsLayout({
         </div>
 
         {/* Unified After Canvas Ad */}
-        <div className="unified-after-canvas bg-white border-t tools-header-responsive">
+        <div className="unified-after-canvas bg-white border-t">
           <div className="container mx-auto px-4 py-3">
             <AdBanner 
               adSlot="unified-after-canvas"
@@ -620,7 +620,7 @@ export function QRCodeToolsLayout({
         </div>
 
         {/* Fixed Desktop Right Sidebar */}
-        <div className="desktop-sidebar overflow-y-auto" style={{ top: '10rem' }}>
+        <div className="desktop-sidebar overflow-y-auto" style={{ top: '4rem' }}>
           <div className="px-6 py-4 border-b bg-gray-50 flex-shrink-0">
             <div className="flex items-center space-x-2">
               <QrCode className="h-5 w-5 text-green-600" />
