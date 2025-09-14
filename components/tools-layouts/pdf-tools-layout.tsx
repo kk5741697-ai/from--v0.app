@@ -72,7 +72,6 @@ export function PDFToolsLayout({
   const [isToolInterfaceActive, setIsToolInterfaceActive] = useState(false)
   
   const fileInputRef = useRef<HTMLInputElement>(null)
-  const [selectedPages, setSelectedPages] = useState<Set<string>>(new Set())
 
   // Initialize options with defaults
   useEffect(() => {
