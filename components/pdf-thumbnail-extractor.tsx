@@ -3,11 +3,6 @@
 import { useEffect, useState } from "react"
 import * as pdfjs from "pdfjs-dist"
 
-// Set the worker source
-if (typeof window !== "undefined") {
-  pdfjs.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.js`
-}
-
 interface PDFPage {
   pageNumber: number
   thumbnail: string
@@ -32,6 +27,13 @@ export function PDFThumbnailExtractor({
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [progress, setProgress] = useState(0)
+
+  // Initialize PDF.js worker on client side only
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      pdfjs.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.js`
+    }
+  }, [])
 
   useEffect(() => {
     async function extractThumbnails() {
