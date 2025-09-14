@@ -51,8 +51,8 @@ Only 2 ad slots: unified-before-canvas and unified-after-canvas
 Persistent ads: Same ads reused, no additional requests
 Rich content: Educational guides for each tool type
 
-create layout file for each tools type
-@/components/imagelayout.tsx
+always use layout file for each tools type
+@/components/image-tool-layout.tsx
 @/components/imagelayout.tsx
 @/components/imagelayout.tsx
 @/components/imagelayout.tsx
