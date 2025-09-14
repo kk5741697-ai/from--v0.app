@@ -567,9 +567,11 @@ export function PDFToolsLayout({
                     <PDFThumbnailExtractor
                       file={file.file}
                       onPagesExtracted={(pages) => {
-                        setFiles(prev => prev.map(f => 
-                          f.id === file.id ? { ...f, pages } : f
-                        ))
+                        if (pages && pages.length > 0) {
+                          setFiles(prev => prev.map(f => 
+                            f.id === file.id ? { ...f, pages } : f
+                          ))
+                        }
                       }}
                     />
                   )}

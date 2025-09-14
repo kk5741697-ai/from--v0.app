@@ -48,6 +48,13 @@ async function splitPDF(files: any[], options: any): Promise<{ success: boolean;
 
     const file = files[0]
 
+    // Validate file
+    if (!file.originalFile && !file.file) {
+      return {
+        success: false,
+        error: "Invalid file object"
+      }
+    }
     const selectedPages: number[] = []
     if (options.selectedPages && Array.isArray(options.selectedPages)) {
       options.selectedPages.forEach((pageKey: string) => {
@@ -65,10 +72,11 @@ async function splitPDF(files: any[], options: any): Promise<{ success: boolean;
     if (selectedPages.length === 0) {
       return {
         success: false,
-        error: "No pages selected for extraction"
+        error: "Please select at least one page to extract"
       }
     }
 
+    console.log(`Splitting PDF: ${selectedPages.length} pages selected:`, selectedPages)
     const splitResults = await ClientPDFProcessor.splitPDF(file.originalFile || file.file, {
       selectedPages
     })
@@ -100,6 +108,7 @@ async function splitPDF(files: any[], options: any): Promise<{ success: boolean;
       }
     }
   } catch (error) {
+    console.error("PDF splitting error:", error)
     return {
       success: false,
       error: error instanceof Error ? error.message : "Failed to split PDF",

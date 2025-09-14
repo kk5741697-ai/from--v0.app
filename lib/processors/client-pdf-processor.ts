@@ -216,11 +216,26 @@ export class ClientPDFProcessor {
 
   static async splitPDF(file: File, options: ClientPDFProcessingOptions): Promise<Blob[]> {
     try {
+      if (!file || file.type !== "application/pdf") {
+        throw new Error("Invalid file. Please provide a valid PDF file.")
+      }
+
       const arrayBuffer = await file.arrayBuffer()
-      const pdf = await PDFDocument.load(arrayBuffer)
+      let pdf: any
+      
+      try {
+        pdf = await PDFDocument.load(arrayBuffer)
+      } catch (pdfError) {
+        console.error("PDF loading error:", pdfError)
+        throw new Error("Failed to load PDF. The file may be corrupted or password-protected.")
+      }
+      
       const results: Blob[] = []
       const totalPages = pdf.getPageCount()
 
+      if (totalPages === 0) {
+        throw new Error("PDF appears to be empty")
+      }
       const selectedPageNumbers = options.selectedPages || []
       
       if (selectedPageNumbers.length === 0) {
@@ -232,22 +247,30 @@ export class ClientPDFProcessor {
         .sort((a, b) => a - b)
 
       if (validPages.length === 0) {
-        throw new Error("No valid pages selected for extraction.")
+        throw new Error(`No valid pages selected. PDF has ${totalPages} pages.`)
       }
 
       for (const pageNum of validPages as number[]) {
-        const newPdf = await PDFDocument.create()
-        const [copiedPage] = await newPdf.copyPages(pdf, [pageNum - 1])
-        newPdf.addPage(copiedPage)
+        try {
+          const newPdf = await PDFDocument.create()
+          const [copiedPage] = await newPdf.copyPages(pdf, [pageNum - 1])
+          newPdf.addPage(copiedPage)
 
-        newPdf.setTitle(`${file.name.replace(".pdf", "")} - Page ${pageNum}`)
-        newPdf.setCreator("PixoraTools PDF Splitter")
-        newPdf.setProducer("PixoraTools")
+          newPdf.setTitle(`${file.name.replace(".pdf", "")} - Page ${pageNum}`)
+          newPdf.setCreator("PixoraTools PDF Splitter")
+          newPdf.setProducer("PixoraTools")
 
-        const pdfBytes = await newPdf.save()
-        results.push(new Blob([pdfBytes], { type: "application/pdf" }))
+          const pdfBytes = await newPdf.save()
+          results.push(new Blob([pdfBytes], { type: "application/pdf" }))
+        } catch (pageError) {
+          console.error(`Error processing page ${pageNum}:`, pageError)
+          throw new Error(`Failed to extract page ${pageNum}. The page may be corrupted.`)
+        }
       }
 
+      if (results.length === 0) {
+        throw new Error("Failed to extract any pages")
+      }
       return results
     } catch (error) {
       console.error("PDF split failed:", error)
