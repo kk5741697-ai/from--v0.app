@@ -183,38 +183,77 @@
 }
 
 /* Fixed sidebar positioning - Updated for better responsive design */
+/* Enhanced responsive sidebar positioning */
 .desktop-sidebar {
-  @apply w-80 xl:w-96 bg-white border-l shadow-lg flex flex-col fixed top-32 bottom-0 right-0 z-30;
+  @apply hidden lg:flex w-80 xl:w-96 bg-white border-l shadow-lg flex-col fixed top-32 bottom-0 right-0 z-30;
 }
 
-/* Responsive canvas margins */
+/* Responsive content margins for tools interface */
+.tools-interface-active {
+  @apply lg:mr-80 xl:mr-96;
+}
+
+.tools-header-responsive {
+  @apply lg:mr-80 xl:mr-96;
+}
+
+/* Enhanced responsive adjustments */
 @media (min-width: 1024px) {
-  .canvas {
-    margin-right: 320px; /* 80 * 4 = 320px for w-80 sidebar */
+  .tools-interface-active {
+    margin-right: 320px; /* w-80 = 320px */
   }
   
-  .unified-before-canvas,
-  .unified-after-canvas {
-    margin-right: 320px;
-  }
-  
-  .tools-header .container {
+  .tools-header-responsive {
     margin-right: 320px;
   }
 }
 
 @media (min-width: 1280px) {
-  .canvas {
-    margin-right: 384px; /* 96 * 4 = 384px for w-96 sidebar on xl screens */
+  .tools-interface-active {
+    margin-right: 384px; /* w-96 = 384px */
   }
   
-  .unified-before-canvas,
-  .unified-after-canvas {
+  .tools-header-responsive {
     margin-right: 384px;
   }
+}
+
+/* Prevent horizontal overflow on smaller screens */
+@media (max-width: 1023px) {
+  .desktop-sidebar {
+    @apply hidden;
+  }
   
+  .tools-interface-active,
+  .tools-header-responsive {
+    margin-right: 0 !important;
+  }
+}
+
+/* Enhanced mobile responsiveness */
+@media (max-width: 768px) {
   .tools-header .container {
-    margin-right: 384px;
+    @apply px-2;
+  }
+  
+  .canvas .container {
+    @apply px-2;
+  }
+  
+  .unified-before-canvas .container,
+  .unified-after-canvas .container {
+    @apply px-2;
+  }
+}
+
+/* Tablet adjustments */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .tools-header .container {
+    @apply px-4;
+  }
+  
+  .canvas .container {
+    @apply px-4;
   }
 }
 
@@ -242,13 +281,7 @@
 }
 
 /* Tools interface responsive adjustments */
-.tools-interface-active {
-  @apply lg:mr-80 xl:mr-96;
-}
-
-.tools-header-responsive {
-  @apply lg:mr-80 xl:mr-96;
-}
+/* Removed duplicate classes - now handled above */
 
 /* Enhanced mobile interactions */
 @media (hover: hover) {
@@ -261,7 +294,7 @@
   }
 }
 
-/* Responsive grid adjustments */
+/* Enhanced responsive grid adjustments */
 @media (max-width: 768px) {
   .crop-handle {
     @apply w-6 h-6; /* Larger touch targets on mobile */
@@ -271,21 +304,65 @@
     @apply fixed bottom-0 left-0 right-0 bg-white border-t p-2 z-40;
   }
   
-  .sidebar {
+  .desktop-sidebar {
     @apply hidden; /* Hide desktop sidebar on mobile */
   }
   
+  .tools-interface-active,
+  .tools-header-responsive {
+    margin-right: 0 !important;
+  }
+  
+  /* Enhanced mobile spacing */
+  .tools-header {
+    @apply px-2;
+  }
+  
   .canvas {
+    @apply px-2;
+  }
+}
+
+/* Tablet responsive adjustments */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .desktop-sidebar {
+    @apply hidden; /* Hide sidebar on tablet */
+  }
+  
+  .tools-interface-active,
+  .tools-header-responsive {
     margin-right: 0 !important;
   }
   
-  .unified-before-canvas,
-  .unified-after-canvas {
-    margin-right: 0 !important;
+  .tools-header {
+    @apply px-4;
   }
   
-  .tools-header .container {
-    margin-right: 0 !important;
+  .canvas {
+    @apply px-4;
+  }
+}
+
+/* Desktop sidebar positioning with overflow protection */
+@media (min-width: 1024px) {
+  .desktop-sidebar {
+    @apply flex; /* Show sidebar on desktop */
+    max-width: calc(100vw - 320px); /* Prevent overflow */
+  }
+  
+  /* Ensure content doesn't overlap sidebar */
+  .tools-interface-active {
+    max-width: calc(100vw - 320px);
+  }
+}
+
+@media (min-width: 1280px) {
+  .desktop-sidebar {
+    max-width: calc(100vw - 384px); /* w-96 = 384px */
+  }
+  
+  .tools-interface-active {
+    max-width: calc(100vw - 384px);
   }
 }
 
@@ -325,4 +402,42 @@
 .layout-stable {
   contain: layout style;
   will-change: auto;
+}
+
+/* Enhanced responsive utilities for tools */
+.tools-content-wrapper {
+  @apply relative min-h-screen;
+}
+
+.tools-main-content {
+  @apply transition-all duration-300 ease-in-out;
+}
+
+/* Responsive sidebar management */
+.sidebar-open .tools-main-content {
+  @apply lg:mr-80 xl:mr-96;
+}
+
+/* Safe area adjustments for mobile */
+@supports (padding: max(0px)) {
+  .mobile-safe-area {
+    padding-left: max(16px, env(safe-area-inset-left));
+    padding-right: max(16px, env(safe-area-inset-right));
+  }
+}
+
+/* Prevent content jumping during sidebar transitions */
+.tools-layout-container {
+  @apply relative overflow-x-hidden;
+}
+
+/* Enhanced touch targets for mobile */
+@media (max-width: 768px) {
+  .touch-target {
+    @apply min-h-[44px] min-w-[44px];
+  }
+  
+  .mobile-option-trigger {
+    @apply h-12 px-4 text-base;
+  }
 }

@@ -1,12 +1,14 @@
 "use client"
 
-import { ImageToolsLayout } from "@/components/tools-layouts/image-tools-layout"
-import { PDFToolsLayout } from "@/components/tools-layouts/pdf-tools-layout"
-import { QRCodeToolsLayout } from "@/components/tools-layouts/qrcode-tools-layout"
-import { TextToolsLayout } from "@/components/tools-layouts/text-tools-layout"
-import { NetworkToolsLayout } from "@/components/tools-layouts/network-tools-layout"
-import { SEOToolsLayout } from "@/components/tools-layouts/seo-tools-layout"
-import { UtilitiesToolsLayout } from "@/components/tools-layouts/utilities-tools-layout"
+import { 
+  ImageToolsLayout,
+  PDFToolsLayout,
+  QRCodeToolsLayout,
+  TextToolsLayout,
+  NetworkToolsLayout,
+  SEOToolsLayout,
+  UtilitiesToolsLayout
+} from "@/components/tools-layouts"
 
 interface UnifiedToolLayoutProps {
   title: string
@@ -60,20 +62,60 @@ export function UnifiedToolLayout({
 
   switch (toolType) {
     case "image":
-      return <ImageToolsLayout {...commonProps} />
+      return (
+        <ImageToolsLayout 
+          {...commonProps}
+          toolType={toolType}
+        />
+      )
     case "pdf":
-      return <PDFToolsLayout {...commonProps} />
+      return (
+        <PDFToolsLayout 
+          {...commonProps}
+          toolType={toolType}
+        />
+      )
     case "qr":
-      return <QRCodeToolsLayout {...commonProps} />
+      return (
+        <QRCodeToolsLayout 
+          {...commonProps}
+          toolType={toolType}
+        />
+      )
     case "text":
-      return <TextToolsLayout {...commonProps} />
+      return (
+        <TextToolsLayout 
+          {...commonProps}
+          toolType={toolType}
+        />
+      )
     case "network":
-      return <NetworkToolsLayout {...commonProps} />
+      return (
+        <NetworkToolsLayout 
+          {...commonProps}
+          toolType={toolType}
+        />
+      )
     case "seo":
-      return <SEOToolsLayout {...commonProps} />
+      return (
+        <SEOToolsLayout 
+          {...commonProps}
+          toolType={toolType}
+        />
+      )
     case "utilities":
-      return <UtilitiesToolsLayout {...commonProps} />
+      return (
+        <UtilitiesToolsLayout 
+          {...commonProps}
+          toolType={toolType}
+        />
+      )
     default:
-      return <ImageToolsLayout {...commonProps} />
+      return (
+        <ImageToolsLayout 
+          {...commonProps}
+          toolType="image"
+        />
+      )
   }
 }

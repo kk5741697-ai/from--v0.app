@@ -552,7 +552,7 @@ export function ImageToolsLayout({
 
       {/* Fixed Tools Header */}
       <div className="fixed top-16 left-0 right-0 z-40 tools-header bg-white border-b shadow-sm">
-        <div className="container mx-auto px-4 py-3 lg:mr-80 xl:mr-96">
+        <div className="container mx-auto px-4 py-3 tools-header-responsive">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-2">
               <Icon className="h-5 w-5 text-purple-600" />
@@ -594,7 +594,7 @@ export function ImageToolsLayout({
       <div className="pt-32 min-h-screen">
         {/* Unified Before Canvas Ad */}
         <div className="unified-before-canvas bg-white border-b">
-          <div className="container mx-auto px-4 py-3 lg:mr-80 xl:mr-96">
+          <div className="container mx-auto px-4 py-3 tools-header-responsive">
             <AdBanner 
               adSlot="unified-before-canvas"
               adFormat="auto"
@@ -606,7 +606,7 @@ export function ImageToolsLayout({
         </div>
 
         {/* Canvas Area with proper responsive margins */}
-        <div className="canvas bg-gray-50 min-h-[60vh] lg:mr-80 xl:mr-96">
+        <div className="canvas bg-gray-50 min-h-[60vh] tools-interface-active">
           <div className="container mx-auto px-4 py-6">
             {!allowBatchProcessing && files.length > 0 ? (
               // Single image full preview
@@ -703,7 +703,7 @@ export function ImageToolsLayout({
 
         {/* Unified After Canvas Ad */}
         <div className="unified-after-canvas bg-white border-t">
-          <div className="container mx-auto px-4 py-3 lg:mr-80 xl:mr-96">
+          <div className="container mx-auto px-4 py-3 tools-header-responsive">
             <AdBanner 
               adSlot="unified-after-canvas"
               adFormat="auto"
@@ -715,7 +715,7 @@ export function ImageToolsLayout({
         </div>
 
         {/* Fixed Desktop Right Sidebar */}
-        <div className="hidden lg:flex w-80 xl:w-96 bg-white border-l shadow-lg flex-col fixed top-32 bottom-0 right-0 z-30">
+        <div className="desktop-sidebar">
           <div className="px-6 py-4 border-b bg-gray-50 flex-shrink-0">
             <div className="flex items-center space-x-2">
               <Icon className="h-5 w-5 text-purple-600" />
