@@ -54,7 +54,7 @@ Rich content: Educational guides for each tool type
 note: when tools interface are active, then the upload zone, rich content, footer will be hidden.
 
 always use layout file for each tools type
-@/components/image-tools-layout.tsx
+@/components/tools-layouts/image-tools-layout.tsx
 @/components/qrcode-tools-layout.tsx
 @/components/pdf-tools-layout.tsx
 @/components/text-tools-layout.tsx
