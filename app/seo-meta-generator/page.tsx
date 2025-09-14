@@ -1,15 +1,13 @@
 "use client"
 
 import { useState } from "react"
-import { Header } from "@/components/header"
-import { Footer } from "@/components/footer"
+import { SEOToolsLayout } from "@/components/tools-layouts/seo-tools-layout"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Separator } from "@/components/ui/separator"
 import { Copy, Download, Globe, Eye } from "lucide-react"
-import { toast } from "@/hooks/use-toast"
 
 interface MetaData {
   title: string
@@ -24,21 +22,9 @@ interface MetaData {
   type: string
 }
 
-export default function SEOMetaGeneratorPage() {
-  const [metaData, setMetaData] = useState<MetaData>({
-    title: "",
-    description: "",
-    keywords: "",
-    author: "",
-    url: "",
-    image: "",
-    siteName: "",
-    twitterHandle: "",
-    locale: "en_US",
-    type: "website",
-  })
-
-  const generateMetaTags = () => {
+function processMetaTags(input: string, options: any = {}) {
+  try {
+    const metaData = JSON.parse(input)
     const tags = []
 
     if (metaData.title) {
@@ -70,8 +56,8 @@ export default function SEOMetaGeneratorPage() {
     if (metaData.siteName) {
       tags.push(`<meta property="og:site_name" content="${metaData.siteName}">`)
     }
-    tags.push(`<meta property="og:type" content="${metaData.type}">`)
-    tags.push(`<meta property="og:locale" content="${metaData.locale}">`)
+    tags.push(`<meta property="og:type" content="${metaData.type || 'website'}">`)
+    tags.push(`<meta property="og:locale" content="${metaData.locale || 'en_US'}">`)
 
     tags.push(`<meta name="twitter:card" content="summary_large_image">`)
     if (metaData.title) {
@@ -92,240 +78,96 @@ export default function SEOMetaGeneratorPage() {
     tags.push(`<meta name="viewport" content="width=device-width, initial-scale=1.0">`)
     tags.push(`<meta charset="UTF-8">`)
 
-    return tags.join("\n")
+    const output = tags.join("\n")
+    const stats = {
+      "Meta Tags": tags.length,
+      "Title Length": metaData.title?.length || 0,
+      "Description Length": metaData.description?.length || 0,
+      "Keywords": metaData.keywords?.split(',').filter((k: string) => k.trim()).length || 0
+    }
+
+    return { output, stats }
+  } catch (error) {
+    return {
+      output: "",
+      error: "Invalid JSON format for meta data"
+    }
   }
+}
 
-  const output = generateMetaTags()
-
-  const examples = [
-    {
-      name: "Blog Post",
-      data: {
-        title: "10 Best SEO Practices for 2024",
-        description:
-          "Discover the latest SEO strategies and techniques to boost your website's ranking in search engines.",
-        keywords: "SEO, search engine optimization, digital marketing, website ranking",
-        author: "John Smith",
-        url: "https://example.com/blog/seo-practices-2024",
-        image: "https://example.com/images/seo-blog-post.jpg",
-        siteName: "Digital Marketing Blog",
-        twitterHandle: "digitalmarketing",
-        locale: "en_US",
-        type: "article",
-      },
-    },
-    {
-      name: "Product Page",
-      data: {
-        title: "Premium Wireless Headphones - AudioTech Pro",
-        description:
-          "Experience crystal-clear sound with our premium wireless headphones. 30-hour battery life, noise cancellation.",
-        keywords: "wireless headphones, audio, music, noise cancellation, bluetooth",
-        author: "AudioTech",
-        url: "https://audiotech.com/products/wireless-headphones-pro",
-        image: "https://audiotech.com/images/headphones-pro.jpg",
-        siteName: "AudioTech Store",
-        twitterHandle: "audiotech",
-        locale: "en_US",
-        type: "product",
-      },
-    },
-  ]
-
-  const loadExample = (exampleData: MetaData) => {
-    setMetaData(exampleData)
+const seoExamples = [
+  {
+    name: "Blog Post",
+    content: JSON.stringify({
+      title: "10 Best SEO Practices for 2024",
+      description: "Discover the latest SEO strategies and techniques to boost your website's ranking in search engines.",
+      keywords: "SEO, search engine optimization, digital marketing, website ranking",
+      author: "John Smith",
+      url: "https://example.com/blog/seo-practices-2024",
+      image: "https://example.com/images/seo-blog-post.jpg",
+      siteName: "Digital Marketing Blog",
+      twitterHandle: "digitalmarketing",
+      locale: "en_US",
+      type: "article"
+    }, null, 2)
+  },
+  {
+    name: "Product Page",
+    content: JSON.stringify({
+      title: "Premium Wireless Headphones - AudioTech Pro",
+      description: "Experience crystal-clear sound with our premium wireless headphones. 30-hour battery life, noise cancellation.",
+      keywords: "wireless headphones, audio, music, noise cancellation, bluetooth",
+      author: "AudioTech",
+      url: "https://audiotech.com/products/wireless-headphones-pro",
+      image: "https://audiotech.com/images/headphones-pro.jpg",
+      siteName: "AudioTech Store",
+      twitterHandle: "audiotech",
+      locale: "en_US",
+      type: "product"
+    }, null, 2)
   }
+]
 
-  const copyToClipboard = async () => {
-    try {
-      await navigator.clipboard.writeText(output)
-      toast({
-        title: "Copied to clipboard",
-        description: "Meta tags have been copied"
-      })
-      toast({
-        title: "Copy failed",
-        description: "Failed to copy meta tags",
-        variant: "destructive"
-      })
-    } catch {}
-  }
-
-  const downloadHTML = () => {
-    const blob = new Blob([output], { type: "text/html" })
-    const url = URL.createObjectURL(blob)
-    const a = document.createElement("a")
-    a.href = url
-    a.download = "meta-tags.html"
-    document.body.appendChild(a)
-    a.click()
-    document.body.removeChild(a)
-    URL.revokeObjectURL(url)
-
-    toast({
-      title: "Download started",
-      description: "Meta tags HTML file downloaded"
-    })
-  }
-
+export default function SEOMetaGeneratorPage() {
   return (
-    <div className="min-h-screen bg-background">
-      <Header />
-
-      <div className="container mx-auto px-4 py-8">
-        <div className="text-center mb-8">
-          <div className="inline-flex items-center space-x-2 mb-4">
-            <Globe className="h-8 w-8 text-accent" />
-            <h1 className="text-3xl font-heading font-bold text-foreground">SEO Meta Generator</h1>
-          </div>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Generate optimized meta tags, Open Graph, and Twitter Card tags for better SEO and social media sharing.
-          </p>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          <div>
-            <h2 className="font-semibold mb-4">Meta Data Configuration</h2>
-            <div className="space-y-4">
-              <div>
-                <Label htmlFor="title">Page Title *</Label>
-                <Input
-                  id="title"
-                  value={metaData.title}
-                  onChange={(e) => setMetaData((prev) => ({ ...prev, title: e.target.value }))}
-                  placeholder="Enter page title (50-60 characters recommended)"
-                  maxLength={60}
-                />
-                <div className="text-xs text-muted-foreground">{metaData.title.length}/60 characters</div>
-              </div>
-              <div>
-                <Label htmlFor="description">Meta Description *</Label>
-                <Textarea
-                  id="description"
-                  value={metaData.description}
-                  onChange={(e) => setMetaData((prev) => ({ ...prev, description: e.target.value }))}
-                  placeholder="Enter meta description (150-160 characters recommended)"
-                  maxLength={160}
-                  rows={3}
-                />
-                <div className="text-xs text-muted-foreground">{metaData.description.length}/160 characters</div>
-              </div>
-              <div>
-                <Label htmlFor="keywords">Keywords</Label>
-                <Input
-                  id="keywords"
-                  value={metaData.keywords}
-                  onChange={(e) => setMetaData((prev) => ({ ...prev, keywords: e.target.value }))}
-                  placeholder="keyword1, keyword2, keyword3"
-                />
-              </div>
-              <div>
-                <Label htmlFor="author">Author</Label>
-                <Input
-                  id="author"
-                  value={metaData.author}
-                  onChange={(e) => setMetaData((prev) => ({ ...prev, author: e.target.value }))}
-                  placeholder="Author name"
-                />
-              </div>
-              <Separator />
-              <div>
-                <Label htmlFor="url">Canonical URL</Label>
-                <Input
-                  id="url"
-                  value={metaData.url}
-                  onChange={(e) => setMetaData((prev) => ({ ...prev, url: e.target.value }))}
-                  placeholder="https://example.com/page"
-                />
-              </div>
-              <div>
-                <Label htmlFor="image">Featured Image URL</Label>
-                <Input
-                  id="image"
-                  value={metaData.image}
-                  onChange={(e) => setMetaData((prev) => ({ ...prev, image: e.target.value }))}
-                  placeholder="https://example.com/image.jpg"
-                />
-              </div>
-              <div>
-                <Label htmlFor="siteName">Site Name</Label>
-                <Input
-                  id="siteName"
-                  value={metaData.siteName}
-                  onChange={(e) => setMetaData((prev) => ({ ...prev, siteName: e.target.value }))}
-                  placeholder="Your Website Name"
-                />
-              </div>
-              <div>
-                <Label htmlFor="twitterHandle">Twitter Handle</Label>
-                <Input
-                  id="twitterHandle"
-                  value={metaData.twitterHandle}
-                  onChange={(e) =>
-                    setMetaData((prev) => ({ ...prev, twitterHandle: e.target.value.replace("@", "") }))
-                  }
-                  placeholder="username (without @)"
-                />
-              </div>
-              <Separator />
-              <h4 className="font-medium text-sm text-muted-foreground uppercase tracking-wide">Examples</h4>
-              <div className="grid gap-2">
-                {examples.map((example) => (
-                  <Button
-                    key={example.name}
-                    variant="outline"
-                    size="sm"
-                    onClick={() => loadExample(example.data)}
-                    className="justify-start h-auto p-3"
-                  >
-                    <div className="text-left">
-                      <div className="font-medium">{example.name}</div>
-                      <div className="text-xs text-muted-foreground">{example.data.title.substring(0, 40)}...</div>
+    <SEOToolsLayout
+      title="SEO Meta Generator"
+      description="Generate optimized meta tags, Open Graph, and Twitter Card tags for better SEO and social media sharing."
+      icon={Globe}
+      toolType="meta-generator"
+      processFunction={processMetaTags}
+      options={[]}
+      outputFormats={["html"]}
+    >
+      <div className="max-w-4xl mx-auto space-y-6">
+        <Card>
+          <CardHeader>
+            <CardTitle>Meta Data Configuration</CardTitle>
+            <CardDescription>Enter your page information as JSON to generate meta tags</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <p className="text-sm text-muted-foreground mb-4">
+              Enter your page data in JSON format with fields like title, description, keywords, url, image, etc.
+            </p>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {seoExamples.map((example) => (
+                <Button
+                  key={example.name}
+                  variant="outline"
+                  className="h-auto p-4 text-left justify-start"
+                >
+                  <div>
+                    <div className="font-medium">{example.name}</div>
+                    <div className="text-xs text-muted-foreground mt-1">
+                      Click to load example data
                     </div>
-                  </Button>
-                ))}
-              </div>
+                  </div>
+                </Button>
+              ))}
             </div>
-          </div>
-          <div>
-            <h2 className="font-semibold mb-4">Generated Meta Tags</h2>
-            <Textarea
-              value={output}
-              readOnly
-              className="min-h-[400px] font-mono text-sm resize-none mb-4"
-              placeholder="Meta tags will appear here..."
-            />
-            <div className="flex gap-2">
-              <Button variant="outline" size="sm" onClick={copyToClipboard}>
-                <Copy className="h-4 w-4 mr-2" />
-                Copy Tags
-              </Button>
-              <Button variant="outline" size="sm" onClick={downloadHTML}>
-                <Download className="h-4 w-4 mr-2" />
-                Download HTML
-              </Button>
-              <Button variant="outline" size="sm" onClick={() => window.open("about:blank", "_blank")}>
-                <Eye className="h-4 w-4 mr-2" />
-                Preview
-              </Button>
-            </div>
-            <div className="mt-4 text-xs text-muted-foreground">
-              <div>Meta Tags: {output.split("\n").length}</div>
-              <div>Title Length: {metaData.title.length}</div>
-              <div>Description Length: {metaData.description.length}</div>
-              <div>
-                Keywords:{" "}
-                {metaData.keywords
-                  .split(",")
-                  .filter((k) => k.trim())
-                  .length}
-              </div>
-            </div>
-          </div>
-        </div>
+          </CardContent>
+        </Card>
       </div>
-
-      <Footer />
-    </div>
+    </SEOToolsLayout>
   )
 }
