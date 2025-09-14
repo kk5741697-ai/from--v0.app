@@ -184,22 +184,36 @@
 
 /* Fixed sidebar positioning - Updated for better responsive design */
 .desktop-sidebar {
-  @apply w-96 bg-white border-l shadow-lg flex flex-col fixed top-32 bottom-0 right-0 z-30;
-}
-
-/* Canvas margin for desktop sidebar - Fixed overflow issues */
-.canvas-with-sidebar {
-  @apply lg:mr-96;
+  @apply w-80 xl:w-96 bg-white border-l shadow-lg flex flex-col fixed top-32 bottom-0 right-0 z-30;
 }
 
 /* Responsive canvas margins */
 @media (min-width: 1024px) {
   .canvas {
-    margin-right: 384px; /* 96 * 4 = 384px for w-96 sidebar */
+    margin-right: 320px; /* 80 * 4 = 320px for w-80 sidebar */
   }
   
   .unified-before-canvas,
   .unified-after-canvas {
+    margin-right: 320px;
+  }
+  
+  .tools-header .container {
+    margin-right: 320px;
+  }
+}
+
+@media (min-width: 1280px) {
+  .canvas {
+    margin-right: 384px; /* 96 * 4 = 384px for w-96 sidebar on xl screens */
+  }
+  
+  .unified-before-canvas,
+  .unified-after-canvas {
+    margin-right: 384px;
+  }
+  
+  .tools-header .container {
     margin-right: 384px;
   }
 }
@@ -225,6 +239,15 @@
 /* Mobile ad spacing */
 .mobile-sticky-ad {
   @apply fixed bottom-0 left-0 right-0 bg-white border-t p-2 z-40;
+}
+
+/* Tools interface responsive adjustments */
+.tools-interface-active {
+  @apply lg:mr-80 xl:mr-96;
+}
+
+.tools-header-responsive {
+  @apply lg:mr-80 xl:mr-96;
 }
 
 /* Enhanced mobile interactions */
@@ -258,6 +281,10 @@
   
   .unified-before-canvas,
   .unified-after-canvas {
+    margin-right: 0 !important;
+  }
+  
+  .tools-header .container {
     margin-right: 0 !important;
   }
 }

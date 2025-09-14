@@ -172,7 +172,7 @@ export function SEOToolsLayout({
         </div>
 
         {/* Canvas Area with proper responsive margins */}
-        <div className="canvas bg-gray-50 min-h-[60vh] lg:mr-96">
+        <div className="canvas bg-gray-50 min-h-[60vh]">
           <div className="container mx-auto px-4 py-6">
             {children ? (
               children
@@ -270,7 +270,7 @@ export function SEOToolsLayout({
         </div>
 
         {/* Unified After Canvas Ad */}
-        <div className="unified-after-canvas bg-white border-t lg:mr-96">
+        <div className="unified-after-canvas bg-white border-t">
           <div className="container mx-auto px-4 py-3">
             <AdBanner 
               adSlot="unified-after-canvas"
@@ -347,7 +347,7 @@ export function SEOToolsLayout({
 
       {/* Rich Educational Content */}
       {richContent && (
-        <div className="bg-gray-50 lg:mr-96">
+        <div className="bg-gray-50">
           {richContent}
         </div>
       )}
