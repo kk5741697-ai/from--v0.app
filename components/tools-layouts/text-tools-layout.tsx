@@ -208,15 +208,19 @@ export function TextToolsLayout({
 
   return (
     <div className="min-h-screen bg-background">
-      <Header />
+      {/* Fixed Header */}
+      <div className="fixed top-0 left-0 right-0 z-50">
+        <Header />
+      </div>
 
-      {/* Tools Header */}
-      <div className="tools-header bg-white border-b">
+      {/* Fixed Tools Header */}
+      <div className="fixed top-16 left-0 right-0 z-40 tools-header bg-white border-b shadow-sm">
         <div className="container mx-auto px-4 py-3">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-2">
               <Icon className="h-5 w-5 text-green-600" />
-              <h1 className="text-xl font-semibold text-gray-900">{title}</h1>
+              <h1 className="text-lg lg:text-xl font-semibold text-gray-900">{title}</h1>
+              <Badge variant="secondary" className="hidden sm:inline-flex">Text Mode</Badge>
             </div>
             <div className="flex items-center space-x-2">
               <Button variant="outline" size="sm" onClick={() => setInput("")}>
@@ -235,198 +239,265 @@ export function TextToolsLayout({
         </div>
       </div>
 
-      {/* Unified Before Canvas Ad */}
-      <div className="unified-before-canvas bg-white border-b">
-        <div className="container mx-auto px-4 py-3">
-          <AdBanner 
-            adSlot="unified-before-canvas"
-            adFormat="auto"
-            className="max-w-4xl mx-auto"
-            mobileOptimized={true}
-            persistent={true}
-          />
+      {/* Main Content Area with proper spacing */}
+      <div className="pt-32 min-h-screen">
+        {/* Unified Before Canvas Ad */}
+        <div className="unified-before-canvas bg-white border-b">
+          <div className="container mx-auto px-4 py-3">
+            <AdBanner 
+              adSlot="unified-before-canvas"
+              adFormat="auto"
+              className="max-w-4xl mx-auto"
+              mobileOptimized={true}
+              persistent={true}
+            />
+          </div>
         </div>
-      </div>
 
-      {/* Main Interface */}
-      <div className="canvas">
-        <div className="container mx-auto px-4 py-6">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-            {/* Input Panel */}
-            <Card>
-              <CardHeader className="pb-2">
-                <div className="flex items-center justify-between">
-                  <CardTitle className="text-lg">Input</CardTitle>
-                  <div className="flex items-center space-x-2">
-                    <Checkbox
-                      id="auto-update"
-                      checked={autoUpdate}
-                      onCheckedChange={setAutoUpdate}
-                    />
-                    <Label htmlFor="auto-update" className="text-sm">Auto Process</Label>
-                  </div>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <Textarea
-                  value={input}
-                  onChange={(e) => setInput(e.target.value)}
-                  placeholder={placeholder}
-                  className="min-h-[400px] font-mono text-sm resize-none"
-                />
-                <div className="flex justify-between items-center mt-2 text-xs text-gray-500">
-                  <span>Lines: {input.split('\n').length} | Chars: {input.length}</span>
-                  <div className="flex space-x-2">
-                    <Button variant="ghost" size="sm" onClick={() => copyToClipboard(input)}>
-                      <Copy className="h-3 w-3" />
-                    </Button>
-                    <Button variant="ghost" size="sm" onClick={() => downloadFile(input, `input${fileExtensions[0]}`)}>
-                      <Download className="h-3 w-3" />
-                    </Button>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Output Panel */}
-            <Card>
-              <CardHeader className="pb-2">
-                <CardTitle className="text-lg">Output</CardTitle>
-              </CardHeader>
-              <CardContent>
-                {error ? (
-                  <div className="min-h-[400px] flex items-center justify-center text-red-500 bg-red-50 rounded border">
-                    <div className="text-center">
-                      <AlertCircle className="h-8 w-8 mx-auto mb-2" />
-                      <p>{error}</p>
+        {/* Canvas Area with proper responsive margins */}
+        <div className="canvas bg-gray-50 min-h-[60vh] lg:mr-96">
+          <div className="container mx-auto px-4 py-6">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+              {/* Input Panel */}
+              <Card>
+                <CardHeader className="pb-2">
+                  <div className="flex items-center justify-between">
+                    <CardTitle className="text-lg">Input</CardTitle>
+                    <div className="flex items-center space-x-2">
+                      <Checkbox
+                        id="auto-update"
+                        checked={autoUpdate}
+                        onCheckedChange={setAutoUpdate}
+                      />
+                      <Label htmlFor="auto-update" className="text-sm">Auto Process</Label>
                     </div>
                   </div>
-                ) : (
+                </CardHeader>
+                <CardContent>
                   <Textarea
-                    value={output}
-                    readOnly
-                    placeholder={outputPlaceholder}
+                    value={input}
+                    onChange={(e) => setInput(e.target.value)}
+                    placeholder={placeholder}
                     className="min-h-[400px] font-mono text-sm resize-none"
                   />
-                )}
-                <div className="flex justify-between items-center mt-2 text-xs text-gray-500">
-                  <span>Lines: {output.split('\n').length} | Chars: {output.length}</span>
-                  <div className="flex space-x-2">
-                    <Button variant="ghost" size="sm" onClick={() => copyToClipboard(output)} disabled={!output}>
-                      <Copy className="h-3 w-3" />
-                    </Button>
-                    <Button variant="ghost" size="sm" onClick={() => downloadFile(output, `output${fileExtensions[0]}`)} disabled={!output}>
-                      <Download className="h-3 w-3" />
-                    </Button>
+                  <div className="flex justify-between items-center mt-2 text-xs text-gray-500">
+                    <span>Lines: {input.split('\n').length} | Chars: {input.length}</span>
+                    <div className="flex space-x-2">
+                      <Button variant="ghost" size="sm" onClick={() => copyToClipboard(input)}>
+                        <Copy className="h-3 w-3" />
+                      </Button>
+                      <Button variant="ghost" size="sm" onClick={() => downloadFile(input, `input${fileExtensions[0]}`)}>
+                        <Download className="h-3 w-3" />
+                      </Button>
+                    </div>
                   </div>
+                </CardContent>
+              </Card>
+
+              {/* Output Panel */}
+              <Card>
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-lg">Output</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  {error ? (
+                    <div className="min-h-[400px] flex items-center justify-center text-red-500 bg-red-50 rounded border">
+                      <div className="text-center">
+                        <AlertCircle className="h-8 w-8 mx-auto mb-2" />
+                        <p>{error}</p>
+                      </div>
+                    </div>
+                  ) : (
+                    <Textarea
+                      value={output}
+                      readOnly
+                      placeholder={outputPlaceholder}
+                      className="min-h-[400px] font-mono text-sm resize-none"
+                    />
+                  )}
+                  <div className="flex justify-between items-center mt-2 text-xs text-gray-500">
+                    <span>Lines: {output.split('\n').length} | Chars: {output.length}</span>
+                    <div className="flex space-x-2">
+                      <Button variant="ghost" size="sm" onClick={() => copyToClipboard(output)} disabled={!output}>
+                        <Copy className="h-3 w-3" />
+                      </Button>
+                      <Button variant="ghost" size="sm" onClick={() => downloadFile(output, `output${fileExtensions[0]}`)} disabled={!output}>
+                        <Download className="h-3 w-3" />
+                      </Button>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Process Button */}
+            <div className="text-center mb-8 lg:hidden">
+              <Button 
+                onClick={processText}
+                disabled={!input.trim()}
+                className="bg-green-600 hover:bg-green-700 text-white px-8"
+                size="lg"
+              >
+                <Icon className="h-4 w-4 mr-2" />
+                Process Text
+              </Button>
+            </div>
+
+            {/* Stats Display */}
+            {stats && (
+              <Card className="max-w-2xl mx-auto">
+                <CardHeader>
+                  <CardTitle>Processing Statistics</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                    {Object.entries(stats).map(([key, value]) => (
+                      <div key={key} className="text-center">
+                        <div className="text-xl lg:text-2xl font-bold text-gray-900">{value}</div>
+                        <div className="text-sm text-gray-600">{key}</div>
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+
+            {/* Examples */}
+            {examples.length > 0 && (
+              <div className="max-w-4xl mx-auto mt-8">
+                <h3 className="text-lg font-semibold mb-4">Examples</h3>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  {examples.map((example, index) => (
+                    <Button
+                      key={index}
+                      variant="outline"
+                      onClick={() => loadExample(example.content)}
+                      className="h-auto p-4 text-left justify-start"
+                    >
+                      <div>
+                        <div className="font-medium">{example.name}</div>
+                        <div className="text-xs text-gray-500 mt-1 truncate">
+                          {example.content.substring(0, 50)}...
+                        </div>
+                      </div>
+                    </Button>
+                  ))}
                 </div>
-              </CardContent>
-            </Card>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Unified After Canvas Ad */}
+        <div className="unified-after-canvas bg-white border-t lg:mr-96">
+          <div className="container mx-auto px-4 py-3">
+            <AdBanner 
+              adSlot="unified-after-canvas"
+              adFormat="auto"
+              className="max-w-4xl mx-auto"
+              mobileOptimized={true}
+              persistent={true}
+            />
+          </div>
+        </div>
+
+        {/* Fixed Desktop Right Sidebar */}
+        <div className="hidden lg:flex w-96 bg-white border-l shadow-lg flex-col fixed top-32 bottom-0 right-0 z-30">
+          <div className="px-6 py-4 border-b bg-gray-50 flex-shrink-0">
+            <div className="flex items-center space-x-2">
+              <Icon className="h-5 w-5 text-green-600" />
+              <h2 className="text-lg font-semibold text-gray-900">Text Settings</h2>
+            </div>
+            <p className="text-sm text-gray-600 mt-1">Configure processing options</p>
           </div>
 
-          {/* Process Button */}
-          <div className="text-center mb-8">
+          <div className="flex-1 overflow-hidden">
+            <ScrollArea className="h-full">
+              <div className="p-6 space-y-6">
+                {Object.entries(groupedOptions).map(([section, sectionOptions]) => (
+                  <div key={section} className="space-y-4">
+                    <div className="flex items-center space-x-2">
+                      <div className="h-px bg-gray-200 flex-1"></div>
+                      <Label className="text-xs font-medium text-gray-500 uppercase tracking-wide">{section}</Label>
+                      <div className="h-px bg-gray-200 flex-1"></div>
+                    </div>
+                    {sectionOptions.map((option) => (
+                      <div key={option.key} className="space-y-2">
+                        <Label className="text-sm font-medium">{option.label}</Label>
+                        {renderOptionControl(option)}
+                      </div>
+                    ))}
+                  </div>
+                ))}
+              </div>
+            </ScrollArea>
+          </div>
+
+          <div className="p-6 border-t bg-gray-50 space-y-3 flex-shrink-0">
             <Button 
               onClick={processText}
               disabled={!input.trim()}
-              className="bg-green-600 hover:bg-green-700 text-white px-8"
+              className="w-full bg-green-600 hover:bg-green-700 text-white py-3 text-base font-semibold"
               size="lg"
             >
               <Icon className="h-4 w-4 mr-2" />
               Process Text
             </Button>
+
+            {/* Auto Update Toggle */}
+            <div className="flex items-center space-x-2">
+              <Checkbox
+                id="auto-update-sidebar"
+                checked={autoUpdate}
+                onCheckedChange={setAutoUpdate}
+              />
+              <Label htmlFor="auto-update-sidebar" className="text-sm">Auto Process</Label>
+            </div>
           </div>
+        </div>
 
-          {/* Stats Display */}
-          {stats && (
-            <Card className="max-w-2xl mx-auto">
-              <CardHeader>
-                <CardTitle>Processing Statistics</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-                  {Object.entries(stats).map(([key, value]) => (
-                    <div key={key} className="text-center">
-                      <div className="text-xl lg:text-2xl font-bold text-gray-900">{value}</div>
-                      <div className="text-sm text-gray-600">{key}</div>
-                    </div>
-                  ))}
+        {/* Mobile Options Panel */}
+        <MobileOptionPanel
+          isOpen={isMobileSidebarOpen}
+          onOpenChange={setIsMobileSidebarOpen}
+          title={`${title} Options`}
+          icon={<Icon className="h-5 w-5 text-green-600" />}
+          footer={
+            <Button 
+              onClick={processText}
+              disabled={!input.trim()}
+              className="w-full bg-green-600 hover:bg-green-700"
+            >
+              Process Text
+            </Button>
+          }
+        >
+          <div className="space-y-6">
+            {Object.entries(groupedOptions).map(([section, sectionOptions]) => (
+              <div key={section} className="space-y-4">
+                <div className="flex items-center space-x-2">
+                  <div className="h-px bg-gray-200 flex-1"></div>
+                  <Label className="text-xs font-medium text-gray-500 uppercase tracking-wide">{section}</Label>
+                  <div className="h-px bg-gray-200 flex-1"></div>
                 </div>
-              </CardContent>
-            </Card>
-          )}
-
-          {/* Examples */}
-          {examples.length > 0 && (
-            <div className="max-w-4xl mx-auto mt-8">
-              <h3 className="text-lg font-semibold mb-4">Examples</h3>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                {examples.map((example, index) => (
-                  <Button
-                    key={index}
-                    variant="outline"
-                    onClick={() => loadExample(example.content)}
-                    className="h-auto p-4 text-left justify-start"
-                  >
-                    <div>
-                      <div className="font-medium">{example.name}</div>
-                      <div className="text-xs text-gray-500 mt-1 truncate">
-                        {example.content.substring(0, 50)}...
-                      </div>
-                    </div>
-                  </Button>
+                {sectionOptions.map((option) => (
+                  <div key={option.key} className="space-y-2">
+                    <Label className="text-sm font-medium">{option.label}</Label>
+                    {renderOptionControl(option)}
+                  </div>
                 ))}
               </div>
-            </div>
-          )}
-        </div>
-      </div>
-
-      {/* Unified After Canvas Ad */}
-      <div className="unified-after-canvas bg-white border-t">
-        <div className="container mx-auto px-4 py-3">
-          <AdBanner 
-            adSlot="unified-after-canvas"
-            adFormat="auto"
-            className="max-w-4xl mx-auto"
-            mobileOptimized={true}
-            persistent={true}
-          />
-        </div>
+            ))}
+          </div>
+        </MobileOptionPanel>
       </div>
 
       {/* Rich Educational Content */}
       {richContent && (
-        <div className="bg-gray-50">
+        <div className="bg-gray-50 lg:mr-96">
           {richContent}
         </div>
       )}
-
-      {/* Mobile Options Panel */}
-      <MobileOptionPanel
-        isOpen={isMobileSidebarOpen}
-        onOpenChange={setIsMobileSidebarOpen}
-        title={`${title} Options`}
-        icon={<Icon className="h-5 w-5 text-green-600" />}
-      >
-        <div className="space-y-6">
-          {Object.entries(groupedOptions).map(([section, sectionOptions]) => (
-            <div key={section} className="space-y-4">
-              <div className="flex items-center space-x-2">
-                <div className="h-px bg-gray-200 flex-1"></div>
-                <Label className="text-xs font-medium text-gray-500 uppercase tracking-wide">{section}</Label>
-                <div className="h-px bg-gray-200 flex-1"></div>
-              </div>
-              {sectionOptions.map((option) => (
-                <div key={option.key} className="space-y-2">
-                  <Label className="text-sm font-medium">{option.label}</Label>
-                  {renderOptionControl(option)}
-                </div>
-              ))}
-            </div>
-          ))}
-        </div>
-      </MobileOptionPanel>
     </div>
   )
 }

@@ -125,7 +125,7 @@ li { margin-bottom: 4px; }
 
 export default function MarkdownToHTMLPage() {
   return (
-    <TextToolLayout
+    <TextToolsLayout
       title="Markdown to HTML Converter"
       description="Convert Markdown text to HTML with syntax highlighting and live preview."
       icon={FileText}

@@ -104,7 +104,7 @@ function validateBase64(input: string) {
 
 export default function Base64EncoderPage() {
   return (
-    <TextToolLayout
+    <TextToolsLayout
       title="Base64 Encoder/Decoder"
       description="Encode text to Base64 or decode Base64 strings back to text. Supports URL-safe encoding and custom padding options."
       icon={Lock}

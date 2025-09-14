@@ -173,7 +173,7 @@ function validateJavaScript(input: string) {
 
 export default function JSMinifierPage() {
   return (
-    <TextToolLayout
+    <TextToolsLayout
       title="JavaScript Minifier"
       description="Compress JavaScript code while preserving functionality to optimize web performance. Remove comments, whitespace, and console statements."
       icon={FileCode}

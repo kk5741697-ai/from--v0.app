@@ -115,7 +115,7 @@ function countCaseChanges(input: string, output: string): number {
 
 export default function TextCaseConverterPage() {
   return (
-    <TextToolLayout
+    <TextToolsLayout
       title="Text Case Converter"
       description="Convert text between different cases: lowercase, UPPERCASE, Title Case, camelCase, snake_case, kebab-case, and more."
       icon={Type}

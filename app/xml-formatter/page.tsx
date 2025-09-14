@@ -71,7 +71,7 @@ function validateXML(input: string) {
 
 export default function XMLFormatterPage() {
   return (
-    <TextToolLayout
+    <TextToolsLayout
       title="XML Formatter"
       description="Format, validate, and beautify XML documents with syntax highlighting and error detection."
       icon={Code}

@@ -86,7 +86,7 @@ function validateJSON(input: string) {
 
 export default function JSONFormatterPage() {
   const richContent = (
-    <div className="py-8">
+    <TextToolsLayout
       <div className="container mx-auto px-4">
         <div className="text-center mb-8">
           <h2 className="text-2xl font-heading font-bold text-foreground mb-4">

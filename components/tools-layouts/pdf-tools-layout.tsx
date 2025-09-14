@@ -488,29 +488,39 @@ export function PDFToolsLayout({
   // Tool interface when files are loaded
   return (
     <div className="min-h-screen bg-background">
-      <Header />
+      {/* Fixed Header */}
+      <div className="fixed top-0 left-0 right-0 z-50">
+        <Header />
+      </div>
 
-      {/* Mobile Layout */}
-      <div className="lg:hidden">
-        <div className="tools-header bg-white border-b px-4 py-3 flex items-center justify-between shadow-sm">
-          <div className="flex items-center space-x-2">
-            <Icon className="h-5 w-5 text-red-600" />
-            <h1 className="text-lg font-semibold text-gray-900">{title}</h1>
-          </div>
-          <div className="flex items-center space-x-2">
-            <Button variant="outline" size="sm" onClick={resetTool}>
-              <RefreshCw className="h-4 w-4" />
-            </Button>
-            <Button 
-              variant="outline" 
-              size="sm" 
-              onClick={() => setIsMobileSidebarOpen(true)}
-            >
-              <Settings className="h-4 w-4" />
-            </Button>
+      {/* Fixed Tools Header */}
+      <div className="fixed top-16 left-0 right-0 z-40 tools-header bg-white border-b shadow-sm">
+        <div className="container mx-auto px-4 py-3">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-2">
+              <Icon className="h-5 w-5 text-red-600" />
+              <h1 className="text-lg lg:text-xl font-semibold text-gray-900">{title}</h1>
+              <Badge variant="secondary" className="hidden sm:inline-flex">PDF Mode</Badge>
+            </div>
+            <div className="flex items-center space-x-2">
+              <Button variant="outline" size="sm" onClick={resetTool}>
+                <RefreshCw className="h-4 w-4" />
+              </Button>
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={() => setIsMobileSidebarOpen(true)}
+                className="lg:hidden"
+              >
+                <Settings className="h-4 w-4" />
+              </Button>
+            </div>
           </div>
         </div>
+      </div>
 
+      {/* Main Content Area with proper spacing */}
+      <div className="pt-32 min-h-screen">
         {/* Unified Before Canvas Ad */}
         <div className="unified-before-canvas bg-white border-b">
           <div className="container mx-auto px-4 py-3">
@@ -524,22 +534,24 @@ export function PDFToolsLayout({
           </div>
         </div>
 
-        <div className="canvas p-4 min-h-[60vh]">
-          {/* PDF File List */}
-          <div className="space-y-4">
-            {files.map((file) => (
-              <Card key={file.id}>
-                <CardHeader>
-                  <div className="flex items-center justify-between">
-                    <CardTitle className="text-sm">{file.name}</CardTitle>
+        {/* Canvas Area with proper responsive margins */}
+        <div className="canvas bg-gray-50 min-h-[60vh] lg:mr-96">
+          <div className="container mx-auto px-4 py-6">
+            <div className="space-y-4">
+              {files.map((file) => (
+                <Card key={file.id} className="p-4">
+                  <div className="flex items-center justify-between mb-4">
+                    <div>
+                      <h3 className="font-medium">{file.name}</h3>
+                      <p className="text-sm text-muted-foreground">{formatFileSize(file.size)}</p>
+                    </div>
                     <Button variant="ghost" size="sm" onClick={() => removeFile(file.id)}>
                       <X className="h-4 w-4" />
                     </Button>
                   </div>
-                  <CardDescription>{formatFileSize(file.size)}</CardDescription>
-                </CardHeader>
-                {allowPageSelection && (
-                  <CardContent>
+                  
+                  {/* PDF Page Thumbnails */}
+                  {allowPageSelection && (
                     <PDFThumbnailExtractor
                       file={file.file}
                       onPagesExtracted={(pages) => {
@@ -548,18 +560,94 @@ export function PDFToolsLayout({
                         ))
                       }}
                     />
-                  </CardContent>
+                  )}
+                </Card>
+              ))}
+            </div>
+
+            {/* Mobile Process Button */}
+            <div className="lg:hidden mt-6">
+              <Button 
+                onClick={processFiles}
+                disabled={isProcessing || files.length === 0}
+                className="w-full bg-red-600 hover:bg-red-700 text-white py-3"
+                size="lg"
+              >
+                {isProcessing ? (
+                  <>
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                    Processing...
+                  </>
+                ) : (
+                  <>
+                    <Icon className="h-4 w-4 mr-2" />
+                    Process PDF{files.length > 1 ? 's' : ''}
+                  </>
                 )}
-              </Card>
-            ))}
+              </Button>
+              
+              {isProcessing && (
+                <div className="mt-4">
+                  <Progress value={processingProgress} className="h-2" />
+                  <p className="text-sm text-muted-foreground text-center mt-2">
+                    {processingProgress}% complete
+                  </p>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* Unified After Canvas Ad */}
+        <div className="unified-after-canvas bg-white border-t lg:mr-96">
+          <div className="container mx-auto px-4 py-3">
+            <AdBanner 
+              adSlot="unified-after-canvas"
+              adFormat="auto"
+              className="max-w-4xl mx-auto"
+              mobileOptimized={true}
+              persistent={true}
+            />
+          </div>
+        </div>
+
+        {/* Fixed Desktop Right Sidebar */}
+        <div className="hidden lg:flex w-96 bg-white border-l shadow-lg flex-col fixed top-32 bottom-0 right-0 z-30">
+          <div className="px-6 py-4 border-b bg-gray-50 flex-shrink-0">
+            <div className="flex items-center space-x-2">
+              <Icon className="h-5 w-5 text-red-600" />
+              <h2 className="text-lg font-semibold text-gray-900">PDF Settings</h2>
+            </div>
+            <p className="text-sm text-gray-600 mt-1">Configure processing options</p>
           </div>
 
-          {/* Process Button */}
-          <div className="mt-6">
+          <div className="flex-1 overflow-hidden">
+            <ScrollArea className="h-full">
+              <div className="p-6 space-y-6">
+                {Object.entries(groupedOptions).map(([section, sectionOptions]) => (
+                  <div key={section} className="space-y-4">
+                    <div className="flex items-center space-x-2">
+                      <div className="h-px bg-gray-200 flex-1"></div>
+                      <Label className="text-xs font-medium text-gray-500 uppercase tracking-wide">{section}</Label>
+                      <div className="h-px bg-gray-200 flex-1"></div>
+                    </div>
+                    {sectionOptions.map((option) => (
+                      <div key={option.key} className="space-y-2">
+                        <Label className="text-sm font-medium">{option.label}</Label>
+                        {renderOptionControl(option)}
+                      </div>
+                    ))}
+                  </div>
+                ))}
+              </div>
+            </ScrollArea>
+          </div>
+
+          <div className="p-6 border-t bg-gray-50 space-y-3 flex-shrink-0">
             <Button 
               onClick={processFiles}
               disabled={isProcessing || files.length === 0}
-              className="w-full bg-red-600 hover:bg-red-700 text-white py-3"
+              className="w-full bg-red-600 hover:bg-red-700 text-white py-3 text-base font-semibold"
               size="lg"
             >
               {isProcessing ? (
@@ -574,28 +662,15 @@ export function PDFToolsLayout({
                 </>
               )}
             </Button>
-            
+
             {isProcessing && (
-              <div className="mt-4">
+              <div className="space-y-2">
                 <Progress value={processingProgress} className="h-2" />
-                <p className="text-sm text-muted-foreground text-center mt-2">
+                <p className="text-sm text-muted-foreground text-center">
                   {processingProgress}% complete
                 </p>
               </div>
             )}
-          </div>
-        </div>
-
-        {/* Unified After Canvas Ad */}
-        <div className="unified-after-canvas bg-white border-t">
-          <div className="container mx-auto px-4 py-3">
-            <AdBanner 
-              adSlot="unified-after-canvas"
-              adFormat="auto"
-              className="max-w-4xl mx-auto"
-              mobileOptimized={true}
-              persistent={true}
-            />
           </div>
         </div>
 
@@ -635,148 +710,12 @@ export function PDFToolsLayout({
         </MobileOptionPanel>
       </div>
 
-      {/* Desktop Layout - Fixed responsive issues */}
-      <div className="hidden lg:block">
-        <div className="flex h-screen">
-          {/* Left Canvas - Fixed overflow */}
-          <div className="flex-1 flex flex-col overflow-hidden" style={{ marginRight: '384px' }}>
-            <div className="tools-header bg-white border-b px-6 py-3 flex items-center justify-between shadow-sm flex-shrink-0">
-              <div className="flex items-center space-x-4">
-                <div className="flex items-center space-x-2">
-                  <Icon className="h-5 w-5 text-red-600" />
-                  <h1 className="text-xl font-semibold text-gray-900">{title}</h1>
-                </div>
-                <Badge variant="secondary">PDF Mode</Badge>
-              </div>
-              <div className="flex items-center space-x-2">
-                <Button variant="outline" size="sm" onClick={resetTool}>
-                  <RefreshCw className="h-4 w-4" />
-                </Button>
-              </div>
-            </div>
-
-            {/* Unified Before Canvas Ad */}
-            <div className="unified-before-canvas bg-white border-b">
-              <div className="container mx-auto px-4 py-3">
-                <AdBanner 
-                  adSlot="unified-before-canvas"
-                  adFormat="auto"
-                  className="max-w-4xl mx-auto"
-                  mobileOptimized={true}
-                  persistent={true}
-                />
-              </div>
-            </div>
-
-            {/* Canvas Content */}
-            <div className="canvas flex-1 overflow-auto p-6">
-              <div className="space-y-4">
-                {files.map((file) => (
-                  <Card key={file.id} className="p-4">
-                    <div className="flex items-center justify-between mb-4">
-                      <div>
-                        <h3 className="font-medium">{file.name}</h3>
-                        <p className="text-sm text-muted-foreground">{formatFileSize(file.size)}</p>
-                      </div>
-                      <Button variant="ghost" size="sm" onClick={() => removeFile(file.id)}>
-                        <X className="h-4 w-4" />
-                      </Button>
-                    </div>
-                    
-                    {/* PDF Page Thumbnails */}
-                    {allowPageSelection && (
-                      <PDFThumbnailExtractor
-                        file={file.file}
-                        onPagesExtracted={(pages) => {
-                          setFiles(prev => prev.map(f => 
-                            f.id === file.id ? { ...f, pages } : f
-                          ))
-                        }}
-                      />
-                    )}
-                  </Card>
-                ))}
-              </div>
-            </div>
-
-            {/* Unified After Canvas Ad */}
-            <div className="unified-after-canvas bg-white border-t">
-              <div className="container mx-auto px-4 py-3">
-                <AdBanner 
-                  adSlot="unified-after-canvas"
-                  adFormat="auto"
-                  className="max-w-4xl mx-auto"
-                  mobileOptimized={true}
-                  persistent={true}
-                />
-              </div>
-            </div>
-          </div>
-
-          {/* Desktop Right Sidebar - Fixed positioning */}
-          <div className="w-96 bg-white border-l shadow-lg flex flex-col fixed top-16 bottom-0 right-0 z-30">
-            <div className="px-6 py-4 border-b bg-gray-50 flex-shrink-0">
-              <div className="flex items-center space-x-2">
-                <Icon className="h-5 w-5 text-red-600" />
-                <h2 className="text-lg font-semibold text-gray-900">PDF Settings</h2>
-              </div>
-              <p className="text-sm text-gray-600 mt-1">Configure processing options</p>
-            </div>
-
-            <div className="flex-1 overflow-hidden">
-              <ScrollArea className="h-full">
-                <div className="p-6 space-y-6">
-                  {Object.entries(groupedOptions).map(([section, sectionOptions]) => (
-                    <div key={section} className="space-y-4">
-                      <div className="flex items-center space-x-2">
-                        <div className="h-px bg-gray-200 flex-1"></div>
-                        <Label className="text-xs font-medium text-gray-500 uppercase tracking-wide">{section}</Label>
-                        <div className="h-px bg-gray-200 flex-1"></div>
-                      </div>
-                      {sectionOptions.map((option) => (
-                        <div key={option.key} className="space-y-2">
-                          <Label className="text-sm font-medium">{option.label}</Label>
-                          {renderOptionControl(option)}
-                        </div>
-                      ))}
-                    </div>
-                  ))}
-                </div>
-              </ScrollArea>
-            </div>
-
-            <div className="p-6 border-t bg-gray-50 space-y-3 flex-shrink-0">
-              <Button 
-                onClick={processFiles}
-                disabled={isProcessing || files.length === 0}
-                className="w-full bg-red-600 hover:bg-red-700 text-white py-3 text-base font-semibold"
-                size="lg"
-              >
-                {isProcessing ? (
-                  <>
-                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                    Processing...
-                  </>
-                ) : (
-                  <>
-                    <Icon className="h-4 w-4 mr-2" />
-                    Process PDF{files.length > 1 ? 's' : ''}
-                  </>
-                )}
-              </Button>
-
-              {isProcessing && (
-                <div className="space-y-2">
-                  <Progress value={processingProgress} className="h-2" />
-                  <p className="text-sm text-muted-foreground text-center">
-                    {processingProgress}% complete
-                  </p>
-                </div>
-              )}
-            </div>
-          </div>
+      {/* Rich Educational Content */}
+      {richContent && files.length > 0 && (
+        <div className="bg-gray-50 lg:mr-96">
+          {richContent}
         </div>
-      </div>
+      )}
 
       <input
         ref={fileInputRef}

@@ -462,19 +462,33 @@ export function QRCodeToolsLayout({
 
   return (
     <div className="min-h-screen bg-background">
-      <Header />
+      {/* Fixed Header */}
+      <div className="fixed top-0 left-0 right-0 z-50">
+        <Header />
+      </div>
 
-      {/* QR Type Header */}
-      <div className="tools-header bg-white border-b">
+      {/* Fixed QR Type Header */}
+      <div className="fixed top-16 left-0 right-0 z-40 tools-header bg-white border-b shadow-sm">
         <div className="container mx-auto px-4 py-3">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center space-x-2">
               <Icon className="h-5 w-5 text-green-600" />
-              <h1 className="text-xl font-semibold text-gray-900">{title}</h1>
+              <h1 className="text-lg lg:text-xl font-semibold text-gray-900">{title}</h1>
+              <Badge variant="secondary" className="hidden sm:inline-flex">QR Mode</Badge>
             </div>
-            <Button variant="outline" size="sm" onClick={() => setQrDataURL("")}>
-              <RefreshCw className="h-4 w-4" />
-            </Button>
+            <div className="flex items-center space-x-2">
+              <Button variant="outline" size="sm" onClick={() => setQrDataURL("")}>
+                <RefreshCw className="h-4 w-4" />
+              </Button>
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={() => setIsMobileSidebarOpen(true)}
+                className="lg:hidden"
+              >
+                <Settings className="h-4 w-4" />
+              </Button>
+            </div>
           </div>
           
           {/* QR Type Selector */}
@@ -490,7 +504,7 @@ export function QRCodeToolsLayout({
                   className="flex items-center space-x-2"
                 >
                   <TypeIcon className="h-4 w-4" />
-                  <span>{type.label}</span>
+                  <span className="hidden sm:inline">{type.label}</span>
                 </Button>
               )
             })}
@@ -498,167 +512,221 @@ export function QRCodeToolsLayout({
         </div>
       </div>
 
-      {/* Unified Before Canvas Ad */}
-      <div className="unified-before-canvas bg-white border-b">
-        <div className="container mx-auto px-4 py-3">
-          <AdBanner 
-            adSlot="unified-before-canvas"
-            adFormat="auto"
-            className="max-w-4xl mx-auto"
-            mobileOptimized={true}
-            persistent={true}
-          />
+      {/* Main Content Area with proper spacing */}
+      <div className="pt-40 min-h-screen">
+        {/* Unified Before Canvas Ad */}
+        <div className="unified-before-canvas bg-white border-b">
+          <div className="container mx-auto px-4 py-3">
+            <AdBanner 
+              adSlot="unified-before-canvas"
+              adFormat="auto"
+              className="max-w-4xl mx-auto"
+              mobileOptimized={true}
+              persistent={true}
+            />
+          </div>
         </div>
-      </div>
 
-      {/* Main Content */}
-      <div className="canvas">
-        {children ? (
-          children
-        ) : (
-          <div className="container mx-auto px-4 py-6">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 max-w-4xl mx-auto">
-              {/* QR Content Form */}
-              <Card>
-                <CardHeader>
-                  <CardTitle>QR Code Content</CardTitle>
-                  <CardDescription>Enter your {qrTypeOptions.find(t => t.value === qrType)?.label} information</CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  {renderQRForm()}
-                  
-                  <Button onClick={generateQRCode} disabled={isProcessing} className="w-full bg-green-600 hover:bg-green-700">
-                    {isProcessing ? (
-                      <>
-                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                        Generating...
-                      </>
-                    ) : (
-                      <>
-                        <QrCode className="h-4 w-4 mr-2" />
-                        Generate QR Code
-                      </>
-                    )}
-                  </Button>
-                </CardContent>
-              </Card>
+        {/* Canvas Area with proper responsive margins */}
+        <div className="canvas bg-gray-50 min-h-[60vh] lg:mr-96">
+          {children ? (
+            children
+          ) : (
+            <div className="container mx-auto px-4 py-6">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                {/* QR Content Form */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle>QR Code Content</CardTitle>
+                    <CardDescription>Enter your {qrTypeOptions.find(t => t.value === qrType)?.label} information</CardDescription>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    {renderQRForm()}
+                    
+                    <Button onClick={generateQRCode} disabled={isProcessing} className="w-full bg-green-600 hover:bg-green-700">
+                      {isProcessing ? (
+                        <>
+                          <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                          Generating...
+                        </>
+                      ) : (
+                        <>
+                          <QrCode className="h-4 w-4 mr-2" />
+                          Generate QR Code
+                        </>
+                      )}
+                    </Button>
+                  </CardContent>
+                </Card>
 
-              {/* QR Preview */}
-              <Card>
-                <CardHeader>
-                  <CardTitle>QR Code Preview</CardTitle>
-                  <CardDescription>Your generated QR code</CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="flex justify-center">
-                    {qrDataURL ? (
-                      <div className="qr-preview">
-                        <img
-                          src={qrDataURL}
-                          alt="Generated QR Code"
-                          className="max-w-full h-auto border rounded-lg shadow-lg"
-                          style={{ maxWidth: "300px" }}
-                        />
-                      </div>
-                    ) : (
-                      <div className="w-64 h-64 bg-gray-100 border-2 border-dashed border-gray-300 rounded-lg flex items-center justify-center">
-                        <div className="text-center text-gray-500">
-                          <QrCode className="h-12 w-12 mx-auto mb-2" />
-                          <p>QR code will appear here</p>
+                {/* QR Preview */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle>QR Code Preview</CardTitle>
+                    <CardDescription>Your generated QR code</CardDescription>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div className="flex justify-center">
+                      {qrDataURL ? (
+                        <div className="qr-preview">
+                          <img
+                            src={qrDataURL}
+                            alt="Generated QR Code"
+                            className="max-w-full h-auto border rounded-lg shadow-lg"
+                            style={{ maxWidth: "300px" }}
+                          />
                         </div>
+                      ) : (
+                        <div className="w-64 h-64 bg-gray-100 border-2 border-dashed border-gray-300 rounded-lg flex items-center justify-center">
+                          <div className="text-center text-gray-500">
+                            <QrCode className="h-12 w-12 mx-auto mb-2" />
+                            <p>QR code will appear here</p>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                    
+                    {qrDataURL && (
+                      <div className="flex space-x-2">
+                        <Button onClick={downloadQRCode} className="flex-1">
+                          <Download className="h-4 w-4 mr-2" />
+                          Download PNG
+                        </Button>
+                        <Button onClick={copyQRCode} variant="outline" className="flex-1">
+                          <Copy className="h-4 w-4 mr-2" />
+                          Copy Image
+                        </Button>
                       </div>
                     )}
-                  </div>
-                  
-                  {qrDataURL && (
-                    <div className="flex space-x-2">
-                      <Button onClick={downloadQRCode} className="flex-1">
-                        <Download className="h-4 w-4 mr-2" />
-                        Download PNG
-                      </Button>
-                      <Button onClick={copyQRCode} variant="outline" className="flex-1">
-                        <Copy className="h-4 w-4 mr-2" />
-                        Copy Image
-                      </Button>
-                    </div>
-                  )}
-                </CardContent>
-              </Card>
+                  </CardContent>
+                </Card>
+              </div>
             </div>
+          )}
+        </div>
 
-            {/* QR Options Panel for Desktop */}
-            {options.length > 0 && (
-              <Card className="max-w-4xl mx-auto mt-6">
-                <CardHeader>
-                  <CardTitle>Customization Options</CardTitle>
-                  <CardDescription>Customize your QR code appearance</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {Object.entries(groupedOptions).map(([section, sectionOptions]) => (
-                      <div key={section} className="space-y-4">
-                        <Label className="text-sm font-medium text-gray-500 uppercase tracking-wide">{section}</Label>
-                        {sectionOptions.map((option) => (
-                          <div key={option.key} className="space-y-2">
-                            <Label className="text-sm font-medium">{option.label}</Label>
-                            {renderOptionControl(option)}
-                          </div>
-                        ))}
+        {/* Unified After Canvas Ad */}
+        <div className="unified-after-canvas bg-white border-t lg:mr-96">
+          <div className="container mx-auto px-4 py-3">
+            <AdBanner 
+              adSlot="unified-after-canvas"
+              adFormat="auto"
+              className="max-w-4xl mx-auto"
+              mobileOptimized={true}
+              persistent={true}
+            />
+          </div>
+        </div>
+
+        {/* Fixed Desktop Right Sidebar */}
+        <div className="hidden lg:flex w-96 bg-white border-l shadow-lg flex-col fixed top-40 bottom-0 right-0 z-30">
+          <div className="px-6 py-4 border-b bg-gray-50 flex-shrink-0">
+            <div className="flex items-center space-x-2">
+              <QrCode className="h-5 w-5 text-green-600" />
+              <h2 className="text-lg font-semibold text-gray-900">QR Options</h2>
+            </div>
+            <p className="text-sm text-gray-600 mt-1">Customize your QR code</p>
+          </div>
+
+          <div className="flex-1 overflow-hidden">
+            <ScrollArea className="h-full">
+              <div className="p-6 space-y-6">
+                {Object.entries(groupedOptions).map(([section, sectionOptions]) => (
+                  <div key={section} className="space-y-4">
+                    <div className="flex items-center space-x-2">
+                      <div className="h-px bg-gray-200 flex-1"></div>
+                      <Label className="text-xs font-medium text-gray-500 uppercase tracking-wide">{section}</Label>
+                      <div className="h-px bg-gray-200 flex-1"></div>
+                    </div>
+                    {sectionOptions.map((option) => (
+                      <div key={option.key} className="space-y-2">
+                        <Label className="text-sm font-medium">{option.label}</Label>
+                        {renderOptionControl(option)}
                       </div>
                     ))}
                   </div>
-                </CardContent>
-              </Card>
+                ))}
+              </div>
+            </ScrollArea>
+          </div>
+
+          <div className="p-6 border-t bg-gray-50 space-y-3 flex-shrink-0">
+            <Button 
+              onClick={generateQRCode}
+              disabled={isProcessing}
+              className="w-full bg-green-600 hover:bg-green-700 text-white py-3 text-base font-semibold"
+              size="lg"
+            >
+              {isProcessing ? (
+                <>
+                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                  Generating...
+                </>
+              ) : (
+                <>
+                  <QrCode className="h-4 w-4 mr-2" />
+                  Generate QR Code
+                </>
+              )}
+            </Button>
+
+            {qrDataURL && (
+              <div className="flex space-x-2">
+                <Button onClick={downloadQRCode} variant="outline" className="flex-1">
+                  <Download className="h-4 w-4 mr-2" />
+                  Download
+                </Button>
+                <Button onClick={copyQRCode} variant="outline" className="flex-1">
+                  <Copy className="h-4 w-4 mr-2" />
+                  Copy
+                </Button>
+              </div>
             )}
           </div>
-        )}
-      </div>
-
-      {/* Unified After Canvas Ad */}
-      <div className="unified-after-canvas bg-white border-t">
-        <div className="container mx-auto px-4 py-3">
-          <AdBanner 
-            adSlot="unified-after-canvas"
-            adFormat="auto"
-            className="max-w-4xl mx-auto"
-            mobileOptimized={true}
-            persistent={true}
-          />
         </div>
+
+        {/* Mobile Options Panel */}
+        <MobileOptionPanel
+          isOpen={isMobileSidebarOpen}
+          onOpenChange={setIsMobileSidebarOpen}
+          title="QR Code Options"
+          icon={<QrCode className="h-5 w-5 text-green-600" />}
+          footer={
+            <Button 
+              onClick={generateQRCode}
+              disabled={isProcessing}
+              className="w-full bg-green-600 hover:bg-green-700"
+            >
+              {isProcessing ? "Generating..." : "Generate QR Code"}
+            </Button>
+          }
+        >
+          <div className="space-y-6">
+            {Object.entries(groupedOptions).map(([section, sectionOptions]) => (
+              <div key={section} className="space-y-4">
+                <div className="flex items-center space-x-2">
+                  <div className="h-px bg-gray-200 flex-1"></div>
+                  <Label className="text-xs font-medium text-gray-500 uppercase tracking-wide">{section}</Label>
+                  <div className="h-px bg-gray-200 flex-1"></div>
+                </div>
+                {sectionOptions.map((option) => (
+                  <div key={option.key} className="space-y-2">
+                    <Label className="text-sm font-medium">{option.label}</Label>
+                    {renderOptionControl(option)}
+                  </div>
+                ))}
+              </div>
+            ))}
+          </div>
+        </MobileOptionPanel>
       </div>
 
       {/* Rich Educational Content */}
       {richContent && (
-        <div className="bg-gray-50">
+        <div className="bg-gray-50 lg:mr-96">
           {richContent}
         </div>
       )}
-
-      {/* Mobile Options Panel */}
-      <MobileOptionPanel
-        isOpen={isMobileSidebarOpen}
-        onOpenChange={setIsMobileSidebarOpen}
-        title="QR Code Options"
-        icon={<QrCode className="h-5 w-5 text-green-600" />}
-      >
-        <div className="space-y-6">
-          {Object.entries(groupedOptions).map(([section, sectionOptions]) => (
-            <div key={section} className="space-y-4">
-              <div className="flex items-center space-x-2">
-                <div className="h-px bg-gray-200 flex-1"></div>
-                <Label className="text-xs font-medium text-gray-500 uppercase tracking-wide">{section}</Label>
-                <div className="h-px bg-gray-200 flex-1"></div>
-              </div>
-              {sectionOptions.map((option) => (
-                <div key={option.key} className="space-y-2">
-                  <Label className="text-sm font-medium">{option.label}</Label>
-                  {renderOptionControl(option)}
-                </div>
-              ))}
-            </div>
-          ))}
-        </div>
-      </MobileOptionPanel>
     </div>
   )
 }

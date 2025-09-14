@@ -89,15 +89,6 @@
   @apply min-h-[44px] min-w-[44px];
 }
 
-/* Mobile ad spacing */
-.mobile-device.has-mobile-ad {
-  @apply pb-20;
-}
-
-.mobile-sticky-ad {
-  @apply fixed bottom-0 left-0 right-0 bg-white border-t p-2 z-40;
-}
-
 /* Crop area interactions */
 .crop-handle {
   @apply absolute w-4 h-4 bg-cyan-500 border-2 border-white rounded-full shadow-lg;
@@ -176,11 +167,11 @@
 
 /* Unified tool layout styles */
 .tools-header {
-  @apply bg-white border-b shadow-sm;
+  @apply bg-white border-b shadow-sm fixed top-16 left-0 right-0 z-40;
 }
 
 .canvas {
-  @apply flex-1 overflow-auto;
+  @apply bg-gray-50 min-h-[60vh];
 }
 
 .upload-area {
@@ -191,14 +182,26 @@
   @apply bg-gray-50;
 }
 
-/* Fixed sidebar positioning */
+/* Fixed sidebar positioning - Updated for better responsive design */
 .desktop-sidebar {
-  @apply w-96 bg-white border-l shadow-lg flex flex-col fixed top-16 bottom-0 right-0 z-30;
+  @apply w-96 bg-white border-l shadow-lg flex flex-col fixed top-32 bottom-0 right-0 z-30;
 }
 
-/* Canvas margin for desktop sidebar */
+/* Canvas margin for desktop sidebar - Fixed overflow issues */
 .canvas-with-sidebar {
   @apply lg:mr-96;
+}
+
+/* Responsive canvas margins */
+@media (min-width: 1024px) {
+  .canvas {
+    margin-right: 384px; /* 96 * 4 = 384px for w-96 sidebar */
+  }
+  
+  .unified-before-canvas,
+  .unified-after-canvas {
+    margin-right: 384px;
+  }
 }
 
 /* Ad slot styling */
@@ -219,6 +222,11 @@
   @apply container mx-auto px-4;
 }
 
+/* Mobile ad spacing */
+.mobile-sticky-ad {
+  @apply fixed bottom-0 left-0 right-0 bg-white border-t p-2 z-40;
+}
+
 /* Enhanced mobile interactions */
 @media (hover: hover) {
   .tool-file-thumbnail:hover {
@@ -236,16 +244,21 @@
     @apply w-6 h-6; /* Larger touch targets on mobile */
   }
   
-  .tool-file-thumbnail {
-    @apply hover:scale-100 hover:translate-y-0; /* Disable hover effects on mobile */
-  }
-  
   .mobile-sticky-ad {
     @apply fixed bottom-0 left-0 right-0 bg-white border-t p-2 z-40;
   }
   
   .sidebar {
     @apply hidden; /* Hide desktop sidebar on mobile */
+  }
+  
+  .canvas {
+    margin-right: 0 !important;
+  }
+  
+  .unified-before-canvas,
+  .unified-after-canvas {
+    margin-right: 0 !important;
   }
 }
 
@@ -270,4 +283,19 @@
 
 .processing-spinner {
   @apply animate-spin rounded-full h-8 w-8 border-b-2 border-primary;
+}
+
+/* Fixed header spacing */
+.pt-header {
+  padding-top: 4rem; /* 64px for header */
+}
+
+.pt-tools-header {
+  padding-top: 8rem; /* 128px for header + tools header */
+}
+
+/* Prevent layout shift */
+.layout-stable {
+  contain: layout style;
+  will-change: auto;
 }

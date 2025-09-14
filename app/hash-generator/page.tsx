@@ -116,7 +116,7 @@ function processHash(input: string, options: any = {}) {
 
 export default function HashGeneratorPage() {
   return (
-    <TextToolLayout
+    <TextToolsLayout
       title="Hash Generator"
       description="Generate MD5, SHA-1, SHA-256, and SHA-512 hashes from text input. Perfect for data integrity verification and security applications."
       icon={Shield}

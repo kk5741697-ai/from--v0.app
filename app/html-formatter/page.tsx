@@ -51,7 +51,7 @@ function processHTML(input: string, options: any = {}) {
 
 export default function HTMLFormatterPage() {
   return (
-    <TextToolLayout
+    <TextToolsLayout
       title="HTML Formatter"
       description="Clean up and format HTML code with proper indentation and syntax highlighting."
       icon={Code}
