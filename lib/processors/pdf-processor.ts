@@ -1,5 +1,4 @@
 import { PDFDocument, rgb, StandardFonts, PageSizes } from "pdf-lib"
-// import * as pdfjsLib from "pdfjs-dist"
 
 export interface PDFProcessingOptions {
   quality?: number

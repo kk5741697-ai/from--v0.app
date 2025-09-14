@@ -58,10 +58,19 @@ export interface PDFPageInfo {
 export class ClientPDFProcessor {
   static async getPDFInfo(file: File): Promise<{ pageCount: number; pages: PDFPageInfo[] }> {
     try {
-      // Enhanced PDF processing with better page extraction
+      // Use PDF-lib for basic info, generate mock thumbnails
       const arrayBuffer = await file.arrayBuffer()
-      const pdf = await PDFDocument.load(arrayBuffer)
-      const pageCount = pdf.getPageCount()
+      let pdf: any
+      let pageCount: number
+      
+      try {
+        pdf = await PDFDocument.load(arrayBuffer)
+        pageCount = pdf.getPageCount()
+      } catch (error) {
+        console.error("Failed to load PDF with PDF-lib:", error)
+        throw new Error("Invalid PDF file or corrupted document")
+      }
+      
       const pages: PDFPageInfo[] = []
 
       if (pageCount === 0) {
@@ -74,7 +83,7 @@ export class ClientPDFProcessor {
         canvas.width = 200
         canvas.height = 280
         
-        // Enhanced PDF page rendering
+        // Generate mock PDF page thumbnails
         ctx.fillStyle = "#ffffff"
         ctx.fillRect(0, 0, canvas.width, canvas.height)
         
@@ -82,7 +91,7 @@ export class ClientPDFProcessor {
         ctx.lineWidth = 1
         ctx.strokeRect(0, 0, canvas.width, canvas.height)
         
-        // More realistic content simulation
+        // Add realistic content simulation
         ctx.fillStyle = "#1f2937"
         ctx.font = "bold 12px system-ui"
         ctx.textAlign = "left"
