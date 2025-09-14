@@ -8,16 +8,7 @@ import { Badge } from "@/components/ui/badge"
 import { Progress } from "@/components/ui/progress"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet"
-import { 
-  Upload, 
-  Download, 
-  CheckCircle,
-  X,
-  RefreshCw,
-  Settings,
-  FileText,
-  DragHandleDots2Icon
-} from "lucide-react"
+import { Upload, Download, CheckCircle, X, RefreshCw, Settings, FileText, HandIcon as DragHandleDots2Icon } from "lucide-react"
 import { toast } from "@/hooks/use-toast"
 import { AdBanner } from "@/components/ads/ad-banner"
 import { PDFThumbnailExtractor } from "@/components/pdf-thumbnail-extractor"
