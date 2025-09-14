@@ -51,6 +51,12 @@ Only 2 ad slots: unified-before-canvas and unified-after-canvas
 Persistent ads: Same ads reused, no additional requests
 Rich content: Educational guides for each tool type
 
+create layout file for each tools type
+@/components/imagelayout.tsx
+@/components/imagelayout.tsx
+@/components/imagelayout.tsx
+@/components/imagelayout.tsx
+
 
 also don't remove the .env file
 # AdSense Configuration (Optional - leave empty to disable ads)
