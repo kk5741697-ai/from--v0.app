@@ -1,6 +1,6 @@
 "use client"
 
-import { UnifiedToolLayout } from "@/components/unified-tool-layout"
+import { ImageToolsLayout } from "@/components/image-tools-layout"
 import { Maximize2 } from "lucide-react"
 import { ImageProcessor } from "@/lib/processors/image-processor"
 import { ImageProcessingGuide } from "@/components/content/image-processing-guide"
@@ -113,11 +113,11 @@ export default function ImageResizerPage() {
   )
 
   return (
-    <UnifiedToolLayout
+    <ImageToolsLayout
       title="Resize Image"
       description="Resize images with precision using custom dimensions, percentage scaling, and aspect ratio presets. Advanced algorithms maintain quality while optimizing for web, social media, and print applications."
       icon={Maximize2}
-      toolType="image"
+      toolType="resize"
       processFunction={resizeImages}
       options={resizeOptions}
       maxFiles={20}

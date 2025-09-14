@@ -1,0 +1,307 @@
+"use client"
+
+import { useState, useEffect } from "react"
+import { Header } from "@/components/header"
+import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Badge } from "@/components/ui/badge"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { Textarea } from "@/components/ui/textarea"
+import { ScrollArea } from "@/components/ui/scroll-area"
+import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet"
+import { 
+  Wrench, 
+  Download, 
+  Copy,
+  RefreshCw,
+  Settings,
+  Calculator,
+  Hash,
+  Key
+} from "lucide-react"
+import { toast } from "@/hooks/use-toast"
+import { AdBanner } from "@/components/ads/ad-banner"
+
+interface UtilitiesToolsLayoutProps {
+  title: string
+  description: string
+  icon: any
+  toolType: string
+  processFunction: (input: string, options: any) => { output: string; error?: string; stats?: any }
+  options?: any[]
+  maxFiles?: number
+  supportedFormats?: string[]
+  outputFormats?: string[]
+  richContent?: React.ReactNode
+  children?: React.ReactNode
+}
+
+export function UtilitiesToolsLayout({
+  title,
+  description,
+  icon: Icon,
+  toolType,
+  processFunction,
+  options = [],
+  maxFiles = 0,
+  supportedFormats = [],
+  outputFormats = ["txt"],
+  richContent,
+  children
+}: UtilitiesToolsLayoutProps) {
+  const [input, setInput] = useState("")
+  const [output, setOutput] = useState("")
+  const [toolOptions, setToolOptions] = useState<Record<string, any>>({})
+  const [isProcessing, setIsProcessing] = useState(false)
+  const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false)
+  const [stats, setStats] = useState<any>(null)
+
+  // Initialize options with defaults
+  useEffect(() => {
+    const defaultOptions: Record<string, any> = {}
+    options.forEach(option => {
+      defaultOptions[option.key] = option.defaultValue
+    })
+    setToolOptions(defaultOptions)
+  }, [options])
+
+  const processContent = async () => {
+    setIsProcessing(true)
+
+    try {
+      const result = processFunction(input, toolOptions)
+      setOutput(result.output)
+      setStats(result.stats)
+      
+      if (result.error) {
+        toast({
+          title: "Processing warning",
+          description: result.error,
+          variant: "destructive"
+        })
+      } else {
+        toast({
+          title: "Processing complete",
+          description: "Your content has been processed successfully"
+        })
+      }
+    } catch (error) {
+      toast({
+        title: "Processing failed",
+        description: error instanceof Error ? error.message : "An unexpected error occurred",
+        variant: "destructive"
+      })
+    } finally {
+      setIsProcessing(false)
+    }
+  }
+
+  const copyToClipboard = async (text: string) => {
+    try {
+      await navigator.clipboard.writeText(text)
+      toast({
+        title: "Copied to clipboard",
+        description: "Content has been copied successfully"
+      })
+    } catch (error) {
+      console.error("Failed to copy:", error)
+    }
+  }
+
+  const downloadFile = (content: string, filename: string) => {
+    const blob = new Blob([content], { type: "text/plain" })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement("a")
+    a.href = url
+    a.download = filename
+    document.body.appendChild(a)
+    a.click()
+    document.body.removeChild(a)
+    URL.revokeObjectURL(url)
+  }
+
+  return (
+    <div className="min-h-screen bg-background">
+      <Header />
+
+      {/* Tools Header */}
+      <div className="tools-header bg-white border-b">
+        <div className="container mx-auto px-4 py-3">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-2">
+              <Icon className="h-5 w-5 text-purple-600" />
+              <h1 className="text-xl font-semibold text-gray-900">{title}</h1>
+              <Badge variant="secondary">Utility Tool</Badge>
+            </div>
+            <div className="flex items-center space-x-2">
+              <Button variant="outline" size="sm" onClick={() => setInput("")}>
+                <RefreshCw className="h-4 w-4" />
+              </Button>
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={() => setIsMobileSidebarOpen(true)}
+                className="lg:hidden"
+              >
+                <Settings className="h-4 w-4" />
+              </Button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Unified Before Canvas Ad */}
+      <div className="unified-before-canvas bg-white border-b">
+        <div className="container mx-auto px-4 py-3">
+          <AdBanner 
+            adSlot="unified-before-canvas"
+            adFormat="auto"
+            className="max-w-4xl mx-auto"
+            mobileOptimized={true}
+            persistent={true}
+          />
+        </div>
+      </div>
+
+      {/* Main Content */}
+      <div className="canvas container mx-auto px-4 py-6">
+        {children ? (
+          children
+        ) : (
+          <div className="max-w-2xl mx-auto space-y-6">
+            {/* Utility Input */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Utility Input</CardTitle>
+                <CardDescription>Enter your data for processing</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div>
+                  <Label htmlFor="utility-input">Input</Label>
+                  <Textarea
+                    id="utility-input"
+                    value={input}
+                    onChange={(e) => setInput(e.target.value)}
+                    placeholder="Enter your data here..."
+                    rows={6}
+                    className="font-mono text-sm"
+                  />
+                </div>
+                
+                <Button 
+                  onClick={processContent}
+                  disabled={isProcessing}
+                  className="w-full bg-purple-600 hover:bg-purple-700"
+                  size="lg"
+                >
+                  {isProcessing ? (
+                    <>
+                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                      Processing...
+                    </>
+                  ) : (
+                    <>
+                      <Icon className="h-4 w-4 mr-2" />
+                      Process Data
+                    </>
+                  )}
+                </Button>
+              </CardContent>
+            </Card>
+
+            {/* Output */}
+            {output && (
+              <Card>
+                <CardHeader>
+                  <div className="flex items-center justify-between">
+                    <CardTitle>Generated Output</CardTitle>
+                    <div className="flex space-x-2">
+                      <Button variant="outline" size="sm" onClick={() => copyToClipboard(output)}>
+                        <Copy className="h-4 w-4 mr-2" />
+                        Copy
+                      </Button>
+                      <Button variant="outline" size="sm" onClick={() => downloadFile(output, `utility-output.${outputFormats[0]}`)}>
+                        <Download className="h-4 w-4 mr-2" />
+                        Download
+                      </Button>
+                    </div>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  <Textarea
+                    value={output}
+                    readOnly
+                    className="min-h-[200px] font-mono text-sm"
+                  />
+                </CardContent>
+              </Card>
+            )}
+
+            {/* Stats */}
+            {stats && (
+              <Card>
+                <CardHeader>
+                  <CardTitle>Processing Statistics</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
+                    {Object.entries(stats).map(([key, value]) => (
+                      <div key={key} className="text-center">
+                        <div className="text-xl font-bold text-gray-900">{value}</div>
+                        <div className="text-sm text-gray-600">{key}</div>
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+          </div>
+        )}
+      </div>
+
+      {/* Unified After Canvas Ad */}
+      <div className="unified-after-canvas bg-white border-t">
+        <div className="container mx-auto px-4 py-3">
+          <AdBanner 
+            adSlot="unified-after-canvas"
+            adFormat="auto"
+            className="max-w-4xl mx-auto"
+            mobileOptimized={true}
+            persistent={true}
+          />
+        </div>
+      </div>
+
+      {/* Rich Educational Content */}
+      {richContent && (
+        <div className="bg-gray-50">
+          {richContent}
+        </div>
+      )}
+
+      {/* Mobile Options Sidebar */}
+      <Sheet open={isMobileSidebarOpen} onOpenChange={setIsMobileSidebarOpen}>
+        <SheetContent side="bottom" className="h-[70vh] p-0">
+          <SheetHeader className="px-6 py-4 border-b bg-gray-50">
+            <SheetTitle className="flex items-center space-x-2">
+              <Icon className="h-5 w-5 text-purple-600" />
+              <span>{title} Options</span>
+            </SheetTitle>
+          </SheetHeader>
+          
+          <ScrollArea className="h-full">
+            <div className="p-6 space-y-6">
+              {options.map((option) => (
+                <div key={option.key} className="space-y-2">
+                  <Label className="text-sm font-medium">{option.label}</Label>
+                  {/* Option controls would go here */}
+                </div>
+              ))}
+            </div>
+          </ScrollArea>
+        </SheetContent>
+      </Sheet>
+    </div>
+  )
+}

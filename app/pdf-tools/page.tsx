@@ -1,9 +1,9 @@
 import { Header } from "@/components/header"
-import { Footer } from "@/components/footer"
 import { ToolCard } from "@/components/tool-card"
 import { FileType, ArrowLeft } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
+import { AdBanner } from "@/components/ads/ad-banner"
 
 export function generateViewport() {
   return {
@@ -85,6 +85,19 @@ export default function PDFToolsPage() {
     <div className="min-h-screen bg-background">
       <Header />
 
+      {/* Unified Before Canvas Ad */}
+      <div className="unified-before-canvas bg-white border-b">
+        <div className="container mx-auto px-4 py-3">
+          <AdBanner 
+            adSlot="unified-before-canvas"
+            adFormat="auto"
+            className="max-w-4xl mx-auto"
+            mobileOptimized={true}
+            persistent={true}
+          />
+        </div>
+      </div>
+
       <div className="container mx-auto px-4 py-8">
         {/* Page Header */}
         <div className="mb-8">
@@ -108,11 +121,76 @@ export default function PDFToolsPage() {
           </div>
         </div>
 
+        {/* Rich Content Section */}
+        <div className="mb-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="bg-white p-6 rounded-lg border">
+              <h3 className="font-semibold text-lg mb-3">Complete PDF Toolkit</h3>
+              <p className="text-muted-foreground text-sm">
+                Professional PDF manipulation tools for businesses, legal professionals, and individuals. 
+                Merge, split, compress, and convert PDF documents with enterprise-grade security.
+              </p>
+            </div>
+            <div className="bg-white p-6 rounded-lg border">
+              <h3 className="font-semibold text-lg mb-3">Advanced Capabilities</h3>
+              <ul className="text-sm text-muted-foreground space-y-1">
+                <li>• Unlimited file size processing</li>
+                <li>• Password protection and encryption</li>
+                <li>• Watermarking and branding</li>
+                <li>• Page organization and reordering</li>
+              </ul>
+            </div>
+            <div className="bg-white p-6 rounded-lg border">
+              <h3 className="font-semibold text-lg mb-3">Industry Applications</h3>
+              <ul className="text-sm text-muted-foreground space-y-1">
+                <li>• Legal document management</li>
+                <li>• Business report compilation</li>
+                <li>• Academic paper organization</li>
+                <li>• Contract processing workflows</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
         {/* Tools Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {pdfTools.map((tool) => (
             <ToolCard key={tool.title} {...tool} />
           ))}
+        </div>
+
+        {/* Unified After Canvas Ad */}
+        <div className="unified-after-canvas bg-white border-t mt-12">
+          <div className="container mx-auto px-4 py-3">
+            <AdBanner 
+              adSlot="unified-after-canvas"
+              adFormat="auto"
+              className="max-w-4xl mx-auto"
+              mobileOptimized={true}
+              persistent={true}
+            />
+          </div>
+        </div>
+
+        {/* Additional Rich Content */}
+        <div className="mt-12 bg-gray-50 p-8 rounded-lg">
+          <h2 className="text-2xl font-bold text-center mb-6">Enterprise PDF Solutions</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div>
+              <h3 className="font-semibold text-lg mb-3">Security & Compliance</h3>
+              <p className="text-muted-foreground">
+                Handle confidential documents with complete security. All processing happens locally, 
+                ensuring GDPR compliance and protecting sensitive business information.
+              </p>
+            </div>
+            <div>
+              <h3 className="font-semibold text-lg mb-3">Workflow Integration</h3>
+              <p className="text-muted-foreground">
+                Streamline your document workflows with batch processing, automated organization, 
+                and professional-grade output suitable for legal and business use.
+              </p>
+            </div>
+          </div>
         </div>
 
         {/* Coming Soon */}
@@ -126,8 +204,6 @@ export default function PDFToolsPage() {
           </p>
         </div>
       </div>
-
-      <Footer />
     </div>
   )
 }

@@ -1,9 +1,9 @@
 import { Header } from "@/components/header"
-import { Footer } from "@/components/footer"
 import { ToolCard } from "@/components/tool-card"
 import { QrCode, ArrowLeft } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
+import { AdBanner } from "@/components/ads/ad-banner"
 
 export function generateViewport() {
   return {
@@ -65,6 +65,19 @@ export default function QRToolsPage() {
     <div className="min-h-screen bg-background">
       <Header />
 
+      {/* Unified Before Canvas Ad */}
+      <div className="unified-before-canvas bg-white border-b">
+        <div className="container mx-auto px-4 py-3">
+          <AdBanner 
+            adSlot="unified-before-canvas"
+            adFormat="auto"
+            className="max-w-4xl mx-auto"
+            mobileOptimized={true}
+            persistent={true}
+          />
+        </div>
+      </div>
+
       <div className="container mx-auto px-4 py-8">
         {/* Page Header */}
         <div className="mb-8">
@@ -88,11 +101,77 @@ export default function QRToolsPage() {
           </div>
         </div>
 
+        {/* Rich Content Section */}
+        <div className="mb-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="bg-white p-6 rounded-lg border">
+              <h3 className="font-semibold text-lg mb-3">Advanced QR Code Generation</h3>
+              <p className="text-muted-foreground text-sm">
+                Create professional QR codes for WiFi networks, contact cards, events, payments, and more. 
+                Advanced customization with logos, colors, and error correction levels.
+              </p>
+            </div>
+            <div className="bg-white p-6 rounded-lg border">
+              <h3 className="font-semibold text-lg mb-3">Multiple Data Types</h3>
+              <ul className="text-sm text-muted-foreground space-y-1">
+                <li>• WiFi network credentials</li>
+                <li>• Contact information (vCard)</li>
+                <li>• Email and SMS messages</li>
+                <li>• Calendar events and locations</li>
+                <li>• Payment and cryptocurrency</li>
+              </ul>
+            </div>
+            <div className="bg-white p-6 rounded-lg border">
+              <h3 className="font-semibold text-lg mb-3">Business Applications</h3>
+              <ul className="text-sm text-muted-foreground space-y-1">
+                <li>• Restaurant menu access</li>
+                <li>• Event registration systems</li>
+                <li>• Marketing campaign tracking</li>
+                <li>• Contactless payment solutions</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
         {/* Tools Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {qrTools.map((tool) => (
             <ToolCard key={tool.title} {...tool} />
           ))}
+        </div>
+
+        {/* Unified After Canvas Ad */}
+        <div className="unified-after-canvas bg-white border-t mt-12">
+          <div className="container mx-auto px-4 py-3">
+            <AdBanner 
+              adSlot="unified-after-canvas"
+              adFormat="auto"
+              className="max-w-4xl mx-auto"
+              mobileOptimized={true}
+              persistent={true}
+            />
+          </div>
+        </div>
+
+        {/* Additional Rich Content */}
+        <div className="mt-12 bg-gray-50 p-8 rounded-lg">
+          <h2 className="text-2xl font-bold text-center mb-6">QR Code Best Practices</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div>
+              <h3 className="font-semibold text-lg mb-3">Design Guidelines</h3>
+              <p className="text-muted-foreground">
+                Create QR codes that scan reliably across all devices. Use high contrast colors, 
+                appropriate sizing, and test across multiple scanning applications for optimal results.
+              </p>
+            </div>
+            <div>
+              <h3 className="font-semibold text-lg mb-3">Marketing Integration</h3>
+              <p className="text-muted-foreground">
+                Bridge physical and digital experiences with QR codes. Perfect for restaurants, 
+                events, retail, and any business looking to enhance customer engagement.
+              </p>
+            </div>
+          </div>
         </div>
 
         {/* Coming Soon */}
@@ -106,8 +185,6 @@ export default function QRToolsPage() {
           </p>
         </div>
       </div>
-
-      <Footer />
     </div>
   )
 }

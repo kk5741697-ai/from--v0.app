@@ -1,9 +1,9 @@
 import { Header } from "@/components/header"
-import { Footer } from "@/components/footer"
 import { ToolCard } from "@/components/tool-card"
 import { FileText, ArrowLeft } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
+import { AdBanner } from "@/components/ads/ad-banner"
 
 export function generateViewport() {
   return {
@@ -84,6 +84,19 @@ export default function TextToolsPage() {
     <div className="min-h-screen bg-background">
       <Header />
 
+      {/* Unified Before Canvas Ad */}
+      <div className="unified-before-canvas bg-white border-b">
+        <div className="container mx-auto px-4 py-3">
+          <AdBanner 
+            adSlot="unified-before-canvas"
+            adFormat="auto"
+            className="max-w-4xl mx-auto"
+            mobileOptimized={true}
+            persistent={true}
+          />
+        </div>
+      </div>
+
       <div className="container mx-auto px-4 py-8">
         {/* Page Header */}
         <div className="mb-8">
@@ -107,11 +120,76 @@ export default function TextToolsPage() {
           </div>
         </div>
 
+        {/* Rich Content Section */}
+        <div className="mb-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="bg-white p-6 rounded-lg border">
+              <h3 className="font-semibold text-lg mb-3">Developer-Focused Tools</h3>
+              <p className="text-muted-foreground text-sm">
+                Essential tools for developers and content creators. Format, validate, minify, and convert 
+                code and text with professional-grade processing and syntax highlighting.
+              </p>
+            </div>
+            <div className="bg-white p-6 rounded-lg border">
+              <h3 className="font-semibold text-lg mb-3">Code Quality Tools</h3>
+              <ul className="text-sm text-muted-foreground space-y-1">
+                <li>• JSON formatting and validation</li>
+                <li>• HTML/CSS beautification</li>
+                <li>• JavaScript minification</li>
+                <li>• XML processing and validation</li>
+              </ul>
+            </div>
+            <div className="bg-white p-6 rounded-lg border">
+              <h3 className="font-semibold text-lg mb-3">Development Workflows</h3>
+              <ul className="text-sm text-muted-foreground space-y-1">
+                <li>• API development and testing</li>
+                <li>• Code optimization and cleanup</li>
+                <li>• Data format conversion</li>
+                <li>• Security and encoding tools</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
         {/* Tools Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {textTools.map((tool) => (
             <ToolCard key={tool.title} {...tool} />
           ))}
+        </div>
+
+        {/* Unified After Canvas Ad */}
+        <div className="unified-after-canvas bg-white border-t mt-12">
+          <div className="container mx-auto px-4 py-3">
+            <AdBanner 
+              adSlot="unified-after-canvas"
+              adFormat="auto"
+              className="max-w-4xl mx-auto"
+              mobileOptimized={true}
+              persistent={true}
+            />
+          </div>
+        </div>
+
+        {/* Additional Rich Content */}
+        <div className="mt-12 bg-gray-50 p-8 rounded-lg">
+          <h2 className="text-2xl font-bold text-center mb-6">Essential Developer Tools</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div>
+              <h3 className="font-semibold text-lg mb-3">Code Formatting Excellence</h3>
+              <p className="text-muted-foreground">
+                Transform messy code into clean, readable format. Our tools support all major programming 
+                languages and data formats with intelligent formatting and error detection.
+              </p>
+            </div>
+            <div>
+              <h3 className="font-semibold text-lg mb-3">Performance Optimization</h3>
+              <p className="text-muted-foreground">
+                Optimize your code for production with minification, compression, and validation tools. 
+                Reduce file sizes and improve website performance with professional-grade optimization.
+              </p>
+            </div>
+          </div>
         </div>
 
         {/* Coming Soon */}
@@ -125,8 +203,6 @@ export default function TextToolsPage() {
           </p>
         </div>
       </div>
-
-      <Footer />
     </div>
   )
 }

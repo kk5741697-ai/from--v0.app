@@ -1,9 +1,9 @@
 import { Header } from "@/components/header"
-import { Footer } from "@/components/footer"
 import { ToolCard } from "@/components/tool-card"
 import { ImageIcon, ArrowLeft } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
+import { AdBanner } from "@/components/ads/ad-banner"
 
 export function generateViewport() {
   return {
@@ -86,6 +86,19 @@ export default function ImageToolsPage() {
     <div className="min-h-screen bg-background">
       <Header />
 
+      {/* Unified Before Canvas Ad */}
+      <div className="unified-before-canvas bg-white border-b">
+        <div className="container mx-auto px-4 py-3">
+          <AdBanner 
+            adSlot="unified-before-canvas"
+            adFormat="auto"
+            className="max-w-4xl mx-auto"
+            mobileOptimized={true}
+            persistent={true}
+          />
+        </div>
+      </div>
+
       <div className="container mx-auto px-4 py-8">
         {/* Page Header */}
         <div className="mb-8">
@@ -109,11 +122,76 @@ export default function ImageToolsPage() {
           </div>
         </div>
 
+        {/* Rich Content Section */}
+        <div className="mb-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="bg-white p-6 rounded-lg border">
+              <h3 className="font-semibold text-lg mb-3">Professional Image Processing</h3>
+              <p className="text-muted-foreground text-sm">
+                Transform your images with enterprise-grade tools. Resize, compress, convert, and enhance 
+                images with unlimited file size support and professional quality results.
+              </p>
+            </div>
+            <div className="bg-white p-6 rounded-lg border">
+              <h3 className="font-semibold text-lg mb-3">Advanced Features</h3>
+              <ul className="text-sm text-muted-foreground space-y-1">
+                <li>• Batch processing for multiple images</li>
+                <li>• Lossless quality preservation</li>
+                <li>• Format conversion and optimization</li>
+                <li>• Professional watermarking tools</li>
+              </ul>
+            </div>
+            <div className="bg-white p-6 rounded-lg border">
+              <h3 className="font-semibold text-lg mb-3">Use Cases</h3>
+              <ul className="text-sm text-muted-foreground space-y-1">
+                <li>• Website optimization</li>
+                <li>• Social media content</li>
+                <li>• E-commerce product photos</li>
+                <li>• Print material preparation</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
         {/* Tools Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {imageTools.map((tool) => (
             <ToolCard key={tool.title} {...tool} />
           ))}
+        </div>
+
+        {/* Unified After Canvas Ad */}
+        <div className="unified-after-canvas bg-white border-t mt-12">
+          <div className="container mx-auto px-4 py-3">
+            <AdBanner 
+              adSlot="unified-after-canvas"
+              adFormat="auto"
+              className="max-w-4xl mx-auto"
+              mobileOptimized={true}
+              persistent={true}
+            />
+          </div>
+        </div>
+
+        {/* Additional Rich Content */}
+        <div className="mt-12 bg-gray-50 p-8 rounded-lg">
+          <h2 className="text-2xl font-bold text-center mb-6">Why Choose Our Image Tools?</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div>
+              <h3 className="font-semibold text-lg mb-3">Enterprise Security</h3>
+              <p className="text-muted-foreground">
+                All image processing happens locally in your browser. Your images never leave your device, 
+                ensuring complete privacy and security for sensitive visual content.
+              </p>
+            </div>
+            <div>
+              <h3 className="font-semibold text-lg mb-3">Professional Quality</h3>
+              <p className="text-muted-foreground">
+                Advanced algorithms maintain image integrity while optimizing for your specific needs. 
+                Perfect for professional photography, marketing materials, and creative projects.
+              </p>
+            </div>
+          </div>
         </div>
 
         {/* Coming Soon */}
@@ -127,8 +205,6 @@ export default function ImageToolsPage() {
           </p>
         </div>
       </div>
-
-      <Footer />
     </div>
   )
 }
