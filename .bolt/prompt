@@ -52,10 +52,13 @@ Persistent ads: Same ads reused, no additional requests
 Rich content: Educational guides for each tool type
 
 always use layout file for each tools type
-@/components/image-tool-layout.tsx
-@/components/imagelayout.tsx
-@/components/imagelayout.tsx
-@/components/imagelayout.tsx
+@/components/image-tools-layout.tsx
+@/components/qrcode-tools-layout.tsx
+@/components/pdf-tools-layout.tsx
+@/components/text-tools-layout.tsx
+@/components/network-tools-layout.tsx
+@/components/seo-tools-layout.tsx
+@/components/utilities-tools-layout.tsx
 
 
 also don't remove the .env file
