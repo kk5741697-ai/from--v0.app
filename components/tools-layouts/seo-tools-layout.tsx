@@ -67,6 +67,74 @@ export function SEOToolsLayout({
     setToolOptions(defaultOptions)
   }, [options])
 
+  // Group options by section
+  const groupedOptions = options.reduce((groups, option) => {
+    const section = option.section || "General"
+    if (!groups[section]) groups[section] = []
+    groups[section].push(option)
+    return groups
+  }, {} as Record<string, any[]>)
+
+  const renderOptionControl = (option: any) => {
+    const shouldShow = !option.condition || option.condition(toolOptions)
+    if (!shouldShow) return null
+
+    switch (option.type) {
+      case "select":
+        return (
+          <Select
+            value={toolOptions[option.key]?.toString()}
+            onValueChange={(value) => setToolOptions(prev => ({ ...prev, [option.key]: value }))}
+          >
+            <SelectTrigger className="w-full">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {option.selectOptions?.map((opt: any) => (
+                <SelectItem key={opt.value} value={opt.value}>
+                  {opt.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        )
+
+      case "checkbox":
+        return (
+          <div className="flex items-center space-x-2">
+            <Checkbox
+              checked={toolOptions[option.key] || false}
+              onCheckedChange={(checked) => setToolOptions(prev => ({ ...prev, [option.key]: checked }))}
+            />
+            <span className="text-sm">{option.label}</span>
+          </div>
+        )
+
+      case "slider":
+        return (
+          <div className="space-y-2">
+            <Slider
+              value={[toolOptions[option.key] || option.defaultValue]}
+              onValueChange={([value]) => setToolOptions(prev => ({ ...prev, [option.key]: value }))}
+              min={option.min}
+              max={option.max}
+              step={option.step}
+            />
+            <div className="flex justify-between text-xs text-gray-500">
+              <span>{option.min}</span>
+              <span className="font-medium bg-gray-100 px-2 py-1 rounded">
+                {toolOptions[option.key] || option.defaultValue}
+              </span>
+              <span>{option.max}</span>
+            </div>
+          </div>
+        )
+
+      default:
+        return null
+    }
+  }
+
   const processContent = async () => {
     if (!input.trim()) return
 
@@ -284,7 +352,7 @@ export function SEOToolsLayout({
         </div>
 
         {/* Fixed Desktop Right Sidebar */}
-        <div className="desktop-sidebar overflow-y-auto" style={{ top: '4rem' }}>
+        <div className="hidden lg:flex w-80 xl:w-96 bg-white border-l shadow-lg flex-col fixed top-32 bottom-0 right-0 z-30 overflow-y-auto">
           <div className="px-6 py-4 border-b bg-gray-50 flex-shrink-0">
             <div className="flex items-center space-x-2">
               <Icon className="h-5 w-5 text-cyan-600" />
@@ -296,10 +364,19 @@ export function SEOToolsLayout({
           <div className="flex-1 overflow-y-auto">
             <ScrollArea className="h-full">
               <div className="p-6 space-y-6">
-                {options.map((option) => (
-                  <div key={option.key} className="space-y-2">
-                    <Label className="text-sm font-medium">{option.label}</Label>
-                    {/* Option controls would go here */}
+                {Object.entries(groupedOptions).map(([section, sectionOptions]) => (
+                  <div key={section} className="space-y-4">
+                    <div className="flex items-center space-x-2">
+                      <div className="h-px bg-gray-200 flex-1"></div>
+                      <Label className="text-xs font-medium text-gray-500 uppercase tracking-wide">{section}</Label>
+                      <div className="h-px bg-gray-200 flex-1"></div>
+                    </div>
+                    {sectionOptions.map((option) => (
+                      <div key={option.key} className="space-y-2">
+                        <Label className="text-sm font-medium">{option.label}</Label>
+                        {renderOptionControl(option)}
+                      </div>
+                    ))}
                   </div>
                 ))}
               </div>
@@ -336,10 +413,19 @@ export function SEOToolsLayout({
           icon={<Icon className="h-5 w-5 text-cyan-600" />}
         >
           <div className="space-y-6">
-            {options.map((option) => (
-              <div key={option.key} className="space-y-2">
-                <Label className="text-sm font-medium">{option.label}</Label>
-                {/* Option controls would go here */}
+            {Object.entries(groupedOptions).map(([section, sectionOptions]) => (
+              <div key={section} className="space-y-4">
+                <div className="flex items-center space-x-2">
+                  <div className="h-px bg-gray-200 flex-1"></div>
+                  <Label className="text-xs font-medium text-gray-500 uppercase tracking-wide">{section}</Label>
+                  <div className="h-px bg-gray-200 flex-1"></div>
+                </div>
+                {sectionOptions.map((option) => (
+                  <div key={option.key} className="space-y-2">
+                    <Label className="text-sm font-medium">{option.label}</Label>
+                    {renderOptionControl(option)}
+                  </div>
+                ))}
               </div>
             ))}
           </div>

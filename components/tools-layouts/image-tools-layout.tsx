@@ -718,7 +718,7 @@ export function ImageToolsLayout({
         </div>
 
         {/* Fixed Desktop Right Sidebar */}
-        <div className="desktop-sidebar overflow-y-auto" style={{ top: '4rem' }}>
+        <div className="hidden lg:flex w-80 xl:w-96 bg-white border-l shadow-lg flex-col fixed top-32 bottom-0 right-0 z-30 overflow-y-auto">
           <div className="px-6 py-4 border-b bg-gray-50 flex-shrink-0">
             <div className="flex items-center space-x-2">
               <Icon className="h-5 w-5 text-purple-600" />

@@ -48,15 +48,18 @@ async function splitPDF(files: any[], options: any): Promise<{ success: boolean;
 
     const file = files[0]
 
-    let selectedPages: number[] = []
-    if (options.selectedPages && options.selectedPages.length > 0) {
-      selectedPages = options.selectedPages
-        .map((pageKey: string) => {
+    const selectedPages: number[] = []
+    if (options.selectedPages && Array.isArray(options.selectedPages)) {
+      options.selectedPages.forEach((pageKey: string) => {
+        if (typeof pageKey === 'string' && pageKey.includes('-page-')) {
           const parts = pageKey.split("-")
-          return Number.parseInt(parts[parts.length - 1])
-        })
-        .filter((num: number) => !isNaN(num))
-        .sort((a: number, b: number) => a - b)
+          const pageNum = Number.parseInt(parts[parts.length - 1])
+          if (!isNaN(pageNum)) {
+            selectedPages.push(pageNum)
+          }
+        }
+      })
+      selectedPages.sort((a, b) => a - b)
     }
 
     if (selectedPages.length === 0) {

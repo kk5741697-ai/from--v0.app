@@ -221,19 +221,21 @@ export class ClientPDFProcessor {
       const results: Blob[] = []
       const totalPages = pdf.getPageCount()
 
-      if (!options.selectedPages || options.selectedPages.length === 0) {
+      const selectedPageNumbers = options.selectedPages || []
+      
+      if (selectedPageNumbers.length === 0) {
         throw new Error("No pages selected for extraction")
       }
 
-      const validPages = options.selectedPages
-        .filter((pageNum) => pageNum >= 1 && pageNum <= totalPages)
+      const validPages = selectedPageNumbers
+        .filter((pageNum: number) => pageNum >= 1 && pageNum <= totalPages)
         .sort((a, b) => a - b)
 
       if (validPages.length === 0) {
         throw new Error("No valid pages selected for extraction.")
       }
 
-      for (const pageNum of validPages) {
+      for (const pageNum of validPages as number[]) {
         const newPdf = await PDFDocument.create()
         const [copiedPage] = await newPdf.copyPages(pdf, [pageNum - 1])
         newPdf.addPage(copiedPage)

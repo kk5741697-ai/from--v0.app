@@ -232,36 +232,6 @@
   background-color: rgba(156, 163, 175, 0.7);
 }
 
-/* Enhanced responsive sidebar positioning with overflow protection */
-.desktop-sidebar {
-  @apply hidden lg:flex w-80 xl:w-96 bg-white border-l shadow-lg flex-col fixed bottom-0 right-0 z-30;
-  max-height: calc(100vh - 8rem);
-  overflow-y: auto;
-}
-
-/* Sidebar scrolling */
-.desktop-sidebar {
-  scrollbar-width: thin;
-  scrollbar-color: rgba(156, 163, 175, 0.3) transparent;
-}
-
-.desktop-sidebar::-webkit-scrollbar {
-  width: 6px;
-}
-
-.desktop-sidebar::-webkit-scrollbar-track {
-  background: rgba(243, 244, 246, 0.3);
-}
-
-.desktop-sidebar::-webkit-scrollbar-thumb {
-  background-color: rgba(156, 163, 175, 0.4);
-  border-radius: 3px;
-}
-
-.desktop-sidebar::-webkit-scrollbar-thumb:hover {
-  background-color: rgba(156, 163, 175, 0.6);
-}
-
 /* Responsive content margins for tools interface */
 .tools-interface-active {
   @apply lg:mr-80 xl:mr-96;
@@ -283,11 +253,6 @@
     max-width: calc(100vw - 340px) !important;
   }
   
-  .desktop-sidebar {
-    @apply flex;
-    width: 320px;
-  }
-  
   .canvas {
     max-height: calc(100vh - 16rem);
   }
@@ -303,18 +268,10 @@
     margin-right: 384px !important;
     max-width: calc(100vw - 404px) !important;
   }
-  
-  .desktop-sidebar {
-    width: 384px;
-  }
 }
 
 /* Prevent horizontal overflow on smaller screens */
 @media (max-width: 1023px) {
-  .desktop-sidebar {
-    @apply hidden;
-  }
-  
   .tools-interface-active,
   .tools-header-responsive {
     margin-right: 0 !important;
@@ -364,10 +321,6 @@
 
 /* Tablet responsive adjustments */
 @media (min-width: 768px) and (max-width: 1023px) {
-  .desktop-sidebar {
-    @apply hidden; /* Hide sidebar on tablet */
-  }
-  
   .tools-interface-active,
   .tools-header-responsive {
     margin-right: 0 !important;
@@ -436,10 +389,6 @@
     @apply fixed bottom-0 left-0 right-0 bg-white border-t p-2 z-40;
   }
   
-  .desktop-sidebar {
-    @apply hidden; /* Hide desktop sidebar on mobile */
-  }
-  
   .tools-interface-active,
   .tools-header-responsive {
     margin-right: 0 !important;
@@ -452,26 +401,9 @@
   
   .canvas {
     @apply px-2;
-  }
-}
-
-/* Tablet responsive adjustments */
-@media (min-width: 768px) and (max-width: 1023px) {
-  .desktop-sidebar {
-    @apply hidden; /* Hide sidebar on tablet */
-  }
-  
-  .tools-interface-active,
-  .tools-header-responsive {
-    margin-right: 0 !important;
-  }
-  
-  .tools-header {
-    @apply px-4;
-  }
-  
-  .canvas {
-    @apply px-4;
+    max-height: calc(100vh - 8rem);
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
   }
 }
 
