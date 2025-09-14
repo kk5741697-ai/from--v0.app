@@ -55,12 +55,12 @@ note: when tools interface are active, then the upload zone, rich content, foote
 
 always use layout file for each tools type
 @/components/tools-layouts/image-tools-layout.tsx
-@/components/qrcode-tools-layout.tsx
-@/components/pdf-tools-layout.tsx
-@/components/text-tools-layout.tsx
-@/components/network-tools-layout.tsx
-@/components/seo-tools-layout.tsx
-@/components/utilities-tools-layout.tsx
+@/components/tools-layouts/qrcode-tools-layout.tsx
+@/components/tools-layouts/pdf-tools-layout.tsx
+@/components/tools-layouts/text-tools-layout.tsx
+@/components/tools-layouts/network-tools-layout.tsx
+@/components/tools-layouts/seo-tools-layout.tsx
+@/components/tools-layouts/utilities-tools-layout.tsx
 
 
 also don't remove the .env file
