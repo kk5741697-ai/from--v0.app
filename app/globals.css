@@ -233,27 +233,32 @@
 /* Enhanced mobile responsiveness */
 @media (max-width: 768px) {
   .tools-header .container {
-    @apply px-2;
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
   }
   
   .canvas .container {
-    @apply px-2;
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
   }
   
   .unified-before-canvas .container,
   .unified-after-canvas .container {
-    @apply px-2;
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
   }
 }
 
 /* Tablet adjustments */
 @media (min-width: 768px) and (max-width: 1023px) {
   .tools-header .container {
-    @apply px-4;
+    padding-left: 1rem;
+    padding-right: 1rem;
   }
   
   .canvas .container {
-    @apply px-4;
+    padding-left: 1rem;
+    padding-right: 1rem;
   }
 }
 
