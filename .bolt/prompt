@@ -39,7 +39,7 @@ Tools header
 Unified before canvas ads
 Canvas/workspace area
 Unified after canvas ads
-Sidebar (desktop - right side fixed with position fixed, height full, top: 0, bottom: 0, right: 0) / Mobile panel
+Sidebar (desktop - right side fixed) / Mobile panel
 No footer
 
 🔹 Canvas preview behavior 
@@ -50,6 +50,8 @@ image tools -> crop tools or which are single file mode, they should be show ful
 Only 2 ad slots: unified-before-canvas and unified-after-canvas
 Persistent ads: Same ads reused, no additional requests
 Rich content: Educational guides for each tool type
+
+note: when tools interface are active, then the upload zone, rich content, footer will be hidden.
 
 always use layout file for each tools type
 @/components/image-tools-layout.tsx
