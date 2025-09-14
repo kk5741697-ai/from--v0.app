@@ -138,6 +138,7 @@ export default function JSONFormatterPage() {
       </div>
     </div>
   )
+  )
 
   return (
     <TextToolsLayout
