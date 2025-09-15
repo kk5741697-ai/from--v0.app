@@ -62,6 +62,8 @@ always use layout file for each tools type
 @/components/tools-layouts/seo-tools-layout.tsx
 @/components/tools-layouts/utilities-tools-layout.tsx
 
+never generate the fake thumbnail + image-generation with pdf.js rendering, generate the real thumbnail + image-generation with pdf.js rendering.
+
 
 also don't remove the .env file
 # AdSense Configuration (Optional - leave empty to disable ads)
