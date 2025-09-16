@@ -56,16 +56,40 @@ export function PDFThumbnailExtractor({
         
         if (!isMounted) return
         
-        // @ts-ignore
-        const pdfjsLib = await import("pdfjs-dist/legacy/build/pdf")
-
+        // Dynamic import with better error handling
+        let pdfjsLib: any
         try {
-          pdfjsLib.GlobalWorkerOptions.workerSrc = '/pdf.worker.min.js'
-        } catch (e) {
-          // ignore
+          // Try the legacy build first (more compatible)
+          pdfjsLib = await import("pdfjs-dist/legacy/build/pdf.min.mjs")
+        } catch (legacyError) {
+          console.warn("Legacy PDF.js failed, trying standard build:", legacyError)
+          try {
+            pdfjsLib = await import("pdfjs-dist/build/pdf.min.mjs")
+          } catch (standardError) {
+            console.warn("Standard PDF.js failed, trying alternative:", standardError)
+            // Fallback to CDN version
+            pdfjsLib = await loadPDFFromCDN()
+          }
         }
 
-        const loadingTask = pdfjsLib.getDocument({ data: arrayBuffer })
+        // Set worker source with fallback
+        try {
+          if (pdfjsLib.GlobalWorkerOptions) {
+            // Try local worker first
+            pdfjsLib.GlobalWorkerOptions.workerSrc = '/pdf.worker.min.js'
+          }
+        } catch (workerError) {
+          console.warn("Worker setup failed:", workerError)
+          // Continue without worker (slower but more compatible)
+        }
+
+        const loadingTask = pdfjsLib.getDocument({ 
+          data: arrayBuffer,
+          useWorkerFetch: false,
+          isEvalSupported: false,
+          useSystemFonts: true
+        })
+        
         const pdfDoc = await loadingTask.promise
         const pageCount = pdfDoc.numPages
         
@@ -91,36 +115,42 @@ export function PDFThumbnailExtractor({
           try {
             const page = await pdfDoc.getPage(i)
 
-            // compute scale so the resulting viewport fits target thumb size while preserving aspect ratio
+            // Compute scale so the resulting viewport fits target thumb size while preserving aspect ratio
             const viewport = page.getViewport({ scale: 1 })
             const thumbScale = Math.min(thumbW / viewport.width, thumbH / viewport.height)
 
             const scaledViewport = page.getViewport({ scale: thumbScale })
 
-            // create canvas sized for the scaled viewport
+            // Create canvas sized for the scaled viewport
             const canvas = document.createElement("canvas")
-            const context = canvas.getContext("2d")!
+            const context = canvas.getContext("2d", {
+              alpha: false,
+              willReadFrequently: false
+            })!
 
-            // use devicePixelRatio for crisper thumbnails on high-dpi displays
-            const dpr = window.devicePixelRatio || 1
+            // Use devicePixelRatio for crisper thumbnails on high-dpi displays
+            const dpr = Math.min(window.devicePixelRatio || 1, 2) // Limit DPR to 2 for performance
             canvas.width = Math.round(scaledViewport.width * dpr)
             canvas.height = Math.round(scaledViewport.height * dpr)
             canvas.style.width = `${Math.round(scaledViewport.width)}px`
             canvas.style.height = `${Math.round(scaledViewport.height)}px`
 
-            // scale context for DPR
+            // Scale context for DPR
             context.setTransform(dpr, 0, 0, dpr, 0, 0)
             context.fillStyle = "#fff"
             context.fillRect(0, 0, scaledViewport.width, scaledViewport.height)
 
             const renderContext = {
               canvasContext: context,
-              viewport: scaledViewport
+              viewport: scaledViewport,
+              enableWebGL: false,
+              renderInteractiveForms: false,
+              intent: "display"
             }
 
             await page.render(renderContext).promise
 
-            // export thumbnail as dataURL (png)
+            // Export thumbnail as dataURL (png)
             const dataUrl = canvas.toDataURL("image/png", quality)
             
             thumbnails.push({
@@ -128,14 +158,15 @@ export function PDFThumbnailExtractor({
               width: Math.round(scaledViewport.width),
               height: Math.round(scaledViewport.height),
               thumbnail: dataUrl,
-              rotation: page.rotate || 0,
               selected: false
             })
             
             setProgress((i / pageCount) * 100)
             
-            // cleanup
-            page.cleanup && page.cleanup()
+            // Cleanup
+            if (page.cleanup) {
+              page.cleanup()
+            }
             
             // Allow browser to breathe and check if component is still mounted
             await new Promise(resolve => {
@@ -206,4 +237,29 @@ export function PDFThumbnailExtractor({
   }
 
   return null // Component only handles extraction, doesn't render thumbnails
+}
+
+// Fallback function to load PDF.js from CDN if local imports fail
+async function loadPDFFromCDN(): Promise<any> {
+  return new Promise((resolve, reject) => {
+    // Create script element to load PDF.js from CDN
+    const script = document.createElement('script')
+    script.src = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js'
+    script.onload = () => {
+      if ((window as any).pdfjsLib) {
+        // Set up worker
+        try {
+          (window as any).pdfjsLib.GlobalWorkerOptions.workerSrc = 
+            'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js'
+        } catch (e) {
+          console.warn("Worker setup failed:", e)
+        }
+        resolve((window as any).pdfjsLib)
+      } else {
+        reject(new Error("Failed to load PDF.js from CDN"))
+      }
+    }
+    script.onerror = () => reject(new Error("Failed to load PDF.js from CDN"))
+    document.head.appendChild(script)
+  })
 }

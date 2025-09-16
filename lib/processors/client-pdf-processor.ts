@@ -64,23 +64,36 @@ export class ClientPDFProcessor {
     try {
       const arrayBuffer = await file.arrayBuffer()
 
-      // dynamic import to avoid SSR issues in Next.js
-      // using the legacy build which works better for many bundlers
-      // @ts-ignore
-      const pdfjsLib = await import("pdfjs-dist/legacy/build/pdf")
-
-      // Prefer using a local worker (served from /pdf.worker.min.js) if you copied it to public/.
-      // Otherwise fallback to CDN.
+      // Enhanced PDF.js loading with better error handling
+      let pdfjsLib: any
       try {
-        // If you put worker in public folder:
-        pdfjsLib.GlobalWorkerOptions.workerSrc = '/pdf.worker.min.js'
-        // pdfjsLib.GlobalWorkerOptions.workerSrc = (pdfjsLib as any).GlobalWorkerOptions?.workerSrc
-        //   || `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${(pdfjsLib as any).version}/pdf.worker.min.js`
-      } catch (e) {
-        // ignore
+        // Try the legacy build first (more compatible)
+        pdfjsLib = await import("pdfjs-dist/legacy/build/pdf.min.mjs")
+      } catch (legacyError) {
+        console.warn("Legacy PDF.js failed, trying standard build:", legacyError)
+        try {
+          pdfjsLib = await import("pdfjs-dist/build/pdf.min.mjs")
+        } catch (standardError) {
+          console.warn("Standard PDF.js failed, using fallback:", standardError)
+          // Use a more compatible approach
+          throw new Error("PDF.js library not available. Please try refreshing the page.")
+        }
       }
 
-      const loadingTask = pdfjsLib.getDocument({ data: arrayBuffer })
+      try {
+        if (pdfjsLib.GlobalWorkerOptions) {
+          pdfjsLib.GlobalWorkerOptions.workerSrc = '/pdf.worker.min.js'
+        }
+      } catch (e) {
+        console.warn("Worker setup failed:", e)
+      }
+
+      const loadingTask = pdfjsLib.getDocument({ 
+        data: arrayBuffer,
+        useWorkerFetch: false,
+        isEvalSupported: false,
+        useSystemFonts: true
+      })
       const pdfDoc = await loadingTask.promise
       const pageCount = pdfDoc.numPages
       const pages: PDFPageInfo[] = []
@@ -100,10 +113,13 @@ export class ClientPDFProcessor {
 
         // create canvas sized for the scaled viewport
         const canvas = document.createElement("canvas")
-        const context = canvas.getContext("2d")!
+        const context = canvas.getContext("2d", {
+          alpha: false,
+          willReadFrequently: false
+        })!
 
-        // use devicePixelRatio for crisper thumbnails on high-dpi displays
-        const dpr = window.devicePixelRatio || 1
+        // Use devicePixelRatio for crisper thumbnails but limit for performance
+        const dpr = Math.min(window.devicePixelRatio || 1, 2)
         canvas.width = Math.round(scaledViewport.width * dpr)
         canvas.height = Math.round(scaledViewport.height * dpr)
         canvas.style.width = `${Math.round(scaledViewport.width)}px`
@@ -116,25 +132,32 @@ export class ClientPDFProcessor {
 
         const renderContext = {
           canvasContext: context,
-          viewport: scaledViewport
+          viewport: scaledViewport,
+          enableWebGL: false,
+          renderInteractiveForms: false,
+          intent: "display"
         }
 
         await page.render(renderContext).promise
 
         // export thumbnail as dataURL (png)
-        const dataUrl = canvas.toDataURL("image/png", 0.9)
+        const dataUrl = canvas.toDataURL("image/png", 0.8)
 
         pages.push({
           pageNumber: i,
           width: Math.round(scaledViewport.width),
           height: Math.round(scaledViewport.height),
           thumbnail: dataUrl,
-          rotation: page.rotate || 0,
           selected: false
         })
 
-        // cleanup
-        page.cleanup && page.cleanup()
+        // Cleanup
+        if (page.cleanup) {
+          page.cleanup()
+        }
+        
+        // Allow browser to breathe
+        await new Promise(resolve => setTimeout(resolve, 10))
       }
 
       return { pageCount, pages }
