@@ -103,19 +103,19 @@ export default function ImageToolsPage() {
         {/* Page Header */}
         <div className="mb-8">
           <Link href="/">
-            <Button variant="ghost" className="mb-4">
+            <Button variant="ghost" className="mb-6 hover:bg-purple-50 hover:text-purple-600 transition-colors">
               <ArrowLeft className="mr-2 h-4 w-4" />
               Back to Home
             </Button>
           </Link>
 
-          <div className="flex items-center space-x-3 mb-4">
-            <div className="p-3 rounded-lg bg-purple-500/10">
-              <ImageIcon className="h-8 w-8 text-purple-600" />
+          <div className="flex items-center space-x-4 mb-6">
+            <div className="p-4 rounded-2xl bg-gradient-to-br from-purple-100 to-purple-200 shadow-lg">
+              <ImageIcon className="h-10 w-10 text-purple-600" />
             </div>
             <div>
-              <h1 className="text-3xl font-heading font-bold text-foreground">Image Tools</h1>
-              <p className="text-muted-foreground">
+              <h1 className="text-4xl font-heading font-black text-foreground tracking-tight">Image Tools</h1>
+              <p className="text-lg text-muted-foreground font-medium">
                 41 professional tools for editing, converting, and optimizing images
               </p>
             </div>
@@ -123,27 +123,27 @@ export default function ImageToolsPage() {
         </div>
 
         {/* Rich Content Section */}
-        <div className="mb-8">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="bg-white p-6 rounded-lg border">
-              <h3 className="font-semibold text-lg mb-3">Professional Image Processing</h3>
-              <p className="text-muted-foreground text-sm">
+        <div className="mb-12">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div className="bg-white/95 backdrop-blur-md p-8 rounded-2xl border-2 border-gray-200 shadow-lg hover:shadow-xl transition-all duration-300">
+              <h3 className="font-bold text-xl mb-4 text-purple-600">Professional Image Processing</h3>
+              <p className="text-muted-foreground leading-relaxed">
                 Transform your images with enterprise-grade tools. Resize, compress, convert, and enhance 
                 images with unlimited file size support and professional quality results.
               </p>
             </div>
-            <div className="bg-white p-6 rounded-lg border">
-              <h3 className="font-semibold text-lg mb-3">Advanced Features</h3>
-              <ul className="text-sm text-muted-foreground space-y-1">
+            <div className="bg-white/95 backdrop-blur-md p-8 rounded-2xl border-2 border-gray-200 shadow-lg hover:shadow-xl transition-all duration-300">
+              <h3 className="font-bold text-xl mb-4 text-blue-600">Advanced Features</h3>
+              <ul className="text-muted-foreground space-y-2">
                 <li>• Batch processing for multiple images</li>
                 <li>• Lossless quality preservation</li>
                 <li>• Format conversion and optimization</li>
                 <li>• Professional watermarking tools</li>
               </ul>
             </div>
-            <div className="bg-white p-6 rounded-lg border">
-              <h3 className="font-semibold text-lg mb-3">Use Cases</h3>
-              <ul className="text-sm text-muted-foreground space-y-1">
+            <div className="bg-white/95 backdrop-blur-md p-8 rounded-2xl border-2 border-gray-200 shadow-lg hover:shadow-xl transition-all duration-300">
+              <h3 className="font-bold text-xl mb-4 text-green-600">Use Cases</h3>
+              <ul className="text-muted-foreground space-y-2">
                 <li>• Website optimization</li>
                 <li>• Social media content</li>
                 <li>• E-commerce product photos</li>
@@ -174,19 +174,19 @@ export default function ImageToolsPage() {
         </div>
 
         {/* Additional Rich Content */}
-        <div className="mt-12 bg-gray-50 p-8 rounded-lg">
-          <h2 className="text-2xl font-bold text-center mb-6">Why Choose Our Image Tools?</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div className="mt-16 bg-gradient-to-br from-purple-50 via-white to-blue-50 p-12 rounded-3xl border-2 border-purple-100 shadow-xl">
+          <h2 className="text-3xl font-black text-center mb-8 text-gray-900">Why Choose Our Image Tools?</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
             <div>
-              <h3 className="font-semibold text-lg mb-3">Enterprise Security</h3>
-              <p className="text-muted-foreground">
+              <h3 className="font-bold text-xl mb-4 text-purple-600">Enterprise Security</h3>
+              <p className="text-muted-foreground leading-relaxed">
                 All image processing happens locally in your browser. Your images never leave your device, 
                 ensuring complete privacy and security for sensitive visual content.
               </p>
             </div>
             <div>
-              <h3 className="font-semibold text-lg mb-3">Professional Quality</h3>
-              <p className="text-muted-foreground">
+              <h3 className="font-bold text-xl mb-4 text-blue-600">Professional Quality</h3>
+              <p className="text-muted-foreground leading-relaxed">
                 Advanced algorithms maintain image integrity while optimizing for your specific needs. 
                 Perfect for professional photography, marketing materials, and creative projects.
               </p>

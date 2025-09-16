@@ -82,19 +82,19 @@ export default function QRToolsPage() {
         {/* Page Header */}
         <div className="mb-8">
           <Link href="/">
-            <Button variant="ghost" className="mb-4">
+            <Button variant="ghost" className="mb-6 hover:bg-green-50 hover:text-green-600 transition-colors">
               <ArrowLeft className="mr-2 h-4 w-4" />
               Back to Home
             </Button>
           </Link>
 
-          <div className="flex items-center space-x-3 mb-4">
-            <div className="p-3 rounded-lg bg-blue-500/10">
-              <QrCode className="h-8 w-8 text-blue-600" />
+          <div className="flex items-center space-x-4 mb-6">
+            <div className="p-4 rounded-2xl bg-gradient-to-br from-green-100 to-green-200 shadow-lg">
+              <QrCode className="h-10 w-10 text-green-600" />
             </div>
             <div>
-              <h1 className="text-3xl font-heading font-bold text-foreground">QR & Barcode Tools</h1>
-              <p className="text-muted-foreground">
+              <h1 className="text-4xl font-heading font-black text-foreground tracking-tight">QR & Barcode Tools</h1>
+              <p className="text-lg text-muted-foreground font-medium">
                 23 professional tools for generating and reading QR codes and barcodes
               </p>
             </div>
@@ -102,18 +102,18 @@ export default function QRToolsPage() {
         </div>
 
         {/* Rich Content Section */}
-        <div className="mb-8">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="bg-white p-6 rounded-lg border">
-              <h3 className="font-semibold text-lg mb-3">Advanced QR Code Generation</h3>
-              <p className="text-muted-foreground text-sm">
+        <div className="mb-12">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div className="bg-white/95 backdrop-blur-md p-8 rounded-2xl border-2 border-gray-200 shadow-lg hover:shadow-xl transition-all duration-300">
+              <h3 className="font-bold text-xl mb-4 text-green-600">Advanced QR Code Generation</h3>
+              <p className="text-muted-foreground leading-relaxed">
                 Create professional QR codes for WiFi networks, contact cards, events, payments, and more. 
                 Advanced customization with logos, colors, and error correction levels.
               </p>
             </div>
-            <div className="bg-white p-6 rounded-lg border">
-              <h3 className="font-semibold text-lg mb-3">Multiple Data Types</h3>
-              <ul className="text-sm text-muted-foreground space-y-1">
+            <div className="bg-white/95 backdrop-blur-md p-8 rounded-2xl border-2 border-gray-200 shadow-lg hover:shadow-xl transition-all duration-300">
+              <h3 className="font-bold text-xl mb-4 text-blue-600">Multiple Data Types</h3>
+              <ul className="text-muted-foreground space-y-2">
                 <li>• WiFi network credentials</li>
                 <li>• Contact information (vCard)</li>
                 <li>• Email and SMS messages</li>
@@ -121,9 +121,9 @@ export default function QRToolsPage() {
                 <li>• Payment and cryptocurrency</li>
               </ul>
             </div>
-            <div className="bg-white p-6 rounded-lg border">
-              <h3 className="font-semibold text-lg mb-3">Business Applications</h3>
-              <ul className="text-sm text-muted-foreground space-y-1">
+            <div className="bg-white/95 backdrop-blur-md p-8 rounded-2xl border-2 border-gray-200 shadow-lg hover:shadow-xl transition-all duration-300">
+              <h3 className="font-bold text-xl mb-4 text-purple-600">Business Applications</h3>
+              <ul className="text-muted-foreground space-y-2">
                 <li>• Restaurant menu access</li>
                 <li>• Event registration systems</li>
                 <li>• Marketing campaign tracking</li>
@@ -154,19 +154,19 @@ export default function QRToolsPage() {
         </div>
 
         {/* Additional Rich Content */}
-        <div className="mt-12 bg-gray-50 p-8 rounded-lg">
-          <h2 className="text-2xl font-bold text-center mb-6">QR Code Best Practices</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div className="mt-16 bg-gradient-to-br from-green-50 via-white to-blue-50 p-12 rounded-3xl border-2 border-green-100 shadow-xl">
+          <h2 className="text-3xl font-black text-center mb-8 text-gray-900">QR Code Best Practices</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
             <div>
-              <h3 className="font-semibold text-lg mb-3">Design Guidelines</h3>
-              <p className="text-muted-foreground">
+              <h3 className="font-bold text-xl mb-4 text-green-600">Design Guidelines</h3>
+              <p className="text-muted-foreground leading-relaxed">
                 Create QR codes that scan reliably across all devices. Use high contrast colors, 
                 appropriate sizing, and test across multiple scanning applications for optimal results.
               </p>
             </div>
             <div>
-              <h3 className="font-semibold text-lg mb-3">Marketing Integration</h3>
-              <p className="text-muted-foreground">
+              <h3 className="font-bold text-xl mb-4 text-blue-600">Marketing Integration</h3>
+              <p className="text-muted-foreground leading-relaxed">
                 Bridge physical and digital experiences with QR codes. Perfect for restaurants, 
                 events, retail, and any business looking to enhance customer engagement.
               </p>

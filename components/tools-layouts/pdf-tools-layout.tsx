@@ -563,7 +563,7 @@ export function PDFToolsLayout({
                   </div>
                   
                   {/* PDF Page Thumbnails */}
-                  {(allowPageSelection || allowPageReorder) && (
+                  {allowPageSelection && (
                     <PDFThumbnailExtractor
                       file={file.file}
                       onPagesExtracted={(pages) => {
@@ -573,70 +573,10 @@ export function PDFToolsLayout({
                           ))
                         }
                       }}
+                      allowSelection={allowPageSelection}
+                      selectedPages={selectedPages}
+                      onPageSelectionChange={handlePageSelection}
                     />
-                  )}
-                  
-                  {/* Page Selection Grid */}
-                  {file.pages && file.pages.length > 0 && (
-                    <div className="mt-4">
-                      <div className="flex items-center justify-between mb-3">
-                        <h4 className="font-medium text-sm">Select Pages</h4>
-                        <div className="flex space-x-2">
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => {
-                              const allPageKeys = file.pages?.map(p => `${file.id}-page-${p.pageNumber}`) || []
-                              setSelectedPages(new Set(allPageKeys))
-                            }}
-                          >
-                            Select All
-                          </Button>
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => setSelectedPages(new Set())}
-                          >
-                            Clear
-                          </Button>
-                        </div>
-                      </div>
-                      <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-3">
-                        {file.pages.map((page) => {
-                          const pageKey = `${file.id}-page-${page.pageNumber}`
-                          const isSelected = selectedPages.has(pageKey)
-                          
-                          return (
-                            <div
-                              key={pageKey}
-                              className={`relative cursor-pointer border-2 rounded-lg overflow-hidden transition-all hover:shadow-md ${
-                                isSelected ? 'border-blue-500 ring-2 ring-blue-200' : 'border-gray-200 hover:border-blue-300'
-                              }`}
-                              onClick={() => handlePageSelection(pageKey)}
-                            >
-                              <img
-                                src={page.thumbnail}
-                                alt={`Page ${page.pageNumber}`}
-                                className="w-full h-auto object-cover"
-                              />
-                              <div className="absolute bottom-0 left-0 right-0 bg-black/70 text-white text-xs p-1 text-center">
-                                Page {page.pageNumber}
-                              </div>
-                              {isSelected && (
-                                <div className="absolute top-1 right-1 w-5 h-5 bg-blue-500 rounded-full flex items-center justify-center">
-                                  <CheckCircle className="h-3 w-3 text-white" />
-                                </div>
-                              )}
-                            </div>
-                          )
-                        })}
-                      </div>
-                      {selectedPages.size > 0 && (
-                        <div className="mt-3 text-sm text-muted-foreground">
-                          {selectedPages.size} page{selectedPages.size !== 1 ? 's' : ''} selected
-                        </div>
-                      )}
-                    </div>
                   )}
                 </Card>
               ))}

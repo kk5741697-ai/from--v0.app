@@ -101,19 +101,19 @@ export default function TextToolsPage() {
         {/* Page Header */}
         <div className="mb-8">
           <Link href="/">
-            <Button variant="ghost" className="mb-4">
+            <Button variant="ghost" className="mb-6 hover:bg-green-50 hover:text-green-600 transition-colors">
               <ArrowLeft className="mr-2 h-4 w-4" />
               Back to Home
             </Button>
           </Link>
 
-          <div className="flex items-center space-x-3 mb-4">
-            <div className="p-3 rounded-lg bg-green-500/10">
-              <FileText className="h-8 w-8 text-green-600" />
+          <div className="flex items-center space-x-4 mb-6">
+            <div className="p-4 rounded-2xl bg-gradient-to-br from-green-100 to-green-200 shadow-lg">
+              <FileText className="h-10 w-10 text-green-600" />
             </div>
             <div>
-              <h1 className="text-3xl font-heading font-bold text-foreground">Text & Code Tools</h1>
-              <p className="text-muted-foreground">
+              <h1 className="text-4xl font-heading font-black text-foreground tracking-tight">Text & Code Tools</h1>
+              <p className="text-lg text-muted-foreground font-medium">
                 52 professional tools for formatting, validating, and converting text and code
               </p>
             </div>
@@ -121,27 +121,27 @@ export default function TextToolsPage() {
         </div>
 
         {/* Rich Content Section */}
-        <div className="mb-8">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="bg-white p-6 rounded-lg border">
-              <h3 className="font-semibold text-lg mb-3">Developer-Focused Tools</h3>
-              <p className="text-muted-foreground text-sm">
+        <div className="mb-12">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div className="bg-white/95 backdrop-blur-md p-8 rounded-2xl border-2 border-gray-200 shadow-lg hover:shadow-xl transition-all duration-300">
+              <h3 className="font-bold text-xl mb-4 text-green-600">Developer-Focused Tools</h3>
+              <p className="text-muted-foreground leading-relaxed">
                 Essential tools for developers and content creators. Format, validate, minify, and convert 
                 code and text with professional-grade processing and syntax highlighting.
               </p>
             </div>
-            <div className="bg-white p-6 rounded-lg border">
-              <h3 className="font-semibold text-lg mb-3">Code Quality Tools</h3>
-              <ul className="text-sm text-muted-foreground space-y-1">
+            <div className="bg-white/95 backdrop-blur-md p-8 rounded-2xl border-2 border-gray-200 shadow-lg hover:shadow-xl transition-all duration-300">
+              <h3 className="font-bold text-xl mb-4 text-blue-600">Code Quality Tools</h3>
+              <ul className="text-muted-foreground space-y-2">
                 <li>• JSON formatting and validation</li>
                 <li>• HTML/CSS beautification</li>
                 <li>• JavaScript minification</li>
                 <li>• XML processing and validation</li>
               </ul>
             </div>
-            <div className="bg-white p-6 rounded-lg border">
-              <h3 className="font-semibold text-lg mb-3">Development Workflows</h3>
-              <ul className="text-sm text-muted-foreground space-y-1">
+            <div className="bg-white/95 backdrop-blur-md p-8 rounded-2xl border-2 border-gray-200 shadow-lg hover:shadow-xl transition-all duration-300">
+              <h3 className="font-bold text-xl mb-4 text-purple-600">Development Workflows</h3>
+              <ul className="text-muted-foreground space-y-2">
                 <li>• API development and testing</li>
                 <li>• Code optimization and cleanup</li>
                 <li>• Data format conversion</li>
@@ -172,19 +172,19 @@ export default function TextToolsPage() {
         </div>
 
         {/* Additional Rich Content */}
-        <div className="mt-12 bg-gray-50 p-8 rounded-lg">
-          <h2 className="text-2xl font-bold text-center mb-6">Essential Developer Tools</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div className="mt-16 bg-gradient-to-br from-green-50 via-white to-cyan-50 p-12 rounded-3xl border-2 border-green-100 shadow-xl">
+          <h2 className="text-3xl font-black text-center mb-8 text-gray-900">Essential Developer Tools</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
             <div>
-              <h3 className="font-semibold text-lg mb-3">Code Formatting Excellence</h3>
-              <p className="text-muted-foreground">
+              <h3 className="font-bold text-xl mb-4 text-green-600">Code Formatting Excellence</h3>
+              <p className="text-muted-foreground leading-relaxed">
                 Transform messy code into clean, readable format. Our tools support all major programming 
                 languages and data formats with intelligent formatting and error detection.
               </p>
             </div>
             <div>
-              <h3 className="font-semibold text-lg mb-3">Performance Optimization</h3>
-              <p className="text-muted-foreground">
+              <h3 className="font-bold text-xl mb-4 text-blue-600">Performance Optimization</h3>
+              <p className="text-muted-foreground leading-relaxed">
                 Optimize your code for production with minification, compression, and validation tools. 
                 Reduce file sizes and improve website performance with professional-grade optimization.
               </p>

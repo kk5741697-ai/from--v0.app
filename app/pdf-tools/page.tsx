@@ -102,19 +102,19 @@ export default function PDFToolsPage() {
         {/* Page Header */}
         <div className="mb-8">
           <Link href="/">
-            <Button variant="ghost" className="mb-4">
+            <Button variant="ghost" className="mb-6 hover:bg-red-50 hover:text-red-600 transition-colors">
               <ArrowLeft className="mr-2 h-4 w-4" />
               Back to Home
             </Button>
           </Link>
 
-          <div className="flex items-center space-x-3 mb-4">
-            <div className="p-3 rounded-lg bg-red-500/10">
-              <FileType className="h-8 w-8 text-red-600" />
+          <div className="flex items-center space-x-4 mb-6">
+            <div className="p-4 rounded-2xl bg-gradient-to-br from-red-100 to-red-200 shadow-lg">
+              <FileType className="h-10 w-10 text-red-600" />
             </div>
             <div>
-              <h1 className="text-3xl font-heading font-bold text-foreground">PDF Tools</h1>
-              <p className="text-muted-foreground">
+              <h1 className="text-4xl font-heading font-black text-foreground tracking-tight">PDF Tools</h1>
+              <p className="text-lg text-muted-foreground font-medium">
                 34 professional tools for manipulating, converting, and optimizing PDFs
               </p>
             </div>
@@ -122,27 +122,27 @@ export default function PDFToolsPage() {
         </div>
 
         {/* Rich Content Section */}
-        <div className="mb-8">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="bg-white p-6 rounded-lg border">
-              <h3 className="font-semibold text-lg mb-3">Complete PDF Toolkit</h3>
-              <p className="text-muted-foreground text-sm">
+        <div className="mb-12">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div className="bg-white/95 backdrop-blur-md p-8 rounded-2xl border-2 border-gray-200 shadow-lg hover:shadow-xl transition-all duration-300">
+              <h3 className="font-bold text-xl mb-4 text-red-600">Complete PDF Toolkit</h3>
+              <p className="text-muted-foreground leading-relaxed">
                 Professional PDF manipulation tools for businesses, legal professionals, and individuals. 
                 Merge, split, compress, and convert PDF documents with enterprise-grade security.
               </p>
             </div>
-            <div className="bg-white p-6 rounded-lg border">
-              <h3 className="font-semibold text-lg mb-3">Advanced Capabilities</h3>
-              <ul className="text-sm text-muted-foreground space-y-1">
+            <div className="bg-white/95 backdrop-blur-md p-8 rounded-2xl border-2 border-gray-200 shadow-lg hover:shadow-xl transition-all duration-300">
+              <h3 className="font-bold text-xl mb-4 text-blue-600">Advanced Capabilities</h3>
+              <ul className="text-muted-foreground space-y-2">
                 <li>• Unlimited file size processing</li>
                 <li>• Password protection and encryption</li>
                 <li>• Watermarking and branding</li>
                 <li>• Page organization and reordering</li>
               </ul>
             </div>
-            <div className="bg-white p-6 rounded-lg border">
-              <h3 className="font-semibold text-lg mb-3">Industry Applications</h3>
-              <ul className="text-sm text-muted-foreground space-y-1">
+            <div className="bg-white/95 backdrop-blur-md p-8 rounded-2xl border-2 border-gray-200 shadow-lg hover:shadow-xl transition-all duration-300">
+              <h3 className="font-bold text-xl mb-4 text-green-600">Industry Applications</h3>
+              <ul className="text-muted-foreground space-y-2">
                 <li>• Legal document management</li>
                 <li>• Business report compilation</li>
                 <li>• Academic paper organization</li>
@@ -173,19 +173,19 @@ export default function PDFToolsPage() {
         </div>
 
         {/* Additional Rich Content */}
-        <div className="mt-12 bg-gray-50 p-8 rounded-lg">
-          <h2 className="text-2xl font-bold text-center mb-6">Enterprise PDF Solutions</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div className="mt-16 bg-gradient-to-br from-red-50 via-white to-orange-50 p-12 rounded-3xl border-2 border-red-100 shadow-xl">
+          <h2 className="text-3xl font-black text-center mb-8 text-gray-900">Enterprise PDF Solutions</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
             <div>
-              <h3 className="font-semibold text-lg mb-3">Security & Compliance</h3>
-              <p className="text-muted-foreground">
+              <h3 className="font-bold text-xl mb-4 text-red-600">Security & Compliance</h3>
+              <p className="text-muted-foreground leading-relaxed">
                 Handle confidential documents with complete security. All processing happens locally, 
                 ensuring GDPR compliance and protecting sensitive business information.
               </p>
             </div>
             <div>
-              <h3 className="font-semibold text-lg mb-3">Workflow Integration</h3>
-              <p className="text-muted-foreground">
+              <h3 className="font-bold text-xl mb-4 text-blue-600">Workflow Integration</h3>
+              <p className="text-muted-foreground leading-relaxed">
                 Streamline your document workflows with batch processing, automated organization, 
                 and professional-grade output suitable for legal and business use.
               </p>
