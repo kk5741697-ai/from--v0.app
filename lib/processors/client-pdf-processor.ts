@@ -57,111 +57,90 @@ export interface PDFPageInfo {
 
 export class ClientPDFProcessor {
   static async getPDFInfo(file: File): Promise<{ pageCount: number; pages: PDFPageInfo[] }> {
+    if (typeof window === "undefined") {
+      throw new Error("getPDFInfo must be called in a browser environment.");
+    }
+
     try {
-      // Use PDF-lib for basic info, generate mock thumbnails
       const arrayBuffer = await file.arrayBuffer()
-      let pdf: any
-      let pageCount: number
-      
+
+      // dynamic import to avoid SSR issues in Next.js
+      // using the legacy build which works better for many bundlers
+      // @ts-ignore
+      const pdfjsLib = await import("pdfjs-dist/legacy/build/pdf")
+
+      // Prefer using a local worker (served from /pdf.worker.min.js) if you copied it to public/.
+      // Otherwise fallback to CDN.
       try {
-        pdf = await PDFDocument.load(arrayBuffer)
-        pageCount = pdf.getPageCount()
-      } catch (error) {
-        console.error("Failed to load PDF with PDF-lib:", error)
-        throw new Error("Invalid PDF file or corrupted document")
+        // If you put worker in public folder:
+        pdfjsLib.GlobalWorkerOptions.workerSrc = '/pdf.worker.min.js'
+        // pdfjsLib.GlobalWorkerOptions.workerSrc = (pdfjsLib as any).GlobalWorkerOptions?.workerSrc
+        //   || `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${(pdfjsLib as any).version}/pdf.worker.min.js`
+      } catch (e) {
+        // ignore
       }
-      
+
+      const loadingTask = pdfjsLib.getDocument({ data: arrayBuffer })
+      const pdfDoc = await loadingTask.promise
+      const pageCount = pdfDoc.numPages
       const pages: PDFPageInfo[] = []
 
-      if (pageCount === 0) {
-        throw new Error("PDF file appears to be empty or corrupted")
-      }
+      // Thumbnail target size (you can tweak)
+      const thumbW = 200
+      const thumbH = 280
 
-      for (let i = 0; i < pageCount; i++) {
+      for (let i = 1; i <= pageCount; i++) {
+        const page = await pdfDoc.getPage(i)
+
+        // compute scale so the resulting viewport fits target thumb size while preserving aspect ratio
+        const viewport = page.getViewport({ scale: 1 })
+        const scale = Math.min(thumbW / viewport.width, thumbH / viewport.height)
+
+        const scaledViewport = page.getViewport({ scale })
+
+        // create canvas sized for the scaled viewport
         const canvas = document.createElement("canvas")
-        const ctx = canvas.getContext("2d")!
-        canvas.width = 200
-        canvas.height = 280
-        
-        // Generate mock PDF page thumbnails
-        ctx.fillStyle = "#ffffff"
-        ctx.fillRect(0, 0, canvas.width, canvas.height)
-        
-        ctx.strokeStyle = "#e2e8f0"
-        ctx.lineWidth = 1
-        ctx.strokeRect(0, 0, canvas.width, canvas.height)
-        
-        // Add realistic content simulation
-        ctx.fillStyle = "#1f2937"
-        ctx.font = "bold 12px system-ui"
-        ctx.textAlign = "left"
-        ctx.fillText(`Document Page ${i + 1}`, 15, 25)
-        
-        ctx.fillStyle = "#374151"
-        ctx.font = "10px system-ui"
-        const lines = [
-          `This is page ${i + 1} content. Lorem ipsum`,
-          "dolor sit amet, consectetur adipiscing",
-          "elit. Sed do eiusmod tempor incididunt",
-          "ut labore et dolore magna aliqua.",
-          "Ut enim ad minim veniam, quis nostrud",
-          "exercitation ullamco laboris nisi ut",
-          "aliquip ex ea commodo consequat.",
-          "Duis aute irure dolor in reprehenderit",
-          "in voluptate velit esse cillum dolore."
-        ]
-        
-        lines.forEach((line, lineIndex) => {
-          if (lineIndex < 8) {
-            const pageVariation = i % 3
-            const adjustedLine = pageVariation === 0 ? line : 
-                               pageVariation === 1 ? line.substring(0, 25) + "..." :
-                               line.substring(0, 30)
-            ctx.fillText(adjustedLine, 15, 45 + lineIndex * 12)
-          }
-        })
-        
-        // Add visual elements to make pages look different
-        ctx.fillStyle = "#e5e7eb"
-        ctx.fillRect(15, 150, canvas.width - 30, 1)
-        ctx.fillRect(15, 170, canvas.width - 50, 1)
-        
-        // Add page-specific visual elements
-        if (i === 0) {
-          ctx.fillStyle = "#3b82f6"
-          ctx.fillRect(15, 180, 50, 20)
-          ctx.fillStyle = "#ffffff"
-          ctx.font = "8px system-ui"
-          ctx.textAlign = "center"
-          ctx.fillText("TITLE", 40, 192)
-        } else if (i % 2 === 1) {
-          ctx.fillStyle = "#10b981"
-          ctx.fillRect(15, 180, 30, 15)
-        } else if (i % 3 === 0) {
-          ctx.fillStyle = "#f59e0b"
-          ctx.fillRect(15, 180, 40, 12)
+        const context = canvas.getContext("2d")!
+
+        // use devicePixelRatio for crisper thumbnails on high-dpi displays
+        const dpr = window.devicePixelRatio || 1
+        canvas.width = Math.round(scaledViewport.width * dpr)
+        canvas.height = Math.round(scaledViewport.height * dpr)
+        canvas.style.width = `${Math.round(scaledViewport.width)}px`
+        canvas.style.height = `${Math.round(scaledViewport.height)}px`
+
+        // scale context for DPR
+        context.setTransform(dpr, 0, 0, dpr, 0, 0)
+        context.fillStyle = "#fff"
+        context.fillRect(0, 0, scaledViewport.width, scaledViewport.height)
+
+        const renderContext = {
+          canvasContext: context,
+          viewport: scaledViewport
         }
-        
-        ctx.fillStyle = "#9ca3af"
-        ctx.font = "8px system-ui"
-        ctx.textAlign = "center"
-        ctx.fillText(`Page ${i + 1} of ${pageCount}`, canvas.width / 2, canvas.height - 15)
+
+        await page.render(renderContext).promise
+
+        // export thumbnail as dataURL (png)
+        const dataUrl = canvas.toDataURL("image/png", 0.9)
 
         pages.push({
-          pageNumber: i + 1,
-          width: 200,
-          height: 280,
-          thumbnail: canvas.toDataURL("image/png", 0.8),
-          rotation: 0,
+          pageNumber: i,
+          width: Math.round(scaledViewport.width),
+          height: Math.round(scaledViewport.height),
+          thumbnail: dataUrl,
+          rotation: page.rotate || 0,
           selected: false
         })
+
+        // cleanup
+        page.cleanup && page.cleanup()
       }
 
-      console.log(`PDF processed: ${pageCount} pages extracted`)
       return { pageCount, pages }
     } catch (error) {
       console.error("Failed to process PDF:", error)
-      throw new Error(`Failed to load PDF file: ${error instanceof Error ? error.message : "Unknown error"}. Please ensure it's a valid PDF document.`)
+      throw new Error("Failed to load PDF file. Please ensure it's a valid PDF document.")
     }
   }
 
@@ -460,67 +439,60 @@ export class ClientPDFProcessor {
   }
 
   static async pdfToImages(file: File, options: ClientPDFProcessingOptions = {}): Promise<Blob[]> {
+    if (typeof window === "undefined") {
+      throw new Error("pdfToImages must be called in a browser environment.")
+    }
+
     try {
       const arrayBuffer = await file.arrayBuffer()
-      const pdf = await PDFDocument.load(arrayBuffer)
-      const images: Blob[] = []
-      const pageCount = pdf.getPageCount()
+      // @ts-ignore
+      const pdfjsLib = await import("pdfjs-dist/legacy/build/pdf")
 
-      for (let i = 0; i < pageCount; i++) {
+      try {
+        pdfjsLib.GlobalWorkerOptions.workerSrc = '/pdf.worker.min.js'
+      } catch (e) {
+        // ignore
+      }
+
+      const loadingTask = pdfjsLib.getDocument({ data: arrayBuffer })
+      const pdfDoc = await loadingTask.promise
+      const pageCount = pdfDoc.numPages
+      const images: Blob[] = []
+
+      // target DPI (defaults to 150), pdf pages are 72 DPI by default
+      const dpi = options.dpi || 150
+      const scale = dpi / 72
+
+      for (let i = 1; i <= pageCount; i++) {
+        const page = await pdfDoc.getPage(i)
+        const viewport = page.getViewport({ scale })
+
         const canvas = document.createElement("canvas")
         const ctx = canvas.getContext("2d")!
-        
-        const dpi = options.dpi || 150
-        canvas.width = Math.floor(8.5 * dpi)
-        canvas.height = Math.floor(11 * dpi)
 
-        if (options.colorMode === "grayscale") {
-          ctx.fillStyle = "#f8f9fa"
-        } else if (options.colorMode === "monochrome") {
-          ctx.fillStyle = "#ffffff"
-        } else {
-          ctx.fillStyle = "#ffffff"
-        }
-        
-        ctx.fillRect(0, 0, canvas.width, canvas.height)
-        ctx.strokeStyle = "#e5e7eb"
-        ctx.lineWidth = 2
-        ctx.strokeRect(0, 0, canvas.width, canvas.height)
-        
-        const titleSize = Math.floor(dpi / 4)
-        const textSize = Math.floor(dpi / 8)
-        
-        ctx.fillStyle = options.colorMode === "monochrome" ? "#000000" : "#1f2937"
-        ctx.font = `bold ${titleSize}px Arial`
-        ctx.textAlign = "left"
-        ctx.fillText(`Document Page ${i + 1}`, 50, 100)
-        
-        ctx.fillStyle = options.colorMode === "monochrome" ? "#000000" : "#374151"
-        ctx.font = `${textSize}px Arial`
-        
-        for (let block = 0; block < 5; block++) {
-          const startY = 150 + block * Math.floor(dpi * 1.2)
-          for (let line = 0; line < 12; line++) {
-            const lineY = startY + line * Math.floor(dpi / 10)
-            const lineWidth = Math.random() * (dpi * 4) + (dpi * 2)
-            if (lineY < canvas.height - 100) {
-              ctx.fillRect(50, lineY, lineWidth, Math.floor(dpi / 15))
-            }
-          }
-        }
-        
-        ctx.fillStyle = options.colorMode === "monochrome" ? "#000000" : "#9ca3af"
-        ctx.font = `${Math.floor(dpi / 6)}px Arial`
-        ctx.textAlign = "center"
-        ctx.fillText(`Page ${i + 1} of ${pageCount}`, canvas.width / 2, canvas.height - 50)
+        const dpr = window.devicePixelRatio || 1
+        canvas.width = Math.round(viewport.width * dpr)
+        canvas.height = Math.round(viewport.height * dpr)
+        canvas.style.width = `${Math.round(viewport.width)}px`
+        canvas.style.height = `${Math.round(viewport.height)}px`
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
 
-        const blob = await new Promise<Blob>((resolve) => {
-          canvas.toBlob((blob) => {
-            resolve(blob!)
-          }, `image/${options.outputFormat || "png"}`, (options.imageQuality || 90) / 100)
+        // white background
+        ctx.fillStyle = "#fff"
+        ctx.fillRect(0, 0, viewport.width, viewport.height)
+
+        await page.render({ canvasContext: ctx, viewport }).promise
+
+        const mime = options.outputFormat && options.outputFormat !== "png" ? `image/${options.outputFormat}` : "image/png"
+        const quality = typeof options.imageQuality === "number" ? Math.max(0, Math.min(1, options.imageQuality / 100)) : 0.9
+
+        const blob: Blob = await new Promise((resolve) => {
+          canvas.toBlob((b) => resolve(b!), mime, quality)
         })
 
         images.push(blob)
+
+        page.cleanup && page.cleanup()
       }
 
       return images

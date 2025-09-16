@@ -51,21 +51,23 @@ export function PDFThumbnailExtractor({
           throw new Error("PDF file too large. Please use a file smaller than 50MB.")
         }
 
-        // Use PDF-lib to get actual page count
-        const { PDFDocument } = await import("pdf-lib")
+        // Use PDF.js for real thumbnail extraction
         const arrayBuffer = await file.arrayBuffer()
         
         if (!isMounted) return
         
-        let pdf: any
+        // @ts-ignore
+        const pdfjsLib = await import("pdfjs-dist/legacy/build/pdf")
+
         try {
-          pdf = await PDFDocument.load(arrayBuffer)
-        } catch (pdfError) {
-          console.error("PDF loading error:", pdfError)
-          throw new Error("Failed to load PDF. The file may be corrupted or password-protected.")
+          pdfjsLib.GlobalWorkerOptions.workerSrc = '/pdf.worker.min.js'
+        } catch (e) {
+          // ignore
         }
-        
-        const pageCount = pdf.getPageCount()
+
+        const loadingTask = pdfjsLib.getDocument({ data: arrayBuffer })
+        const pdfDoc = await loadingTask.promise
+        const pageCount = pdfDoc.numPages
         
         if (pageCount === 0) {
           throw new Error("PDF appears to be empty")
@@ -78,91 +80,67 @@ export function PDFThumbnailExtractor({
         if (!isMounted) return
         
         const thumbnails: PDFPage[] = []
+
+        // Thumbnail target size
+        const thumbW = 200
+        const thumbH = 280
         
-        // Generate thumbnails with proper error handling
         for (let i = 1; i <= pageCount; i++) {
           if (!isMounted) break
           
           try {
+            const page = await pdfDoc.getPage(i)
+
+            // compute scale so the resulting viewport fits target thumb size while preserving aspect ratio
+            const viewport = page.getViewport({ scale: 1 })
+            const thumbScale = Math.min(thumbW / viewport.width, thumbH / viewport.height)
+
+            const scaledViewport = page.getViewport({ scale: thumbScale })
+
+            // create canvas sized for the scaled viewport
             const canvas = document.createElement("canvas")
-            const ctx = canvas.getContext("2d")!
-            canvas.width = 200
-            canvas.height = 280
-            
-            // Generate realistic PDF page thumbnail
-            ctx.fillStyle = "#ffffff"
-            ctx.fillRect(0, 0, canvas.width, canvas.height)
-            
-            ctx.strokeStyle = "#e2e8f0"
-            ctx.lineWidth = 1
-            ctx.strokeRect(0, 0, canvas.width, canvas.height)
-            
-            ctx.fillStyle = "#1f2937"
-            ctx.font = "bold 12px system-ui"
-            ctx.textAlign = "left"
-            ctx.fillText(`Page ${i}`, 15, 25)
-            
-            ctx.fillStyle = "#374151"
-            ctx.font = "10px system-ui"
-            const lines = [
-              "Lorem ipsum dolor sit amet,",
-              "consectetur adipiscing elit.",
-              "Sed do eiusmod tempor",
-              "incididunt ut labore et",
-              "dolore magna aliqua.",
-              "Ut enim ad minim veniam,",
-              "quis nostrud exercitation",
-              "ullamco laboris nisi ut",
-              "aliquip ex ea commodo."
-            ]
-            
-            lines.forEach((line, lineIndex) => {
-              if (lineIndex < 8) {
-                const pageVariation = i % 3
-                const adjustedLine = pageVariation === 0 ? line : 
-                                   pageVariation === 1 ? line.substring(0, 25) + "..." :
-                                   line.substring(0, 30)
-                ctx.fillText(adjustedLine, 15, 45 + lineIndex * 12)
-              }
-            })
-            
-            // Add visual elements
-            ctx.fillStyle = "#e5e7eb"
-            ctx.fillRect(15, 150, canvas.width - 30, 1)
-            ctx.fillRect(15, 170, canvas.width - 50, 1)
-            
-            // Add page-specific elements
-            if (i === 1) {
-              ctx.fillStyle = "#3b82f6"
-              ctx.fillRect(15, 180, 50, 20)
-              ctx.fillStyle = "#ffffff"
-              ctx.font = "8px system-ui"
-              ctx.textAlign = "center"
-              ctx.fillText("TITLE", 40, 192)
-            } else if (i % 2 === 0) {
-              ctx.fillStyle = "#10b981"
-              ctx.fillRect(15, 180, 30, 15)
+            const context = canvas.getContext("2d")!
+
+            // use devicePixelRatio for crisper thumbnails on high-dpi displays
+            const dpr = window.devicePixelRatio || 1
+            canvas.width = Math.round(scaledViewport.width * dpr)
+            canvas.height = Math.round(scaledViewport.height * dpr)
+            canvas.style.width = `${Math.round(scaledViewport.width)}px`
+            canvas.style.height = `${Math.round(scaledViewport.height)}px`
+
+            // scale context for DPR
+            context.setTransform(dpr, 0, 0, dpr, 0, 0)
+            context.fillStyle = "#fff"
+            context.fillRect(0, 0, scaledViewport.width, scaledViewport.height)
+
+            const renderContext = {
+              canvasContext: context,
+              viewport: scaledViewport
             }
-            
-            ctx.fillStyle = "#9ca3af"
-            ctx.font = "8px system-ui"
-            ctx.textAlign = "center"
-            ctx.fillText(`${i} / ${pageCount}`, canvas.width / 2, canvas.height - 15)
+
+            await page.render(renderContext).promise
+
+            // export thumbnail as dataURL (png)
+            const dataUrl = canvas.toDataURL("image/png", quality)
             
             thumbnails.push({
               pageNumber: i,
-              thumbnail: canvas.toDataURL("image/jpeg", quality),
-              width: 200,
-              height: 280,
+              width: Math.round(scaledViewport.width),
+              height: Math.round(scaledViewport.height),
+              thumbnail: dataUrl,
+              rotation: page.rotate || 0,
               selected: false
             })
             
             setProgress((i / pageCount) * 100)
             
+            // cleanup
+            page.cleanup && page.cleanup()
+            
             // Allow browser to breathe and check if component is still mounted
             await new Promise(resolve => {
               if (isMounted) {
-                setTimeout(resolve, 5) // Reduced delay
+                setTimeout(resolve, 10)
               } else {
                 resolve(undefined)
               }
