@@ -534,7 +534,7 @@ export function PDFToolsLayout({
       {/* Main Content Area with proper spacing */}
       <div className="pt-32 min-h-screen tools-main-content">
         {/* Unified Before Canvas Ad */}
-        <div className="unified-before-canvas bg-white border-b">
+        <div className="unified-before-canvas bg-white border-b tools-header-responsive">
           <div className="container mx-auto px-4 py-3">
             <AdBanner 
               adSlot="unified-before-canvas"
@@ -676,7 +676,7 @@ export function PDFToolsLayout({
         </div>
 
         {/* Unified After Canvas Ad */}
-        <div className="unified-after-canvas bg-white border-t">
+        <div className="unified-after-canvas bg-white border-t tools-header-responsive">
           <div className="container mx-auto px-4 py-3">
             <AdBanner 
               adSlot="unified-after-canvas"
