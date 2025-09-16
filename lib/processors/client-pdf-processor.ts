@@ -67,22 +67,16 @@ export class ClientPDFProcessor {
       // Enhanced PDF.js loading with better error handling
       let pdfjsLib: any
       try {
-        // Try the legacy build first (more compatible)
-        pdfjsLib = await import("pdfjs-dist/legacy/build/pdf.min.mjs")
-      } catch (legacyError) {
-        console.warn("Legacy PDF.js failed, trying standard build:", legacyError)
-        try {
-          pdfjsLib = await import("pdfjs-dist/build/pdf.min.mjs")
-        } catch (standardError) {
-          console.warn("Standard PDF.js failed, using fallback:", standardError)
-          // Use a more compatible approach
-          throw new Error("PDF.js library not available. Please try refreshing the page.")
-        }
+        // Import PDF.js with correct path
+        pdfjsLib = await import("pdfjs-dist")
+      } catch (importError) {
+        console.warn("PDF.js import failed:", importError)
+        throw new Error("PDF.js library not available. Please try refreshing the page.")
       }
 
       try {
         if (pdfjsLib.GlobalWorkerOptions) {
-          pdfjsLib.GlobalWorkerOptions.workerSrc = '/pdf.worker.min.js'
+          pdfjsLib.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js`
         }
       } catch (e) {
         console.warn("Worker setup failed:", e)
@@ -468,13 +462,14 @@ export class ClientPDFProcessor {
 
     try {
       const arrayBuffer = await file.arrayBuffer()
-      // @ts-ignore
-      const pdfjsLib = await import("pdfjs-dist/legacy/build/pdf")
+      const pdfjsLib = await import("pdfjs-dist")
 
       try {
-        pdfjsLib.GlobalWorkerOptions.workerSrc = '/pdf.worker.min.js'
+        if (pdfjsLib.GlobalWorkerOptions) {
+          pdfjsLib.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js`
+        }
       } catch (e) {
-        // ignore
+        console.warn("Worker setup failed:", e)
       }
 
       const loadingTask = pdfjsLib.getDocument({ data: arrayBuffer })

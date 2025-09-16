@@ -59,24 +59,18 @@ export function PDFThumbnailExtractor({
         // Dynamic import with better error handling
         let pdfjsLib: any
         try {
-          // Try the legacy build first (more compatible)
-          pdfjsLib = await import("pdfjs-dist/legacy/build/pdf.min.mjs")
-        } catch (legacyError) {
-          console.warn("Legacy PDF.js failed, trying standard build:", legacyError)
-          try {
-            pdfjsLib = await import("pdfjs-dist/build/pdf.min.mjs")
-          } catch (standardError) {
-            console.warn("Standard PDF.js failed, trying alternative:", standardError)
-            // Fallback to CDN version
-            pdfjsLib = await loadPDFFromCDN()
-          }
+          // Import PDF.js with correct path
+          pdfjsLib = await import("pdfjs-dist")
+        } catch (importError) {
+          console.warn("PDF.js import failed, trying CDN fallback:", importError)
+          pdfjsLib = await loadPDFFromCDN()
         }
 
         // Set worker source with fallback
         try {
           if (pdfjsLib.GlobalWorkerOptions) {
-            // Try local worker first
-            pdfjsLib.GlobalWorkerOptions.workerSrc = '/pdf.worker.min.js'
+            // Set worker source to the correct path
+            pdfjsLib.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js`
           }
         } catch (workerError) {
           console.warn("Worker setup failed:", workerError)
@@ -242,24 +236,47 @@ export function PDFThumbnailExtractor({
 // Fallback function to load PDF.js from CDN if local imports fail
 async function loadPDFFromCDN(): Promise<any> {
   return new Promise((resolve, reject) => {
-    // Create script element to load PDF.js from CDN
+    // Check if PDF.js is already loaded
+    if ((window as any).pdfjsLib) {
+      resolve((window as any).pdfjsLib)
+      return
+    }
+
+    // Load PDF.js from CDN
     const script = document.createElement('script')
     script.src = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js'
     script.onload = () => {
-      if ((window as any).pdfjsLib) {
-        // Set up worker
-        try {
-          (window as any).pdfjsLib.GlobalWorkerOptions.workerSrc = 
-            'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js'
-        } catch (e) {
-          console.warn("Worker setup failed:", e)
+      setTimeout(() => {
+        if ((window as any).pdfjsLib) {
+          try {
+            (window as any).pdfjsLib.GlobalWorkerOptions.workerSrc = 
+              'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js'
+          } catch (e) {
+            console.warn("Worker setup failed:", e)
+          }
+          resolve((window as any).pdfjsLib)
+        } else {
+          reject(new Error("PDF.js not available after loading"))
         }
-        resolve((window as any).pdfjsLib)
-      } else {
-        reject(new Error("Failed to load PDF.js from CDN"))
+      }, 100)
+    }
+    script.onerror = () => {
+      reject(new Error("Failed to load PDF.js from CDN"))
+    }
+    
+    // Only add script if not already present
+    if (!document.querySelector('script[src*="pdf.min.js"]')) {
+      document.head.appendChild(script)
+    } else {
+      // Script already exists, wait for it to load
+      setTimeout(() => {
+        if ((window as any).pdfjsLib) {
+          resolve((window as any).pdfjsLib)
+        } else {
+          reject(new Error("PDF.js script exists but library not available"))
+        }
+      }, 500)
       }
     }
-    script.onerror = () => reject(new Error("Failed to load PDF.js from CDN"))
-    document.head.appendChild(script)
   })
 }
