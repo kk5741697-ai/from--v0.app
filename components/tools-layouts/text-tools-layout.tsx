@@ -398,7 +398,7 @@ export function TextToolsLayout({
         </div>
 
         {/* Unified After Canvas Ad */}
-        <div className="unified-after-canvas bg-white border-t">
+        <div className="unified-after-canvas bg-white border-t tools-header-responsive">
           <div className="container mx-auto px-4 py-3">
             <AdBanner 
               adSlot="unified-after-canvas"
