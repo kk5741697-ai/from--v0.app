@@ -90,15 +90,6 @@ const featuredTools = [
     iconColor: "text-indigo-600",
   },
   {
-    title: "Remove background",
-    description: "Remove image backgrounds automatically with AI-powered edge detection.",
-    href: "/background-remover",
-    icon: ImageIcon,
-    iconBg: "bg-purple-100",
-    iconColor: "text-purple-600",
-    isNew: true,
-  },
-  {
     title: "SEO Meta Generator",
     description: "Generate optimized meta tags, Open Graph, and Twitter Card tags for better SEO.",
     href: "/seo-meta-generator",

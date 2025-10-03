@@ -2,7 +2,7 @@
 
 import { UnifiedToolLayout } from "@/components/unified-tool-layout"
 import { QrCode } from "lucide-react"
-import { QRProcessor } from "@/lib/qr-processor"
+import { EnhancedQRProcessor } from "@/lib/enhanced-qr-processor"
 import { QRCodeGuide } from "@/components/content/qr-code-guide"
 
 const qrOptions = [
@@ -29,7 +29,7 @@ const qrOptions = [
     min: 200,
     max: 2000,
     step: 50,
-    section: "Appearance",
+    section: "Design",
   },
   {
     key: "margin",
@@ -39,7 +39,32 @@ const qrOptions = [
     min: 0,
     max: 10,
     step: 1,
-    section: "Appearance",
+    section: "Design",
+  },
+  {
+    key: "dotStyle",
+    label: "Dot Style",
+    type: "select" as const,
+    defaultValue: "square",
+    selectOptions: [
+      { value: "square", label: "Square (Classic)" },
+      { value: "rounded", label: "Rounded" },
+      { value: "dots", label: "Dots" },
+      { value: "classy", label: "Classy" },
+    ],
+    section: "Design",
+  },
+  {
+    key: "cornerSquareStyle",
+    label: "Corner Square Style",
+    type: "select" as const,
+    defaultValue: "square",
+    selectOptions: [
+      { value: "square", label: "Square" },
+      { value: "extra-rounded", label: "Extra Rounded" },
+      { value: "dot", label: "Dot" },
+    ],
+    section: "Design",
   },
   {
     key: "darkColor",
@@ -54,6 +79,34 @@ const qrOptions = [
     type: "color" as const,
     defaultValue: "#ffffff",
     section: "Colors",
+  },
+  {
+    key: "gradientType",
+    label: "Gradient",
+    type: "select" as const,
+    defaultValue: "none",
+    selectOptions: [
+      { value: "none", label: "None" },
+      { value: "linear", label: "Linear" },
+      { value: "radial", label: "Radial" },
+    ],
+    section: "Colors",
+  },
+  {
+    key: "gradientStart",
+    label: "Gradient Start Color",
+    type: "color" as const,
+    defaultValue: "#000000",
+    section: "Colors",
+    condition: (options: any) => options.gradientType && options.gradientType !== "none"
+  },
+  {
+    key: "gradientEnd",
+    label: "Gradient End Color",
+    type: "color" as const,
+    defaultValue: "#4a00e0",
+    section: "Colors",
+    condition: (options: any) => options.gradientType && options.gradientType !== "none"
   },
   {
     key: "errorCorrection",
@@ -79,7 +132,7 @@ async function generateQRCode(files: any[], options: any) {
       }
     }
 
-    const qrDataURL = await QRProcessor.generateQRCode(options.content, {
+    const qrDataURL = await EnhancedQRProcessor.generateQRCode(options.content, {
       width: options.size,
       margin: options.margin,
       height: options.size,
@@ -88,6 +141,12 @@ async function generateQRCode(files: any[], options: any) {
         light: options.lightColor,
       },
       errorCorrectionLevel: options.errorCorrection,
+      dotStyle: options.dotStyle || "square",
+      cornerSquareStyle: options.cornerSquareStyle || "square",
+      cornerDotStyle: options.cornerDotStyle || "square",
+      gradientType: options.gradientType || "none",
+      gradientStart: options.gradientStart,
+      gradientEnd: options.gradientEnd,
     })
 
     return {

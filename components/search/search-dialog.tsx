@@ -36,10 +36,7 @@ const allTools: SearchResult[] = [
   { title: "Image Converter", description: "Convert between formats", href: "/image-converter", category: "Image", icon: ImageIcon },
   { title: "Image Cropper", description: "Crop images precisely", href: "/image-cropper", category: "Image", icon: ImageIcon },
   { title: "Image Rotator", description: "Rotate and flip images", href: "/image-rotator", category: "Image", icon: ImageIcon },
-  { title: "Background Remover", description: "Remove image backgrounds", href: "/background-remover", category: "Image", icon: ImageIcon },
   { title: "Image Flipper", description: "Flip images horizontally/vertically", href: "/image-flipper", category: "Image", icon: ImageIcon },
-  { title: "Image Filters", description: "Apply filters and effects", href: "/image-filters", category: "Image", icon: ImageIcon },
-  { title: "Image Upscaler", description: "Enlarge images with AI", href: "/image-upscaler", category: "Image", icon: ImageIcon },
   { title: "Image Watermark", description: "Add watermarks to images", href: "/image-watermark", category: "Image", icon: ImageIcon },
 
   // QR Tools

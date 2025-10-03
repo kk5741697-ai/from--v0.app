@@ -134,15 +134,6 @@ export const TOOLS_REGISTRY: ToolDefinition[] = [
     icon: "ScanLine",
     inputTypes: ["jpg", "png", "webp"],
   },
-  {
-    id: "barcode-generator",
-    slug: "barcode-generator",
-    title: "Barcode Generator",
-    description: "Generate EAN, UPC, Code128, and other barcodes",
-    category: "QR_BARCODE",
-    icon: "BarChart3",
-    outputTypes: ["png", "svg"],
-  },
 
   // Code & Development Tools
   {

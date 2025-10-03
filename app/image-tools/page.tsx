@@ -50,14 +50,6 @@ const imageTools = [
     category: "Image Tools",
   },
   {
-    title: "Background Remover",
-    description: "Remove backgrounds from images automatically using AI-powered detection.",
-    href: "/background-remover",
-    icon: ImageIcon,
-    category: "Image Tools",
-    isNew: true,
-  },
-  {
     title: "Image Flipper",
     description: "Flip images horizontally, vertically, or both directions with batch processing.",
     href: "/image-flipper",
@@ -70,14 +62,6 @@ const imageTools = [
     href: "/image-filters",
     icon: ImageIcon,
     category: "Image Tools",
-  },
-  {
-    title: "Image Upscaler",
-    description: "Enlarge images with AI-enhanced quality. Increase resolution while preserving details.",
-    href: "/image-upscaler",
-    icon: ImageIcon,
-    category: "Image Tools",
-    isNew: true,
   },
 ]
 
@@ -116,7 +100,7 @@ export default function ImageToolsPage() {
             <div>
               <h1 className="text-4xl font-heading font-black text-foreground tracking-tight">Image Tools</h1>
               <p className="text-lg text-muted-foreground font-medium">
-                41 professional tools for editing, converting, and optimizing images
+                Professional tools for editing, converting, and optimizing images
               </p>
             </div>
           </div>

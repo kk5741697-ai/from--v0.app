@@ -279,30 +279,31 @@ export class ClientPDFProcessor {
       const arrayBuffer = await file.arrayBuffer()
       const pdf = await PDFDocument.load(arrayBuffer)
 
+      let scaleFactor = 1
+      switch (options.compressionLevel) {
+        case "low":
+          scaleFactor = 0.95
+          break
+        case "medium":
+          scaleFactor = 0.80
+          break
+        case "high":
+          scaleFactor = 0.60
+          break
+        case "extreme":
+          scaleFactor = 0.40
+          break
+        default:
+          scaleFactor = 0.80
+      }
+
       const compressedPdf = await PDFDocument.create()
       const pages = await compressedPdf.copyPages(pdf, pdf.getPageIndices())
 
       pages.forEach((page) => {
-        let scaleFactor = 1
-        switch (options.compressionLevel) {
-          case "low":
-            scaleFactor = 0.95
-            break
-          case "medium":
-            scaleFactor = 0.85
-            break
-          case "high":
-            scaleFactor = 0.65
-            break
-          case "extreme":
-            scaleFactor = 0.4
-            break
-        }
-
         if (scaleFactor < 1) {
           page.scale(scaleFactor, scaleFactor)
         }
-        
         compressedPdf.addPage(page)
       })
 
@@ -315,14 +316,17 @@ export class ClientPDFProcessor {
           console.warn("Failed to copy metadata:", error)
         }
       }
-      
+
       compressedPdf.setCreator("PixoraTools PDF Compressor")
       compressedPdf.setProducer("PixoraTools")
 
-      const pdfBytes = await compressedPdf.save({
-        useObjectStreams: options.compressionLevel === "extreme",
-        addDefaultPage: false
-      })
+      const saveOptions: any = {
+        useObjectStreams: true,
+        addDefaultPage: false,
+        objectsPerTick: options.compressionLevel === "extreme" ? 50 : 500
+      }
+
+      const pdfBytes = await compressedPdf.save(saveOptions)
 
       return new Blob([pdfBytes], { type: "application/pdf" })
     } catch (error) {
