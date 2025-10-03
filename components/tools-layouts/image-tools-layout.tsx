@@ -391,7 +391,7 @@ export function ImageToolsLayout({
         <div className="container mx-auto px-4 py-6 lg:py-8">
           <div className="text-center mb-6 lg:mb-8">
             <div className="inline-flex items-center space-x-2 mb-4">
-              <Icon className="h-6 w-6 lg:h-8 lg:w-8 text-purple-600" />
+              <Icon className="h-6 w-6 lg:h-8 lg:w-8 text-cyan-600" />
               <h1 className="text-2xl lg:text-3xl font-heading font-bold text-foreground">{title}</h1>
             </div>
             <p className="text-base lg:text-lg text-muted-foreground max-w-2xl mx-auto px-4">
@@ -438,18 +438,18 @@ export function ImageToolsLayout({
 
           <div className="max-w-2xl mx-auto">
             <div 
-              className="border-2 border-dashed border-gray-300 rounded-2xl flex flex-col items-center justify-center text-gray-500 cursor-pointer hover:border-purple-400 hover:bg-purple-50/30 transition-all duration-300 p-8 lg:p-16 group"
+              className="border-2 border-dashed border-gray-300 rounded-2xl flex flex-col items-center justify-center text-gray-500 cursor-pointer hover:border-cyan-400 hover:bg-cyan-50/30 transition-all duration-300 p-8 lg:p-16 group"
               onDrop={handleDrop}
               onDragOver={handleDragOver}
               onClick={() => fileInputRef.current?.click()}
             >
               <div className="relative mb-4 lg:mb-6">
-                <div className="absolute inset-0 bg-purple-500/20 rounded-full blur-xl group-hover:blur-2xl transition-all"></div>
-                <Upload className="relative h-16 w-16 lg:h-20 lg:w-20 text-purple-500 group-hover:text-purple-600 transition-colors group-hover:scale-110 transform duration-300" />
+                <div className="absolute inset-0 bg-cyan-500/20 rounded-full blur-xl group-hover:blur-2xl transition-all"></div>
+                <Upload className="relative h-16 w-16 lg:h-20 lg:w-20 text-cyan-500 group-hover:text-cyan-600 transition-colors group-hover:scale-110 transform duration-300" />
               </div>
-              <h3 className="text-xl lg:text-2xl font-semibold mb-2 lg:mb-3 text-gray-700 group-hover:text-purple-600 transition-colors">Drop images here</h3>
+              <h3 className="text-xl lg:text-2xl font-semibold mb-2 lg:mb-3 text-gray-700 group-hover:text-cyan-600 transition-colors">Drop images here</h3>
               <p className="text-gray-500 mb-4 lg:mb-6 text-base lg:text-lg text-center">or tap to browse files</p>
-              <Button className="bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white px-6 lg:px-8 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 group-hover:scale-105">
+              <Button className="bg-gradient-to-r from-cyan-600 to-cyan-700 hover:from-cyan-700 hover:to-cyan-800 text-white px-6 lg:px-8 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 group-hover:scale-105">
                 <Upload className="h-4 w-4 lg:h-5 lg:w-5 mr-2" />
                 Choose Images
               </Button>
@@ -558,7 +558,7 @@ export function ImageToolsLayout({
         <div className="container mx-auto px-4 py-3">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-2">
-              <Icon className="h-5 w-5 text-purple-600" />
+              <Icon className="h-5 w-5 text-cyan-600" />
               <h1 className="text-lg lg:text-xl font-semibold text-gray-900">{title}</h1>
               <Badge variant="secondary" className="hidden sm:inline-flex">Image Mode</Badge>
             </div>
@@ -676,7 +676,7 @@ export function ImageToolsLayout({
               <Button 
                 onClick={processFiles}
                 disabled={isProcessing || files.length === 0}
-                className="w-full bg-purple-600 hover:bg-purple-700 text-white py-3"
+                className="w-full bg-cyan-600 hover:bg-cyan-700 text-white py-3"
                 size="lg"
               >
                 {isProcessing ? (
@@ -721,7 +721,7 @@ export function ImageToolsLayout({
         <div className="hidden lg:flex w-80 xl:w-96 bg-white border-l shadow-lg flex-col fixed top-16 bottom-0 right-0 z-30 overflow-y-auto">
           <div className="px-6 py-4 border-b bg-gray-50 flex-shrink-0">
             <div className="flex items-center space-x-2">
-              <Icon className="h-5 w-5 text-purple-600" />
+              <Icon className="h-5 w-5 text-cyan-600" />
               <h2 className="text-lg font-semibold text-gray-900">Image Settings</h2>
             </div>
             <p className="text-sm text-gray-600 mt-1">Configure processing options</p>
@@ -753,7 +753,7 @@ export function ImageToolsLayout({
             <Button 
               onClick={processFiles}
               disabled={isProcessing || files.length === 0}
-              className="w-full bg-purple-600 hover:bg-purple-700 text-white py-2 lg:py-3 text-sm lg:text-base font-semibold"
+              className="w-full bg-cyan-600 hover:bg-cyan-700 text-white py-2 lg:py-3 text-sm lg:text-base font-semibold"
               size="lg"
             >
               {isProcessing ? (
@@ -809,7 +809,7 @@ export function ImageToolsLayout({
             <Button 
               onClick={processFiles}
               disabled={isProcessing || files.length === 0}
-              className="w-full bg-purple-600 hover:bg-purple-700"
+              className="w-full bg-cyan-600 hover:bg-cyan-700"
             >
               {isProcessing ? "Processing..." : `Process Image${files.length > 1 ? 's' : ''}`}
             </Button>
