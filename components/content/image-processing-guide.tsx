@@ -3,26 +3,7 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { 
-  ImageIcon, 
-  Zap, 
-  Shield, 
-  Award, 
-  Target, 
-  TrendingUp,
-  CheckCircle,
-  ArrowRight,
-  Lightbulb,
-  BookOpen,
-  Star,
-  Users,
-  Globe,
-  Maximize,
-  Crop,
-  Palette,
-  RotateCw,
-  Archive
-} from "lucide-react"
+import { Image as ImageIcon, Zap, Shield, Award, Target, TrendingUp, CircleCheck as CheckCircle, ArrowRight, Lightbulb, BookOpen, Star, Users, Globe, Maximize, Crop, Palette, RotateCw, Archive } from "lucide-react"
 
 interface ImageProcessingGuideProps {
   toolName: string

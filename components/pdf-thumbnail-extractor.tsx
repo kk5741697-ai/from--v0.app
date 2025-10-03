@@ -5,7 +5,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Button } from "@/components/ui/button"
-import { FileText, CheckCircle, Loader2 } from "lucide-react"
+import { FileText, CircleCheck as CheckCircle, Loader as Loader2 } from "lucide-react"
 import { ClientPDFProcessor } from "@/lib/processors/client-pdf-processor"
 
 interface PDFPage {

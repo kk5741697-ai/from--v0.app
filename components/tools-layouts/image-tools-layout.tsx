@@ -12,18 +12,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Slider } from "@/components/ui/slider"
-import { 
-  Upload, 
-  Download, 
-  CheckCircle,
-  X,
-  RefreshCw,
-  ZoomIn,
-  ZoomOut,
-  Maximize2,
-  Settings,
-  ImageIcon
-} from "lucide-react"
+import { Upload, Download, CircleCheck as CheckCircle, X, RefreshCw, ZoomIn, ZoomOut, Maximize2, Settings, Image as ImageIcon } from "lucide-react"
 import { toast } from "@/hooks/use-toast"
 import { AdBanner } from "@/components/ads/ad-banner"
 import { MobileOptionPanel } from "@/components/mobile-option-panel"
