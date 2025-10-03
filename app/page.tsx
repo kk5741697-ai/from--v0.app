@@ -9,10 +9,7 @@ import { Badge } from "@/components/ui/badge"
 import { Card } from "@/components/ui/card"
 import { SearchDialog } from "@/components/search/search-dialog"
 import { EnhancedAdSense } from "@/components/ads/enhanced-adsense-manager"
-import {
-  Search, FileText, Image, QrCode, Code2, TrendingUp,
-  Wrench, Shield, Zap, Globe, ChevronRight, Star
-} from "lucide-react"
+import { Search, FileText, Image, QrCode, Code as Code2, TrendingUp, Wrench, Shield, Zap, Globe, ChevronRight, Star } from "lucide-react"
 
 const categories = [
   { name: "PDF Tools", href: "/pdf-tools", icon: FileText, color: "#dc2626", count: 34 },

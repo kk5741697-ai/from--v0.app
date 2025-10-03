@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
-import { Search, Menu, X, FileText, Image, QrCode, Code2, TrendingUp, Wrench } from "lucide-react"
+import { Search, Menu, X, FileText, Image, QrCode, Code as Code2, TrendingUp, Wrench } from "lucide-react"
 import { useState } from "react"
 import { EnhancedSearchDialog } from "@/components/search/enhanced-search-dialog"
 
