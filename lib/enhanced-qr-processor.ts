@@ -131,9 +131,9 @@ export class EnhancedQRProcessor {
    * Apply rounded dots styling
    */
   private static applyRoundedDots(ctx: CanvasRenderingContext2D, imageData: ImageData, options: EnhancedQROptions) {
-    const moduleSize = Math.floor(options.width! / 29) // Approximate module size
+    const moduleSize = Math.floor(options.width! / 29); // Approximate module size
     )
-    const radius = options.dotStyle === "dots" ? moduleSize / 2 : moduleSize / 4
+    const radius = options.dotStyle === "dots" ? moduleSize / 2 : moduleSize / 4;
 
     // This is a simplified version - full implementation would require
     // QR code structure parsing to round only data modules
