@@ -12,16 +12,7 @@ import { ScrollArea } from "@/components/ui/scroll-area"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Slider } from "@/components/ui/slider"
-import {
-  TrendingUp,
-  Download,
-  Copy,
-  RefreshCw,
-  Settings,
-  Search,
-  Globe,
-  BarChart
-} from "lucide-react"
+import { TrendingUp, Download, Copy, RefreshCw, Settings, Search, Globe, ChartBar as BarChart } from "lucide-react"
 import { toast } from "@/hooks/use-toast"
 import { AdBanner } from "@/components/ads/ad-banner"
 import { MobileOptionPanel } from "@/components/mobile-option-panel"

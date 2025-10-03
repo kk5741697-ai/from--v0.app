@@ -7,10 +7,7 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { SearchDialog } from "@/components/search/search-dialog"
 import { APP_CONFIG } from "@/lib/config"
-import { 
-  Maximize, Crop, FileImage, ArrowUpDown, Edit3, Zap, ImageIcon, Download, Palette, Upload, Archive,
-  FileType, QrCode, Code, TrendingUp, Wrench, Globe, Scissors, Lock, RefreshCw, Search
-} from "lucide-react"
+import { Maximize, Crop, FileImage, ArrowUpDown, CreditCard as Edit3, Zap, Image as ImageIcon, Download, Palette, Upload, Archive, FileType, QrCode, Code, TrendingUp, Wrench, Globe, Scissors, Lock, RefreshCw, Search } from "lucide-react"
 import Link from "next/link"
 
 import { AdBanner } from "@/components/ads/ad-banner"
