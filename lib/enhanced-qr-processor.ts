@@ -132,7 +132,6 @@ export class EnhancedQRProcessor {
    */
   private static applyRoundedDots(ctx: CanvasRenderingContext2D, imageData: ImageData, options: EnhancedQROptions) {
     const moduleSize = Math.floor(options.width! / 29) // Approximate module size
-    )
     const radius = options.dotStyle === "dots" ? moduleSize / 2 : moduleSize / 4
 
     // This is a simplified version - full implementation would require

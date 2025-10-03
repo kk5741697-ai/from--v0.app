@@ -3,9 +3,15 @@
 import { PDFToolsLayout } from "@/components/tools-layouts/pdf-tools-layout"
 import { Scissors } from "lucide-react"
 import { ClientPDFProcessor } from "@/lib/processors/client-pdf-processor"
-import { PDFProcessingGuide } from "@/components/content/pdf-processing-guide"
 
 const splitOptions = [
+  {
+    key: "mergeInSingle",
+    label: "Merge in single PDF",
+    type: "checkbox" as const,
+    defaultValue: true,
+    section: "Output Settings",
+  },
   {
     key: "splitMode",
     label: "Split Mode",
@@ -26,7 +32,7 @@ const splitOptions = [
     min: 2,
     max: 20,
     section: "Split Settings",
-    condition: (options) => options.splitMode === "size",
+    condition: (options: any) => options.splitMode === "size",
   },
   {
     key: "preserveMetadata",
@@ -48,13 +54,13 @@ async function splitPDF(files: any[], options: any): Promise<{ success: boolean;
 
     const file = files[0]
 
-    // Validate file
     if (!file.originalFile && !file.file) {
       return {
         success: false,
         error: "Invalid file object"
       }
     }
+
     const selectedPages: number[] = []
     if (options.selectedPages && Array.isArray(options.selectedPages)) {
       options.selectedPages.forEach((pageKey: string) => {
@@ -81,14 +87,19 @@ async function splitPDF(files: any[], options: any): Promise<{ success: boolean;
       selectedPages
     })
 
-    if (splitResults.length === 1) {
+    // Check if mergeInSingle is enabled (default true)
+    const mergeInSingle = options.mergeInSingle !== false
+
+    if (mergeInSingle || splitResults.length === 1) {
+      // Merge all selected pages into a single PDF
       const downloadUrl = URL.createObjectURL(splitResults[0])
       return {
         success: true,
         downloadUrl,
-        filename: `${file.name.replace(".pdf", "")}_split.pdf`
+        filename: `${file.name.replace(".pdf", "")}_extracted.pdf`
       }
     } else {
+      // Create separate PDFs for each page in a ZIP
       const JSZip = (await import("jszip")).default
       const zip = new JSZip()
 
@@ -117,18 +128,10 @@ async function splitPDF(files: any[], options: any): Promise<{ success: boolean;
 }
 
 export default function PDFSplitterPage() {
-  const richContent = (
-    <PDFProcessingGuide 
-      toolName="PDF Splitter"
-      toolType="split"
-      className="py-8"
-    />
-  )
-
   return (
     <PDFToolsLayout
       title="Split PDF"
-      description="Split large PDF files into smaller documents by extracting specific pages, page ranges, or equal parts. Advanced page selection with visual thumbnails and drag-to-reorder functionality."
+      description="Extract specific pages from your PDF and merge them into a single file or download separately"
       icon={Scissors}
       toolType="split"
       processFunction={splitPDF}
@@ -136,7 +139,6 @@ export default function PDFSplitterPage() {
       maxFiles={1}
       allowPageSelection={true}
       supportedFormats={["application/pdf"]}
-      richContent={richContent}
     />
   )
 }

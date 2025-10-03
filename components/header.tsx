@@ -2,31 +2,17 @@
 
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
-import { 
-  Search, 
-  Menu, 
-  X, 
-  Wrench, 
-  FileText, 
-  ImageIcon, 
-  QrCode, 
-  Code, 
-  TrendingUp,
-  Calculator,
-  Star,
-  Heart
-} from "lucide-react"
+import { Search, Menu, X, FileText, Image, QrCode, Code2, TrendingUp, Wrench } from "lucide-react"
 import { useState } from "react"
 import { EnhancedSearchDialog } from "@/components/search/enhanced-search-dialog"
 
 const navigationItems = [
-  { name: "PDF Tools", href: "/pdf-tools", icon: FileText, color: "text-red-600" },
-  { name: "Image Tools", href: "/image-tools", icon: ImageIcon, color: "text-blue-600" },
-  { name: "QR Tools", href: "/qr-tools", icon: QrCode, color: "text-green-600" },
-  { name: "Text Tools", href: "/text-tools", icon: Code, color: "text-yellow-600" },
-  { name: "SEO Tools", href: "/seo-tools", icon: TrendingUp, color: "text-cyan-600" },
-  { name: "Utilities", href: "/utilities", icon: Calculator, color: "text-purple-600" },
+  { name: "PDF", href: "/pdf-tools", icon: FileText },
+  { name: "Image", href: "/image-tools", icon: Image },
+  { name: "QR Code", href: "/qr-tools", icon: QrCode },
+  { name: "Text", href: "/text-tools", icon: Code2 },
+  { name: "SEO", href: "/seo-tools", icon: TrendingUp },
+  { name: "More", href: "/utilities", icon: Wrench },
 ]
 
 export function Header() {
@@ -34,15 +20,15 @@ export function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+    <header className="sticky top-0 z-50 w-full border-b bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/90 shadow-sm">
       <div className="container mx-auto px-4">
         <div className="flex h-16 items-center justify-between">
           {/* Logo */}
-          <Link href="/" className="flex items-center space-x-2">
-            <div className="h-8 w-8 rounded-lg bg-primary flex items-center justify-center">
-              <Wrench className="h-5 w-5 text-primary-foreground" />
+          <Link href="/" className="flex items-center space-x-2 group">
+            <div className="h-9 w-9 rounded-lg bg-gradient-to-br from-blue-600 to-blue-700 flex items-center justify-center shadow-md group-hover:shadow-lg transition-shadow">
+              <Wrench className="h-5 w-5 text-white" />
             </div>
-            <span className="font-heading text-xl font-bold text-foreground">PixoraTools</span>
+            <span className="font-bold text-xl text-gray-900">PixoraTools</span>
           </Link>
 
           {/* Desktop Navigation */}
@@ -50,13 +36,14 @@ export function Header() {
             {navigationItems.map((item) => {
               const Icon = item.icon
               return (
-                <Link
-                  key={item.name}
-                  href={item.href}
-                  className="flex items-center space-x-2 px-3 py-2 rounded-md text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-accent transition-colors"
-                >
-                  <Icon className={`h-4 w-4 ${item.color}`} />
-                  <span>{item.name}</span>
+                <Link key={item.name} href={item.href}>
+                  <Button
+                    variant="ghost"
+                    className="text-gray-700 hover:text-blue-600 hover:bg-blue-50 font-medium"
+                  >
+                    <Icon className="h-4 w-4 mr-1.5" />
+                    {item.name}
+                  </Button>
                 </Link>
               )
             })}
@@ -68,11 +55,10 @@ export function Header() {
             <Button
               variant="outline"
               onClick={() => setIsSearchOpen(true)}
-              className="hidden sm:flex items-center space-x-2 w-64 justify-start text-muted-foreground"
+              className="hidden sm:flex items-center space-x-2 border-gray-300 hover:border-blue-400 hover:bg-blue-50"
             >
               <Search className="h-4 w-4" />
-              <span>Search tools...</span>
-              <kbd className="ml-auto bg-muted px-1.5 py-0.5 text-xs rounded">⌘K</kbd>
+              <span className="text-gray-600">Search</span>
             </Button>
 
             {/* Mobile Search */}
@@ -80,14 +66,9 @@ export function Header() {
               variant="outline"
               size="icon"
               onClick={() => setIsSearchOpen(true)}
-              className="sm:hidden"
+              className="sm:hidden border-gray-300"
             >
               <Search className="h-4 w-4" />
-            </Button>
-
-            {/* Favorites */}
-            <Button variant="outline" size="icon" className="hidden md:flex">
-              <Heart className="h-4 w-4" />
             </Button>
 
             {/* Mobile Menu */}
@@ -95,7 +76,7 @@ export function Header() {
               variant="outline"
               size="icon"
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="lg:hidden"
+              className="lg:hidden border-gray-300"
             >
               {isMobileMenuOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
             </Button>
@@ -104,36 +85,22 @@ export function Header() {
 
         {/* Mobile Navigation */}
         {isMobileMenuOpen && (
-          <div className="lg:hidden border-t bg-background/95 backdrop-blur">
-            <nav className="py-4 space-y-2">
+          <div className="lg:hidden border-t py-4">
+            <nav className="space-y-1">
               {navigationItems.map((item) => {
                 const Icon = item.icon
                 return (
-                  <Link
-                    key={item.name}
-                    href={item.href}
-                    onClick={() => setIsMobileMenuOpen(false)}
-                    className="flex items-center space-x-3 px-4 py-3 rounded-lg text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-accent transition-colors"
-                  >
-                    <Icon className={`h-5 w-5 ${item.color}`} />
-                    <span>{item.name}</span>
+                  <Link key={item.name} href={item.href} onClick={() => setIsMobileMenuOpen(false)}>
+                    <Button
+                      variant="ghost"
+                      className="w-full justify-start text-gray-700 hover:text-blue-600 hover:bg-blue-50"
+                    >
+                      <Icon className="h-4 w-4 mr-2" />
+                      {item.name} Tools
+                    </Button>
                   </Link>
                 )
               })}
-              
-              <div className="px-4 pt-4 border-t">
-                <Button
-                  variant="outline"
-                  onClick={() => {
-                    setIsSearchOpen(true)
-                    setIsMobileMenuOpen(false)
-                  }}
-                  className="w-full justify-start"
-                >
-                  <Search className="h-4 w-4 mr-2" />
-                  Search Tools
-                </Button>
-              </div>
             </nav>
           </div>
         )}

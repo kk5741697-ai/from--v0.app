@@ -2,21 +2,21 @@
 
 import { useState, useRef, useCallback, useEffect } from "react"
 import { Header } from "@/components/header"
+import { Footer } from "@/components/footer"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Progress } from "@/components/ui/progress"
-import { ScrollArea } from "@/components/ui/scroll-area"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Slider } from "@/components/ui/slider"
-import { Upload, Download, CheckCircle, X, RefreshCw, Settings, FileText, HandIcon as DragHandleDots2Icon } from "lucide-react"
+import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet"
+import { Upload, X, Settings2, ChevronDown } from "lucide-react"
 import { toast } from "@/hooks/use-toast"
-import { AdBanner } from "@/components/ads/ad-banner"
+import { EnhancedAdSense } from "@/components/ads/enhanced-adsense-manager"
 import { PDFThumbnailExtractor } from "@/components/pdf-thumbnail-extractor"
-import { MobileOptionPanel } from "@/components/mobile-option-panel"
 
 interface PDFFile {
   id: string
@@ -24,13 +24,7 @@ interface PDFFile {
   originalFile?: File
   name: string
   size: number
-  preview?: string
-  processed?: boolean
-  processedPreview?: string
-  processedSize?: number
-  blob?: Blob
   pages?: any[]
-  selectedPages?: number[]
 }
 
 interface PDFToolsLayoutProps {
@@ -42,38 +36,27 @@ interface PDFToolsLayoutProps {
   options?: any[]
   maxFiles?: number
   allowPageSelection?: boolean
-  allowPageReorder?: boolean
   supportedFormats?: string[]
-  outputFormats?: string[]
-  richContent?: React.ReactNode
 }
 
 export function PDFToolsLayout({
   title,
   description,
   icon: Icon,
-  toolType,
   processFunction,
   options = [],
   maxFiles = 5,
   allowPageSelection = false,
-  allowPageReorder = false,
   supportedFormats = ["application/pdf"],
-  outputFormats = ["pdf"],
-  richContent
 }: PDFToolsLayoutProps) {
   const [files, setFiles] = useState<PDFFile[]>([])
   const [toolOptions, setToolOptions] = useState<Record<string, any>>({})
   const [isProcessing, setIsProcessing] = useState(false)
   const [processingProgress, setProcessingProgress] = useState(0)
-  const [showUploadArea, setShowUploadArea] = useState(true)
-  const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false)
+  const [isMobileOptionsOpen, setIsMobileOptionsOpen] = useState(false)
   const [selectedPages, setSelectedPages] = useState<Set<string>>(new Set())
-  const [isToolInterfaceActive, setIsToolInterfaceActive] = useState(false)
-  
   const fileInputRef = useRef<HTMLInputElement>(null)
 
-  // Initialize options with defaults
   useEffect(() => {
     const defaultOptions: Record<string, any> = {}
     options.forEach(option => {
@@ -91,7 +74,7 @@ export function PDFToolsLayout({
       if (!supportedFormats.includes(file.type)) {
         toast({
           title: "Invalid file type",
-          description: `${file.name} is not a supported PDF file`,
+          description: `${file.name} is not supported`,
           variant: "destructive"
         })
         continue
@@ -106,25 +89,17 @@ export function PDFToolsLayout({
         break
       }
 
-      const pdfFile: PDFFile = {
-        id: `${file.name}-${Date.now()}`,
+      newFiles.push({
+        id: `${file.name}-${Date.now()}-${Math.random()}`,
         file,
         originalFile: file,
         name: file.name,
         size: file.size,
-      }
-
-      newFiles.push(pdfFile)
+      })
     }
 
     if (newFiles.length > 0) {
       setFiles(prev => [...prev, ...newFiles])
-      setShowUploadArea(false)
-      setIsToolInterfaceActive(true)
-      toast({
-        title: "Files uploaded",
-        description: `${newFiles.length} PDF file(s) loaded successfully`
-      })
     }
   }
 
@@ -139,18 +114,11 @@ export function PDFToolsLayout({
 
   const removeFile = (fileId: string) => {
     setFiles(prev => prev.filter(f => f.id !== fileId))
-    if (files.length === 1) {
-      setShowUploadArea(true)
-    }
   }
 
   const resetTool = () => {
     setFiles([])
     setProcessingProgress(0)
-    setShowUploadArea(true)
-    setIsToolInterfaceActive(false)
-    setIsMobileSidebarOpen(false)
-    setSelectedPages(new Set())
     setSelectedPages(new Set())
   }
 
@@ -181,29 +149,23 @@ export function PDFToolsLayout({
           document.body.appendChild(link)
           link.click()
           document.body.removeChild(link)
-          
+
           toast({
-            title: "Processing complete",
-            description: "Your file has been processed and downloaded"
-          })
-        } else if (result.processedFiles) {
-          setFiles(result.processedFiles)
-          toast({
-            title: "Processing complete",
-            description: `${result.processedFiles.length} file(s) processed successfully`
+            title: "Success",
+            description: "Your file has been processed"
           })
         }
       } else {
         toast({
-          title: "Processing failed",
-          description: result.error || "An error occurred during processing",
+          title: "Error",
+          description: result.error || "Processing failed",
           variant: "destructive"
         })
       }
     } catch (error) {
       toast({
-        title: "Processing failed",
-        description: error instanceof Error ? error.message : "An unexpected error occurred",
+        title: "Error",
+        description: error instanceof Error ? error.message : "An error occurred",
         variant: "destructive"
       })
     } finally {
@@ -231,7 +193,7 @@ export function PDFToolsLayout({
             value={toolOptions[option.key]?.toString()}
             onValueChange={(value) => setToolOptions(prev => ({ ...prev, [option.key]: value }))}
           >
-            <SelectTrigger className="w-full">
+            <SelectTrigger>
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -248,10 +210,13 @@ export function PDFToolsLayout({
         return (
           <div className="flex items-center space-x-2">
             <Checkbox
+              id={option.key}
               checked={toolOptions[option.key] || false}
               onCheckedChange={(checked) => setToolOptions(prev => ({ ...prev, [option.key]: checked }))}
             />
-            <span className="text-sm">{option.label}</span>
+            <label htmlFor={option.key} className="text-sm cursor-pointer">
+              {option.label}
+            </label>
           </div>
         )
 
@@ -265,11 +230,9 @@ export function PDFToolsLayout({
               max={option.max}
               step={option.step}
             />
-            <div className="flex justify-between text-xs text-gray-500">
+            <div className="flex justify-between text-xs text-muted-foreground">
               <span>{option.min}</span>
-              <span className="font-medium bg-gray-100 px-2 py-1 rounded">
-                {toolOptions[option.key] || option.defaultValue}
-              </span>
+              <span className="font-medium">{toolOptions[option.key] || option.defaultValue}</span>
               <span>{option.max}</span>
             </div>
           </div>
@@ -283,17 +246,6 @@ export function PDFToolsLayout({
             onChange={(e) => setToolOptions(prev => ({ ...prev, [option.key]: parseInt(e.target.value) }))}
             min={option.min}
             max={option.max}
-            className="w-full"
-          />
-        )
-
-      case "text":
-        return (
-          <Input
-            type="text"
-            value={toolOptions[option.key] || option.defaultValue}
-            onChange={(e) => setToolOptions(prev => ({ ...prev, [option.key]: e.target.value }))}
-            className="w-full"
           />
         )
 
@@ -302,7 +254,6 @@ export function PDFToolsLayout({
     }
   }
 
-  // Group options by section
   const groupedOptions = options.reduce((groups, option) => {
     const section = option.section || "General"
     if (!groups[section]) groups[section] = []
@@ -321,169 +272,57 @@ export function PDFToolsLayout({
       return newSet
     })
   }
-  // Show upload area if no files
-  if (!isToolInterfaceActive && files.length === 0) {
+
+  // Upload View
+  if (files.length === 0) {
     return (
-      <div className="min-h-screen bg-background">
+      <div className="min-h-screen bg-gray-50/50">
         <Header />
-        
-        {/* Unified Before Canvas Ad */}
-        <div className="unified-before-canvas bg-white border-b">
-          <div className="container mx-auto px-4 py-3">
-            <AdBanner 
+
+        <div className="container mx-auto px-4 py-8 max-w-4xl">
+          <div className="text-center mb-8">
+            <div className="inline-flex items-center justify-center w-16 h-16 bg-red-100 rounded-2xl mb-4">
+              <Icon className="h-8 w-8 text-red-600" />
+            </div>
+            <h1 className="text-3xl font-bold text-gray-900 mb-2">{title}</h1>
+            <p className="text-gray-600">{description}</p>
+          </div>
+
+          {/* Ad - Before Upload */}
+          <div className="mb-8">
+            <EnhancedAdSense
               adSlot="unified-before-canvas"
-              adFormat="auto"
-              className="max-w-4xl mx-auto"
-              mobileOptimized={true}
+              adFormat="horizontal"
               persistent={true}
             />
           </div>
-        </div>
-        
-        <div className="container mx-auto px-4 py-6 lg:py-8">
-          <div className="text-center mb-6 lg:mb-8">
-            <div className="inline-flex items-center space-x-2 mb-4">
-              <Icon className="h-6 w-6 lg:h-8 lg:w-8 text-red-600" />
-              <h1 className="text-2xl lg:text-3xl font-heading font-bold text-foreground">{title}</h1>
-            </div>
-            <p className="text-base lg:text-lg text-muted-foreground max-w-2xl mx-auto px-4">
-              {description}
-            </p>
-          </div>
 
-          {/* Rich Content Before Upload */}
-          <div className="max-w-4xl mx-auto mb-8">
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center space-x-2">
-                  <FileText className="h-5 w-5 text-red-600" />
-                  <span>Professional PDF Processing Made Simple</span>
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <div className="text-center p-4">
-                    <div className="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center mx-auto mb-3">
-                      <FileText className="h-6 w-6 text-red-600" />
-                    </div>
-                    <h3 className="font-semibold mb-2">Unlimited File Size</h3>
-                    <p className="text-sm text-muted-foreground">Process PDF files of any size with our advanced algorithms</p>
-                  </div>
-                  <div className="text-center p-4">
-                    <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mx-auto mb-3">
-                      <CheckCircle className="h-6 w-6 text-green-600" />
-                    </div>
-                    <h3 className="font-semibold mb-2">100% Secure</h3>
-                    <p className="text-sm text-muted-foreground">All processing happens locally in your browser</p>
-                  </div>
-                  <div className="text-center p-4">
-                    <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mx-auto mb-3">
-                      <Download className="h-6 w-6 text-blue-600" />
-                    </div>
-                    <h3 className="font-semibold mb-2">Instant Results</h3>
-                    <p className="text-sm text-muted-foreground">No waiting, no uploads - process files immediately</p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
+          {/* Upload Area */}
+          <Card
+            className="border-2 border-dashed hover:border-red-400 transition-colors cursor-pointer p-12 text-center"
+            onDrop={handleDrop}
+            onDragOver={handleDragOver}
+            onClick={() => fileInputRef.current?.click()}
+          >
+            <Upload className="h-16 w-16 text-red-500 mx-auto mb-4" />
+            <h3 className="text-xl font-semibold text-gray-900 mb-2">Select PDF files</h3>
+            <p className="text-gray-600 mb-4">or drop PDFs here</p>
+            <Button className="bg-red-600 hover:bg-red-700">
+              Select PDF files
+            </Button>
+          </Card>
 
-          <div className="max-w-2xl mx-auto">
-            <div 
-              className="border-2 border-dashed border-gray-300 rounded-2xl flex flex-col items-center justify-center text-gray-500 cursor-pointer hover:border-red-400 hover:bg-red-50/30 transition-all duration-300 p-8 lg:p-16 group"
-              onDrop={handleDrop}
-              onDragOver={handleDragOver}
-              onClick={() => fileInputRef.current?.click()}
-            >
-              <div className="relative mb-4 lg:mb-6">
-                <div className="absolute inset-0 bg-red-500/20 rounded-full blur-xl group-hover:blur-2xl transition-all"></div>
-                <Upload className="relative h-16 w-16 lg:h-20 lg:w-20 text-red-500 group-hover:text-red-600 transition-colors group-hover:scale-110 transform duration-300" />
-              </div>
-              <h3 className="text-xl lg:text-2xl font-semibold mb-2 lg:mb-3 text-gray-700 group-hover:text-red-600 transition-colors">Drop PDF files here</h3>
-              <p className="text-gray-500 mb-4 lg:mb-6 text-base lg:text-lg text-center">or tap to browse files</p>
-              <Button className="bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white px-6 lg:px-8 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 group-hover:scale-105">
-                <Upload className="h-4 w-4 lg:h-5 lg:w-5 mr-2" />
-                Choose PDF Files
-              </Button>
-              <div className="mt-4 lg:mt-6 space-y-2 text-center">
-                <p className="text-sm text-gray-500 font-medium">PDF files only</p>
-                <p className="text-xs text-gray-400">Up to {maxFiles} files • Unlimited size</p>
-              </div>
-            </div>
-          </div>
-
-          {/* Rich Content After Upload */}
-          <div className="max-w-4xl mx-auto mt-12">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Why Choose Our PDF Tools?</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <ul className="space-y-3">
-                    <li className="flex items-start space-x-3">
-                      <CheckCircle className="h-5 w-5 text-green-600 mt-0.5" />
-                      <div>
-                        <p className="font-medium">Enterprise-Grade Security</p>
-                        <p className="text-sm text-muted-foreground">Local processing ensures your documents never leave your device</p>
-                      </div>
-                    </li>
-                    <li className="flex items-start space-x-3">
-                      <CheckCircle className="h-5 w-5 text-green-600 mt-0.5" />
-                      <div>
-                        <p className="font-medium">Professional Quality</p>
-                        <p className="text-sm text-muted-foreground">Maintain document integrity and formatting</p>
-                      </div>
-                    </li>
-                    <li className="flex items-start space-x-3">
-                      <CheckCircle className="h-5 w-5 text-green-600 mt-0.5" />
-                      <div>
-                        <p className="font-medium">No File Size Limits</p>
-                        <p className="text-sm text-muted-foreground">Process documents of any size with advanced algorithms</p>
-                      </div>
-                    </li>
-                  </ul>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardHeader>
-                  <CardTitle>Common Use Cases</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <ul className="space-y-2 text-sm">
-                    <li>• Legal document management</li>
-                    <li>• Business report compilation</li>
-                    <li>• Academic paper organization</li>
-                    <li>• Invoice and receipt processing</li>
-                    <li>• Contract and agreement handling</li>
-                    <li>• Archive and storage optimization</li>
-                  </ul>
-                </CardContent>
-              </Card>
-            </div>
-          </div>
-        </div>
-
-        {/* Unified After Canvas Ad */}
-        <div className="unified-after-canvas bg-white border-t">
-          <div className="container mx-auto px-4 py-3">
-            <AdBanner 
+          {/* Ad - After Upload */}
+          <div className="mt-8">
+            <EnhancedAdSense
               adSlot="unified-after-canvas"
-              adFormat="auto"
-              className="max-w-4xl mx-auto"
-              mobileOptimized={true}
+              adFormat="horizontal"
               persistent={true}
             />
           </div>
         </div>
 
-        {/* Rich Educational Content */}
-        {richContent && (
-          <div className="bg-gray-50">
-            {richContent}
-          </div>
-        )}
+        <Footer />
 
         <input
           ref={fileInputRef}
@@ -497,78 +336,64 @@ export function PDFToolsLayout({
     )
   }
 
-  // Tool interface when files are loaded
+  // Tool Interface
   return (
-    <div className="min-h-screen bg-background tools-interface-container">
-      {/* Fixed Header */}
-      <div className="fixed top-0 left-0 right-0 z-50">
-        <Header />
-      </div>
+    <div className="min-h-screen bg-gray-50/50">
+      <Header />
 
-      {/* Fixed Tools Header */}
-      <div className="fixed top-16 left-0 right-0 z-40 tools-header bg-white border-b shadow-sm tools-header-responsive">
-        <div className="container mx-auto px-4 py-3">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-2">
-              <Icon className="h-5 w-5 text-red-600" />
-              <h1 className="text-lg lg:text-xl font-semibold text-gray-900">{title}</h1>
-              <Badge variant="secondary" className="hidden sm:inline-flex">PDF Mode</Badge>
-            </div>
-            <div className="flex items-center space-x-2">
-              <Button variant="outline" size="sm" onClick={resetTool}>
-                <RefreshCw className="h-4 w-4" />
-              </Button>
-              <Button 
-                variant="outline" 
-                size="sm" 
-                onClick={() => setIsMobileSidebarOpen(true)}
-                className="lg:hidden"
-              >
-                <Settings className="h-4 w-4" />
-              </Button>
-            </div>
+      <div className="container mx-auto px-4 py-4">
+        {/* Tools Header */}
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center space-x-2">
+            <Icon className="h-5 w-5 text-red-600" />
+            <h1 className="text-xl font-bold text-gray-900">{title}</h1>
+          </div>
+          <div className="flex items-center space-x-2">
+            <Button variant="outline" size="sm" onClick={resetTool}>
+              New files
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setIsMobileOptionsOpen(true)}
+              className="lg:hidden"
+            >
+              <Settings2 className="h-4 w-4" />
+            </Button>
           </div>
         </div>
-      </div>
 
-      {/* Main Content Area with proper spacing */}
-      <div className="pt-32 min-h-screen tools-main-content">
-        {/* Unified Before Canvas Ad */}
-        <div className="unified-before-canvas bg-white border-b tools-header-responsive">
-          <div className="container mx-auto px-4 py-3">
-            <AdBanner 
+        {/* Layout: Canvas + Sidebar */}
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
+          {/* Canvas Area */}
+          <div className="lg:col-span-3 space-y-4">
+            {/* Ad - Before Canvas */}
+            <EnhancedAdSense
               adSlot="unified-before-canvas"
-              adFormat="auto"
-              className="max-w-4xl mx-auto"
-              mobileOptimized={true}
+              adFormat="horizontal"
               persistent={true}
             />
-          </div>
-        </div>
 
-        {/* Canvas Area with proper responsive margins */}
-        <div className="canvas bg-gray-50 min-h-[60vh] max-h-[calc(100vh-16rem)] overflow-y-auto tools-interface-active">
-          <div className="container mx-auto px-4 py-6">
+            {/* Files List */}
             <div className="space-y-4">
               {files.map((file) => (
                 <Card key={file.id} className="p-4">
                   <div className="flex items-center justify-between mb-4">
                     <div>
                       <h3 className="font-medium">{file.name}</h3>
-                      <p className="text-sm text-muted-foreground">{formatFileSize(file.size)}</p>
+                      <p className="text-sm text-gray-500">{formatFileSize(file.size)}</p>
                     </div>
                     <Button variant="ghost" size="sm" onClick={() => removeFile(file.id)}>
                       <X className="h-4 w-4" />
                     </Button>
                   </div>
-                  
-                  {/* PDF Page Thumbnails */}
+
                   {allowPageSelection && (
                     <PDFThumbnailExtractor
                       file={file.file}
                       onPagesExtracted={(pages) => {
                         if (pages && pages.length > 0) {
-                          setFiles(prev => prev.map(f => 
+                          setFiles(prev => prev.map(f =>
                             f.id === file.id ? { ...f, pages } : f
                           ))
                         }
@@ -582,163 +407,85 @@ export function PDFToolsLayout({
               ))}
             </div>
 
-            {/* Mobile Process Button */}
-            <div className="lg:hidden mt-6">
-              <Button 
-                onClick={processFiles}
-                disabled={isProcessing || files.length === 0}
-                className="w-full bg-red-600 hover:bg-red-700 text-white py-3"
-                size="lg"
-              >
-                {isProcessing ? (
-                  <>
-                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                    Processing...
-                  </>
-                ) : (
-                  <>
-                    <Icon className="h-4 w-4 mr-2" />
-                    Process PDF{files.length > 1 ? 's' : ''}
-                  </>
-                )}
-              </Button>
-              
-              {isProcessing && (
-                <div className="mt-4">
-                  <Progress value={processingProgress} className="h-2" />
-                  <p className="text-sm text-muted-foreground text-center mt-2">
-                    {processingProgress}% complete
-                  </p>
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-
-        {/* Unified After Canvas Ad */}
-        <div className="unified-after-canvas bg-white border-t tools-header-responsive">
-          <div className="container mx-auto px-4 py-3">
-            <AdBanner 
+            {/* Ad - After Canvas */}
+            <EnhancedAdSense
               adSlot="unified-after-canvas"
-              adFormat="auto"
-              className="max-w-4xl mx-auto"
-              mobileOptimized={true}
+              adFormat="horizontal"
               persistent={true}
             />
           </div>
-        </div>
 
-        {/* Fixed Desktop Right Sidebar */}
-        <div className="hidden lg:flex w-80 xl:w-96 bg-white border-l shadow-lg flex-col fixed top-16 bottom-0 right-0 z-30 overflow-y-auto">
-          <div className="px-6 py-4 border-b bg-gray-50 flex-shrink-0">
-            <div className="flex items-center space-x-2">
-              <Icon className="h-5 w-5 text-red-600" />
-              <h2 className="text-lg font-semibold text-gray-900">PDF Settings</h2>
-            </div>
-            <p className="text-sm text-gray-600 mt-1">Configure processing options</p>
-          </div>
+          {/* Desktop Sidebar */}
+          <div className="hidden lg:block">
+            <Card className="p-4 sticky top-20">
+              <h3 className="font-semibold mb-4">Options</h3>
 
-          <div className="flex-1 overflow-y-auto">
-            <ScrollArea className="h-full">
-              <div className="p-6 space-y-6">
+              <div className="space-y-4">
                 {Object.entries(groupedOptions).map(([section, sectionOptions]) => (
-                  <div key={section} className="space-y-4">
-                    <div className="flex items-center space-x-2">
-                      <div className="h-px bg-gray-200 flex-1"></div>
-                      <Label className="text-xs font-medium text-gray-500 uppercase tracking-wide">{section}</Label>
-                      <div className="h-px bg-gray-200 flex-1"></div>
-                    </div>
+                  <div key={section} className="space-y-3">
+                    <Label className="text-xs font-medium text-gray-500 uppercase">{section}</Label>
                     {sectionOptions.map((option) => (
                       <div key={option.key} className="space-y-2">
-                        <Label className="text-sm font-medium">{option.label}</Label>
+                        {option.type !== "checkbox" && <Label className="text-sm">{option.label}</Label>}
                         {renderOptionControl(option)}
                       </div>
                     ))}
                   </div>
                 ))}
               </div>
-            </ScrollArea>
-          </div>
 
-          <div className="p-4 lg:p-6 border-t bg-gray-50 space-y-3 flex-shrink-0">
-            <Button 
-              onClick={processFiles}
-              disabled={isProcessing || files.length === 0 || (allowPageSelection && selectedPages.size === 0)}
-              className="w-full bg-red-600 hover:bg-red-700 text-white py-2 lg:py-3 text-sm lg:text-base font-semibold"
-              size="lg"
-            >
-              {isProcessing ? (
-                <>
-                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                  Processing...
-                </>
-              ) : (
-                <>
-                  <Icon className="h-4 w-4 mr-2" />
-                  Process PDF{files.length > 1 ? 's' : ''}
-                </>
+              <Button
+                onClick={processFiles}
+                disabled={isProcessing || files.length === 0 || (allowPageSelection && selectedPages.size === 0)}
+                className="w-full mt-6 bg-red-600 hover:bg-red-700"
+              >
+                {isProcessing ? "Processing..." : `Process ${files.length} file${files.length > 1 ? 's' : ''}`}
+              </Button>
+
+              {isProcessing && (
+                <div className="mt-4">
+                  <Progress value={processingProgress} />
+                  <p className="text-xs text-center text-gray-500 mt-2">{processingProgress}%</p>
+                </div>
               )}
-            </Button>
-
-            {isProcessing && (
-              <div className="space-y-2">
-                <Progress value={processingProgress} className="h-2" />
-                <p className="text-sm text-muted-foreground text-center">
-                  {processingProgress}% complete
-                </p>
-              </div>
-            )}
-            
-            {allowPageSelection && selectedPages.size > 0 && (
-              <div className="text-sm text-muted-foreground text-center">
-                {selectedPages.size} page{selectedPages.size !== 1 ? 's' : ''} selected
-              </div>
-            )}
+            </Card>
           </div>
         </div>
 
-        {/* Mobile Options Panel */}
-        <MobileOptionPanel
-          isOpen={isMobileSidebarOpen}
-          onOpenChange={setIsMobileSidebarOpen}
-          title={`${title} Settings`}
-          icon={<Icon className="h-5 w-5 text-red-600" />}
-          footer={
-            <Button 
-              onClick={processFiles}
-              disabled={isProcessing || files.length === 0}
-              className="w-full bg-red-600 hover:bg-red-700"
-            >
-              {isProcessing ? "Processing..." : `Process PDF${files.length > 1 ? 's' : ''}`}
-            </Button>
-          }
-        >
-          <div className="space-y-6">
+        {/* Mobile Process Button */}
+        <div className="lg:hidden fixed bottom-0 left-0 right-0 p-4 bg-white border-t shadow-lg">
+          <Button
+            onClick={processFiles}
+            disabled={isProcessing || files.length === 0}
+            className="w-full bg-red-600 hover:bg-red-700"
+            size="lg"
+          >
+            {isProcessing ? `Processing ${processingProgress}%` : `Process ${files.length} file${files.length > 1 ? 's' : ''}`}
+          </Button>
+        </div>
+      </div>
+
+      {/* Mobile Options Sheet */}
+      <Sheet open={isMobileOptionsOpen} onOpenChange={setIsMobileOptionsOpen}>
+        <SheetContent side="bottom" className="h-[80vh]">
+          <SheetHeader>
+            <SheetTitle>Options</SheetTitle>
+          </SheetHeader>
+          <div className="mt-4 space-y-4">
             {Object.entries(groupedOptions).map(([section, sectionOptions]) => (
-              <div key={section} className="space-y-4">
-                <div className="flex items-center space-x-2">
-                  <div className="h-px bg-gray-200 flex-1"></div>
-                  <Label className="text-xs font-medium text-gray-500 uppercase tracking-wide">{section}</Label>
-                  <div className="h-px bg-gray-200 flex-1"></div>
-                </div>
+              <div key={section} className="space-y-3">
+                <Label className="text-xs font-medium text-gray-500 uppercase">{section}</Label>
                 {sectionOptions.map((option) => (
                   <div key={option.key} className="space-y-2">
-                    <Label className="text-sm font-medium">{option.label}</Label>
+                    {option.type !== "checkbox" && <Label className="text-sm">{option.label}</Label>}
                     {renderOptionControl(option)}
                   </div>
                 ))}
               </div>
             ))}
           </div>
-        </MobileOptionPanel>
-      </div>
-
-      {/* Rich Educational Content - Hidden when tool interface is active */}
-      {richContent && !isToolInterfaceActive && (
-        <div className="bg-gray-50">
-          {richContent}
-        </div>
-      )}
+        </SheetContent>
+      </Sheet>
 
       <input
         ref={fileInputRef}
