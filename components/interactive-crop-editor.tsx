@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect, useCallback } from "react"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Crop, ZoomIn, ZoomOut, Maximize2, RotateCw, Flip, FlipVertical2 } from "lucide-react"
+import { Crop, ZoomIn, ZoomOut, Maximize2, RotateCw, Eclipse as Flip, FlipVertical2 } from "lucide-react"
 
 interface CropArea {
   x: number
