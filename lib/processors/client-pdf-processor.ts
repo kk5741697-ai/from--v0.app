@@ -218,14 +218,14 @@ export class ClientPDFProcessor {
 
       const arrayBuffer = await file.arrayBuffer()
       let pdf: any
-      
+
       try {
         pdf = await PDFDocument.load(arrayBuffer)
       } catch (pdfError) {
         console.error("PDF loading error:", pdfError)
         throw new Error("Failed to load PDF. The file may be corrupted or password-protected.")
       }
-      
+
       const results: Blob[] = []
       const totalPages = pdf.getPageCount()
 
@@ -233,7 +233,7 @@ export class ClientPDFProcessor {
         throw new Error("PDF appears to be empty")
       }
       const selectedPageNumbers = options.selectedPages || []
-      
+
       if (selectedPageNumbers.length === 0) {
         throw new Error("No pages selected for extraction")
       }
@@ -246,23 +246,25 @@ export class ClientPDFProcessor {
         throw new Error(`No valid pages selected. PDF has ${totalPages} pages.`)
       }
 
+      // Create a single PDF with all selected pages
+      const newPdf = await PDFDocument.create()
+
       for (const pageNum of validPages as number[]) {
         try {
-          const newPdf = await PDFDocument.create()
           const [copiedPage] = await newPdf.copyPages(pdf, [pageNum - 1])
           newPdf.addPage(copiedPage)
-
-          newPdf.setTitle(`${file.name.replace(".pdf", "")} - Page ${pageNum}`)
-          newPdf.setCreator("PixoraTools PDF Splitter")
-          newPdf.setProducer("PixoraTools")
-
-          const pdfBytes = await newPdf.save()
-          results.push(new Blob([pdfBytes], { type: "application/pdf" }))
         } catch (pageError) {
           console.error(`Error processing page ${pageNum}:`, pageError)
           throw new Error(`Failed to extract page ${pageNum}. The page may be corrupted.`)
         }
       }
+
+      newPdf.setTitle(`${file.name.replace(".pdf", "")} - Extracted Pages`)
+      newPdf.setCreator("PixoraTools PDF Splitter")
+      newPdf.setProducer("PixoraTools")
+
+      const pdfBytes = await newPdf.save()
+      results.push(new Blob([pdfBytes], { type: "application/pdf" }))
 
       if (results.length === 0) {
         throw new Error("Failed to extract any pages")
